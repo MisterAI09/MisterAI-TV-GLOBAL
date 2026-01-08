@@ -3,117 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MisterAI TV Pro</title>
+    <title>MisterAI | beIN & CAN Hub</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #8e44ad; --bg: #05050a; --surface: #12121f; --text: #ffffff; --accent: #00cec9; }
+        :root { --primary: #706fd3; --bg: #050505; --surface: #10101a; --text: #ffffff; --accent: #33d9b2; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
         
-        .sidebar { width: 350px; background: var(--surface); display: flex; flex-direction: column; border-left: 1px solid #2d2d44; flex-shrink: 0; }
-        .brand { padding: 20px; text-align: center; background: linear-gradient(135deg, var(--primary), #4b0082); font-weight: bold; font-size: 1.2rem; }
-        .search-box { padding: 15px; }
-        input { width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #333; background: #000; color: #fff; text-align: center; outline: none; }
+        /* Sidebar */
+        .sidebar { width: 380px; background: var(--surface); display: flex; flex-direction: column; border-left: 1px solid #2c2c3e; flex-shrink: 0; }
+        .header { padding: 25px; text-align: center; background: linear-gradient(45deg, #40407a, var(--primary)); font-weight: bold; font-size: 1.3rem; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        .search-container { padding: 15px; }
+        input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #333; background: #000; color: #fff; text-align: center; outline: none; }
+        input:focus { border-color: var(--accent); }
         
         .list { flex: 1; overflow-y: auto; padding: 10px; }
-        .cat { font-size: 0.75rem; color: var(--accent); margin: 15px 5px 5px; font-weight: bold; }
-        .card { padding: 12px; margin-bottom: 8px; background: #1a1a2e; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; border: 1px solid transparent; }
-        .card:hover { border-color: var(--primary); background: #252545; }
-        .card.active { background: var(--primary); }
-        .tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.3); }
+        .category { font-size: 0.8rem; color: var(--accent); margin: 20px 10px 10px; font-weight: bold; border-right: 4px solid var(--accent); padding-right: 10px; background: rgba(51, 217, 178, 0.05); padding-top: 5px; padding-bottom: 5px; }
+        .item { padding: 14px; margin-bottom: 8px; background: #1a1a2e; border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; border: 1px solid transparent; }
+        .item:hover { border-color: var(--primary); background: #252545; transform: scale(1.02); }
+        .item.active { background: var(--primary); box-shadow: 0 0 20px rgba(112, 111, 211, 0.4); }
+        .badge { font-size: 0.65rem; padding: 3px 10px; border-radius: 6px; background: rgba(0,0,0,0.5); color: #00d2d3; border: 1px solid #333; }
 
-        .viewer { flex: 1; display: flex; flex-direction: column; position: relative; background: #000; }
-        video { width: 100%; height: 100%; }
+        /* Viewer */
+        .viewer { flex: 1; display: flex; flex-direction: column; background: #000; position: relative; }
+        video { width: 100%; height: 100%; object-fit: contain; }
         
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .play-btn { padding: 15px 35px; background: var(--primary); color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .bypass-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; z-index: 100; }
+        .btn-play { padding: 20px 50px; background: var(--accent); color: #000; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 1.2rem; margin-top: 30px; box-shadow: 0 10px 20px rgba(51, 217, 178, 0.2); transition: 0.3s; }
+        .btn-play:hover { transform: scale(1.05); filter: brightness(1.1); }
 
-        .footer { padding: 10px; text-align: center; font-size: 0.8rem; border-top: 1px solid #2d2d44; }
+        .footer { padding: 15px; text-align: center; font-size: 0.9rem; border-top: 1px solid #2c2c3e; background: var(--surface); }
         .footer b { color: var(--accent); }
 
-        @media (max-width: 850px) { body { flex-direction: column; } .sidebar { width: 100%; height: 40vh; } .viewer { height: 60vh; } }
+        @media (max-width: 900px) { body { flex-direction: column; } .sidebar { width: 100%; height: 45vh; } .viewer { height: 55vh; } }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="brand">MisterAI TV GLOBAL 🌍</div>
-    <div class="search-box"><input type="text" id="q" placeholder="بحث..." onkeyup="filt()"></div>
+    <div class="header">MisterAI LIVE TV 🚀</div>
+    <div class="search-container"><input type="text" id="search" placeholder="ابحث عن أي قناة هنا..." onkeyup="filter()"></div>
     <div class="list" id="list"></div>
     <div class="footer">جميع الحقوق محفوظة © 2026 | تطوير <b>MisterAI</b></div>
 </div>
 
 <div class="viewer">
-    <video id="vid" controls autoplay></video>
-    <div id="ovl" class="overlay">
-        <h2 id="ovl-title">قناة خارجية</h2>
-        <p>لتجاوز حظر المتصفح، سيتم تشغيل هذه القناة في مشغل MisterAI المنفصل.</p>
-        <button id="go" class="play-btn">تشغيل الآن 📺</button>
+    <video id="p" controls autoplay></video>
+    <div id="scr" class="bypass-screen">
+        <h1 style="color:var(--accent)" id="t">المشغل المستقل</h1>
+        <p style="margin-top:20px; font-size: 1.1rem; color: #ccc;">القناة التي اخترتها تتطلب "بيئة تشغيل MisterAI" لتجاوز قيود المتصفح وضمان أعلى جودة.</p>
+        <button id="b" class="btn-play">تشغيل القناة الآن ✅</button>
     </div>
 </div>
 
 <script>
-    const data = [
-        { n: "beIN Sports 1", u: "http://135.125.109.73:9000/beinsport1_.m3u8", c: "SPORTS" },
-        { n: "beIN Max 1 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8", c: "CAN 2025" },
-        { n: "PRG National DZ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8", c: "ALGERIA" },
-        { n: "Rakuten Movies", u: "https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8", c: "MOVIES" }
+    const db = [
+        // beIN MAX - CAN (الروابط الجديدة)
+        { n: "beIN Max 1 4K ❹Ⓚ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 1 FHD ⒻⒽⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 1 HD ⒽⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 1 SD ⓈⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 2 4K ❹Ⓚ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 2 FHD ⒻⒽⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 2 HD ⒽⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 2 SD ⓈⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 3 4K (EN)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 3 FHD (EN)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 3 HD (EN)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 3 SD (AR)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 4 4K (FR)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 4 FHD (FR)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 4 HD (FR)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8", c: "beIN MAX - CAN 2025" },
+        { n: "beIN Max 4 SD (FR)", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8", c: "beIN MAX - CAN 2025" },
+        
+        // ALGERIA
+        { n: "PROGRAMME NATIONAL 🇩🇿", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8", c: "ALGERIAN TV" },
+        { n: "CANAL ALGERIE ⒽⒹ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/1687.m3u8", c: "ALGERIAN TV" },
+        { n: "A3 ALGERIE", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/1675.m3u8", c: "ALGERIAN TV" },
+        
+        // beIN Premium
+        { n: "beIN Sport 1 🟪", u: "http://135.125.109.73:9000/beinsport1_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 2 🟪", u: "http://135.125.109.73:9000/beinsport2_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 3 🟪", u: "http://135.125.109.73:9000/beinsport3_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 4 🟪", u: "http://135.125.109.73:9000/beinsport4_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 5 🟪", u: "http://135.125.109.73:9000/beinsport5_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 6 🟪", u: "http://135.125.109.73:9000/beinsport6_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 7 🟪", u: "http://135.125.109.73:9000/beinsport7_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 8 🟪", u: "http://135.125.109.73:9000/beinsport8_.m3u8", c: "beIN PREMIUM AR" },
+        { n: "beIN Sport 9 🟪", u: "http://135.125.109.73:9000/beinsport9_.m3u8", c: "beIN PREMIUM AR" }
     ];
 
-    const vid = document.getElementById('vid');
-    const ovl = document.getElementById('ovl');
+    const player = document.getElementById('p');
+    const screen = document.getElementById('scr');
+    const trigger = document.getElementById('b');
     const list = document.getElementById('list');
 
-    function draw() {
+    function build() {
         let last = "";
-        data.forEach(ch => {
+        db.forEach(ch => {
             if(ch.c !== last) {
-                const h = document.createElement('div'); h.className='cat'; h.innerText=ch.c; list.appendChild(h); last=ch.c;
+                const cat = document.createElement('div'); cat.className='category'; cat.innerText=ch.c; list.appendChild(cat); last=ch.c;
             }
-            const d = document.createElement('div');
-            d.className = 'card';
-            d.innerHTML = `<span>${ch.n}</span> <span class="tag">${ch.u.startsWith('https')?'Secure':'Legacy'}</span>`;
-            d.onclick = () => play(ch, d);
-            list.appendChild(d);
+            const el = document.createElement('div');
+            el.className = 'item';
+            el.innerHTML = `<span>${ch.n}</span> <span class="badge">Live</span>`;
+            el.onclick = () => launch(ch, el);
+            list.appendChild(el);
         });
     }
 
-    function play(ch, el) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    function launch(ch, el) {
+        document.querySelectorAll('.item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-
-        if(ch.u.startsWith('https')) {
-            ovl.style.display = 'none'; vid.style.display = 'block';
-            if(Hls.isSupported()){ const h = new Hls(); h.loadSource(ch.u); h.attachMedia(vid); }
-        } else {
-            vid.pause(); vid.style.display = 'none'; ovl.style.display = 'flex';
-            document.getElementById('ovl-title').innerText = ch.n;
-            document.getElementById('go').onclick = () => {
-                // الخدعة: إنشاء صفحة HTML مؤقتة داخل النافذة الجديدة تحتوي على مشغل HLS
-                const win = window.open("", "MisterAI_Player", "width=800,height=500");
-                win.document.write(`
-                    <html><head><title>${ch.n}</title><script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script></head>
-                    <body style="margin:0;background:#000;">
-                        <video id="v" controls autoplay style="width:100%;height:100vh;"></video>
-                        <script>
-                            const v = document.getElementById('v');
-                            if(Hls.isSupported()){ 
-                                const h = new Hls(); h.loadSource('${ch.u}'); h.attachMedia(v); 
-                            } else { v.src = '${ch.u}'; }
-                        <\/script>
-                    </body></html>
-                `);
-            };
-        }
+        player.pause(); player.style.display = 'none'; screen.style.display = 'flex';
+        document.getElementById('t').innerText = ch.n;
+        
+        trigger.onclick = () => {
+            const w = window.open("", "_blank", "width=900,height=550");
+            w.document.write(`
+                <html><head><title>MisterAI | ${ch.n}</title>
+                <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
+                <style>body{margin:0;background:#000;} video{width:100%;height:100vh;}<\/style>
+                </head><body>
+                <video id="v" controls autoplay></video>
+                <script>
+                    const v = document.getElementById('v');
+                    if(Hls.isSupported()){ const h = new Hls(); h.loadSource('${ch.u}'); h.attachMedia(v); }
+                    else { v.src = '${ch.u}'; }
+                <\/script></body></html>
+            `);
+        };
     }
 
-    function filt() {
-        const q = document.getElementById('q').value.toLowerCase();
-        document.querySelectorAll('.card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q)?'flex':'none');
+    function filter() {
+        const q = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(q)?'flex':'none');
     }
 
-    draw();
+    build();
 </script>
 </body>
 </html>
