@@ -2,54 +2,54 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>MisterAI TV | النسخة الكاملة</title>
+    <title>MisterAI TV GLOBAL</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: white; font-family: 'Cairo', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 320px; background: #0a0a0a; border-left: 1px solid #222; display: flex; flex-direction: column; flex-shrink: 0; }
-        .header { padding: 15px; background: #4834d4; text-align: center; font-size: 1.1rem; font-weight: bold; }
-        .list { flex: 1; overflow-y: auto; padding: 10px; }
-        .cat { padding: 8px; font-size: 0.8rem; color: #00cec9; background: #111; margin: 10px 0 5px; border-right: 3px solid #00cec9; }
-        .btn { padding: 12px; margin: 4px 0; background: #1a1a2e; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; border: 1px solid transparent; }
-        .btn:hover { background: #4834d4; border-color: #00cec9; }
-        .btn.active { background: #00cec9; color: #000; font-weight: bold; }
-        .player-area { flex: 1; display: flex; background: #000; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
-        @media (max-width: 850px) { body { flex-direction: column-reverse; } .sidebar { width: 100%; height: 40vh; } .player-area { height: 60vh; } }
+        :root { --main: #4834d4; --glow: #00cec9; --bg: #000; }
+        body { background: var(--bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 350px; background: #0a0a0a; border-left: 2px solid var(--main); display: flex; flex-direction: column; }
+        .brand { padding: 30px 10px; text-align: center; border-bottom: 2px solid var(--main); }
+        .logo-text { font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--main), 0 0 20px var(--glow); animation: pulse 1.5s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
+        .list { flex: 1; overflow-y: auto; padding: 15px; }
+        .cat { padding: 10px; font-size: 0.9rem; color: var(--glow); background: #111; margin: 15px 0 8px; border-right: 4px solid var(--glow); }
+        .btn { padding: 14px; margin: 6px 0; background: #161625; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; border: 1px solid #222; }
+        .btn:hover { background: var(--main); }
+        .btn.active { background: var(--glow); color: #000; font-weight: bold; }
+        .footer { padding: 20px; text-align: center; font-size: 0.85rem; border-top: 1px solid #222; }
+        .footer b { color: var(--glow); }
+        .video-container { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; background: #000; }
+        @media (max-width: 900px) { body { flex-direction: column-reverse; } .sidebar { width: 100%; height: 45vh; } }
     </style>
 </head>
 <body>
-
 <div class="sidebar">
-    <div class="header">MisterAI LIVE TV 🚀</div>
-    <div class="list" id="list"></div>
+    <div class="brand"><div class="logo-text">MISTERAI TV</div></div>
+    <div class="list" id="ch-list"></div>
+    <div class="footer">تطوير وبرمجة <b>MisterAI</b><br>جميع الحقوق محفوظة © 2026</div>
 </div>
-
-<div class="player-area">
-    <video id="v" controls autoplay playsinline poster="https://via.placeholder.com/1920x1080/000/00cec9?text=MisterAI+TV+Ready"></video>
-</div>
-
+<div class="video-container"><video id="player" controls autoplay playsinline></video></div>
 <script>
-    const channels = [
-        // beIN MAX 1
+    const data = [
         { n: "beIN Max 1 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 1 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 1 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 1 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8", c: "beIN MAX - CAN" },
-        // beIN MAX 2
         { n: "beIN Max 2 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 2 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 2 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 2 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8", c: "beIN MAX - CAN" },
-        // beIN MAX 3 & 4
-        { n: "beIN Max 3 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8", c: "beIN MAX - OTHER" },
-        { n: "beIN Max 3 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8", c: "beIN MAX - OTHER" },
-        { n: "beIN Max 4 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8", c: "beIN MAX - OTHER" },
-        { n: "beIN Max 4 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8", c: "beIN MAX - OTHER" },
-        // DZ
+        { n: "beIN Max 3 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 3 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 3 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 3 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 4 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 4 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 4 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8", c: "beIN MAX - CAN" },
+        { n: "beIN Max 4 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8", c: "beIN MAX - CAN" },
         { n: "PRG National DZ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8", c: "ALGERIA" },
-        // beIN Premium AR
         { n: "beIN Sport 1", u: "http://135.125.109.73:9000/beinsport1_.m3u8", c: "beIN PREMIUM" },
         { n: "beIN Sport 2", u: "http://135.125.109.73:9000/beinsport2_.m3u8", c: "beIN PREMIUM" },
         { n: "beIN Sport 3", u: "http://135.125.109.73:9000/beinsport3_.m3u8", c: "beIN PREMIUM" },
@@ -60,29 +60,21 @@
         { n: "beIN Sport 8", u: "http://135.125.109.73:9000/beinsport8_.m3u8", c: "beIN PREMIUM" },
         { n: "beIN Sport 9", u: "http://135.125.109.73:9000/beinsport9_.m3u8", c: "beIN PREMIUM" }
     ];
-
-    const v = document.getElementById('v');
-    const l = document.getElementById('list');
+    const player = document.getElementById('player');
+    const list = document.getElementById('ch-list');
     let hls = new Hls();
     let last = "";
-
-    channels.forEach(ch => {
+    data.forEach(ch => {
         if(ch.c !== last) {
-            const cat = document.createElement('div'); cat.className='cat'; cat.innerText=ch.c; l.appendChild(cat); last=ch.c;
+            const h = document.createElement('div'); h.className='cat'; h.innerText=ch.c; list.appendChild(h); last=ch.c;
         }
         const b = document.createElement('div');
-        b.className = 'btn';
-        b.innerText = ch.n;
+        b.className = 'btn'; b.innerText = ch.n;
         b.onclick = () => {
-            document.querySelectorAll('.btn').forEach(i => i.classList.remove('active'));
-            b.classList.add('active');
-            if (Hls.isSupported()) {
-                hls.destroy(); hls = new Hls();
-                hls.loadSource(ch.u); hls.attachMedia(v);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => v.play());
-            } else { v.src = ch.u; v.play(); }
+            document.querySelectorAll('.btn').forEach(i => i.classList.remove('active')); b.classList.add('active');
+            if (Hls.isSupported()) { hls.destroy(); hls = new Hls(); hls.loadSource(ch.u); hls.attachMedia(player); hls.on(Hls.Events.MANIFEST_PARSED, () => player.play()); }
         };
-        l.appendChild(b);
+        list.appendChild(b);
     });
 </script>
 </body>
