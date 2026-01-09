@@ -4,9 +4,18 @@
 <meta charset="UTF-8">
 <title>MisterAI TV GLOBAL 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root { --main:#4834d4; --glow:#00cec9; --bg:#050505; }
+:root { 
+    --main:#4834d4; 
+    --glow:#00cec9; 
+    --bg:#050505;
+    --algeria-green:#006633;
+    --algeria-white:#FFFFFF;
+    --algeria-red:#D21034;
+    --algeria-gold:#FFD700;
+}
 *{box-sizing:border-box}
 body{
     margin:0;
@@ -25,15 +34,169 @@ body{
     flex-direction:column
 }
 .brand{
-    padding:30px 10px;
+    padding:20px 10px;
     text-align:center;
-    border-bottom:2px solid var(--main)
+    border-bottom:2px solid var(--main);
+    position: relative;
+    overflow: hidden;
+}
+.brand::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        var(--algeria-green) 0%, 
+        var(--algeria-green) 33%, 
+        var(--algeria-white) 33%, 
+        var(--algeria-white) 66%, 
+        var(--algeria-red) 66%, 
+        var(--algeria-red) 100%);
+    opacity: 0.1;
+    z-index: 0;
+}
+.logo-container {
+    position: relative;
+    z-index: 1;
 }
 .logo-text{
-    font-size:2rem;
+    font-size:2.2rem;
     font-weight:900;
     text-shadow:0 0 10px var(--main),0 0 20px var(--glow);
-    animation:pulse 1.5s infinite alternate
+    animation:pulse 1.5s infinite alternate;
+    background: linear-gradient(to right, 
+        var(--algeria-green), 
+        var(--algeria-white), 
+        var(--algeria-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    margin-bottom: 10px;
+}
+.logo-text::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, 
+        var(--algeria-green), 
+        var(--algeria-white), 
+        var(--algeria-red), 
+        var(--algeria-gold));
+    z-index: -1;
+    border-radius: 15px;
+    opacity: 0.5;
+    filter: blur(15px);
+    animation: algeriaGlow 3s infinite alternate;
+}
+@keyframes algeriaGlow {
+    0% {
+        opacity: 0.4;
+        filter: blur(15px);
+    }
+    50% {
+        opacity: 0.7;
+        filter: blur(20px);
+    }
+    100% {
+        opacity: 0.4;
+        filter: blur(15px);
+    }
+}
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--algeria-white);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 16px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.social-link:hover {
+    background: #1DA1F2;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(29, 161, 242, 0.4);
+}
+.social-link i {
+    color: #1DA1F2;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+.social-link:hover i {
+    color: white;
+    transform: rotate(15deg);
+}
+.algeria-flag {
+    display: flex;
+    width: 120px;
+    height: 30px;
+    margin: 10px auto;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+.flag-stripe {
+    flex: 1;
+    height: 100%;
+}
+.flag-green {
+    background-color: var(--algeria-green);
+}
+.flag-white {
+    background-color: var(--algeria-white);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.flag-red {
+    background-color: var(--algeria-red);
+}
+.crescent {
+    width: 20px;
+    height: 20px;
+    background-color: var(--algeria-red);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-60%, -50%);
+    box-shadow: 5px 0 0 0 var(--algeria-red);
+}
+.star {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    border-bottom: 12px solid var(--algeria-red);
+    transform: rotate(180deg);
+    left: 60%;
+    top: 30%;
+}
+.star:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    border-top: 12px solid var(--algeria-red);
+    transform: rotate(180deg);
+    left: -8px;
+    top: 4px;
 }
 @keyframes pulse{
     from{transform:scale(1)}
@@ -78,7 +241,10 @@ body{
     padding:15px;
     text-align:center;
     font-size:.85rem;
-    border-top:1px solid #222
+    border-top:1px solid #222;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 .footer-rights b{
     color:var(--glow)
@@ -89,7 +255,8 @@ body{
     align-items:center;
     justify-content:center;
     color:#555;
-    font-size:1.2rem
+    font-size:1.2rem;
+    background: linear-gradient(135deg, rgba(0,102,51,0.1) 0%, rgba(255,255,255,0.05) 33%, rgba(210,16,52,0.1) 66%);
 }
 @media(max-width:900px){
     body{flex-direction:column}
@@ -103,19 +270,42 @@ body{
 
 <div class="sidebar">
     <div class="brand">
-        <div class="logo-text">MISTERAI TV</div>
+        <div class="logo-container">
+            <div class="logo-text">MISTERAI TV</div>
+            
+            <!-- علم الجزائر المصغر -->
+            <div class="algeria-flag">
+                <div class="flag-stripe flag-green"></div>
+                <div class="flag-stripe flag-white">
+                    <div class="crescent"></div>
+                    <div class="star"></div>
+                </div>
+                <div class="flag-stripe flag-red"></div>
+            </div>
+            
+            <!-- رابط حساب X -->
+            <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
+                <i class="fab fa-twitter"></i>
+                تابعنا على X: @neurosisnet
+            </a>
+        </div>
     </div>
 
     <div class="list" id="channels"></div>
 
     <div class="footer-rights">
-        تطوير وبرمجة <b>MisterAI</b><br>
-        © 2026
+        <div>
+            تطوير وبرمجة <b>MisterAI</b><br>
+            © 2026
+        </div>
+        <div style="font-size: 0.8rem; opacity: 0.8;">
+            🇩🇿 بألوان علم الجزائر 🇩🇿
+        </div>
     </div>
 </div>
 
 <div class="video-container">
-    MisterAI TV GLOBAL 2026
+    اختر قناة للمشاهدة الخارجية
 </div>
 
 <script>
