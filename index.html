@@ -11,10 +11,11 @@
     --main:#4834d4; 
     --glow:#00cec9; 
     --bg:#050505;
-    --algeria-green:#006633;
-    --algeria-white:#FFFFFF;
-    --algeria-red:#D21034;
-    --algeria-gold:#FFD700;
+    --color1:#FF6B8B;
+    --color2:#6A5AF9;
+    --color3:#00D4FF;
+    --color4:#00F5A0;
+    --color5:#FFD166;
 }
 *{box-sizing:border-box}
 body{
@@ -24,17 +25,194 @@ body{
     color:#fff;
     display:flex;
     height:100vh;
-    overflow:hidden
+    overflow:hidden;
+    position: relative;
 }
+
+/* خلفية متحركة بألوان جميلة */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.gradient-bg {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    opacity: 0.15;
+    animation: rotateGradient 30s linear infinite;
+}
+
+@keyframes rotateGradient {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* موجات متحركة */
+.waves {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.wave {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, 
+        rgba(255,107,139,0.1) 0%, 
+        rgba(106,90,249,0.08) 25%, 
+        rgba(0,212,255,0.06) 50%, 
+        rgba(0,245,160,0.04) 75%, 
+        transparent 100%);
+    animation: waveMove 20s linear infinite;
+}
+
+.wave:nth-child(1) {
+    top: -100%;
+    left: -100%;
+    animation-delay: 0s;
+}
+
+.wave:nth-child(2) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -5s;
+    animation-duration: 25s;
+    opacity: 0.7;
+}
+
+.wave:nth-child(3) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -10s;
+    animation-duration: 30s;
+    opacity: 0.5;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* جسيمات متحركة */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color3);
+    animation: float 15s infinite linear;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.particle:nth-child(5n) {
+    background: var(--color1);
+    color: var(--color1);
+}
+.particle:nth-child(5n+1) {
+    background: var(--color2);
+    color: var(--color2);
+}
+.particle:nth-child(5n+2) {
+    background: var(--color3);
+    color: var(--color3);
+}
+.particle:nth-child(5n+3) {
+    background: var(--color4);
+    color: var(--color4);
+}
+.particle:nth-child(5n+4) {
+    background: var(--color5);
+    color: var(--color5);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(100px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* خطوط مضيئة */
+.glow-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.glow-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--color3), 
+        transparent);
+    box-shadow: 0 0 10px var(--color3),
+                0 0 20px var(--color3),
+                0 0 30px var(--color3);
+    animation: lineGlow 8s infinite linear;
+}
+
+@keyframes lineGlow {
+    0%, 100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
 .sidebar{
     width:360px;
-    background:#0a0a0a;
+    background:rgba(10, 10, 10, 0.85);
     border-left:2px solid var(--main);
     display:flex;
-    flex-direction:column
+    flex-direction:column;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 .brand{
-    padding:20px 10px;
+    padding:25px 10px;
     text-align:center;
     border-bottom:2px solid var(--main);
     position: relative;
@@ -48,12 +226,11 @@ body{
     right: 0;
     bottom: 0;
     background: linear-gradient(45deg, 
-        var(--algeria-green) 0%, 
-        var(--algeria-green) 33%, 
-        var(--algeria-white) 33%, 
-        var(--algeria-white) 66%, 
-        var(--algeria-red) 66%, 
-        var(--algeria-red) 100%);
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
     opacity: 0.1;
     z-index: 0;
 }
@@ -62,202 +239,166 @@ body{
     z-index: 1;
 }
 .logo-text{
-    font-size:2.2rem;
+    font-size:2.5rem;
     font-weight:900;
-    text-shadow:0 0 10px var(--main),0 0 20px var(--glow);
-    animation:pulse 1.5s infinite alternate;
+    text-shadow:0 0 10px var(--main),
+                0 0 20px var(--glow),
+                0 0 30px var(--color2),
+                0 0 40px var(--color3);
+    animation:pulse 2s infinite alternate;
     background: linear-gradient(to right, 
-        var(--algeria-green), 
-        var(--algeria-white), 
-        var(--algeria-red));
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
-.logo-text::after {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: linear-gradient(45deg, 
-        var(--algeria-green), 
-        var(--algeria-white), 
-        var(--algeria-red), 
-        var(--algeria-gold));
-    z-index: -1;
-    border-radius: 15px;
-    opacity: 0.5;
-    filter: blur(15px);
-    animation: algeriaGlow 3s infinite alternate;
+@keyframes pulse{
+    0%{transform:scale(1); text-shadow:0 0 10px var(--main),0 0 20px var(--glow)}
+    100%{transform:scale(1.05); text-shadow:0 0 20px var(--color2),0 0 40px var(--color3)}
 }
-@keyframes algeriaGlow {
-    0% {
-        opacity: 0.4;
-        filter: blur(15px);
-    }
-    50% {
-        opacity: 0.7;
-        filter: blur(20px);
-    }
-    100% {
-        opacity: 0.4;
-        filter: blur(15px);
-    }
-}
+
 .social-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    color: var(--algeria-white);
-    background: rgba(0, 0, 0, 0.7);
-    padding: 8px 16px;
-    border-radius: 25px;
+    gap: 10px;
+    color: white;
+    background: linear-gradient(45deg, var(--color2), var(--color3));
+    padding: 10px 20px;
+    border-radius: 30px;
     text-decoration: none;
-    font-size: 0.9rem;
-    margin-top: 10px;
+    font-size: 1rem;
+    margin-top: 15px;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
+    box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
 }
 .social-link:hover {
-    background: #1DA1F2;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(29, 161, 242, 0.4);
+    background: linear-gradient(45deg, var(--color1), var(--color4));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 139, 0.6);
 }
 .social-link i {
-    color: #1DA1F2;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     transition: all 0.3s ease;
 }
 .social-link:hover i {
-    color: white;
-    transform: rotate(15deg);
+    transform: rotate(360deg);
 }
-.algeria-flag {
-    display: flex;
-    width: 120px;
-    height: 30px;
-    margin: 10px auto;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    position: relative;
-}
-.flag-stripe {
-    flex: 1;
-    height: 100%;
-}
-.flag-green {
-    background-color: var(--algeria-green);
-}
-.flag-white {
-    background-color: var(--algeria-white);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.flag-red {
-    background-color: var(--algeria-red);
-}
-.crescent {
-    width: 20px;
-    height: 20px;
-    background-color: var(--algeria-red);
-    border-radius: 50%;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-60%, -50%);
-    box-shadow: 5px 0 0 0 var(--algeria-red);
-}
-.star {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-right: 8px solid transparent;
-    border-left: 8px solid transparent;
-    border-bottom: 12px solid var(--algeria-red);
-    transform: rotate(180deg);
-    left: 60%;
-    top: 30%;
-}
-.star:before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-right: 8px solid transparent;
-    border-left: 8px solid transparent;
-    border-top: 12px solid var(--algeria-red);
-    transform: rotate(180deg);
-    left: -8px;
-    top: 4px;
-}
-@keyframes pulse{
-    from{transform:scale(1)}
-    to{transform:scale(1.08)}
-}
+
 .list{
     flex:1;
     overflow-y:auto;
     padding:15px
 }
 .cat{
-    padding:10px;
+    padding:12px;
     margin:15px 0 8px;
-    background:#111;
-    color:var(--glow);
+    background:rgba(17, 17, 17, 0.8);
+    color:var(--color3);
     font-weight:bold;
-    border-right:4px solid var(--glow)
+    border-right:4px solid var(--color3);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 .btn{
     padding:14px;
-    margin:6px 0;
-    background:#161625;
+    margin:8px 0;
+    background:rgba(22, 22, 37, 0.8);
     border-radius:10px;
     cursor:pointer;
     display:flex;
     justify-content:space-between;
     align-items:center;
     transition:.3s;
-    border:1px solid #222
+    border:1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
 }
 .btn:hover{
-    background:var(--main);
-    transform:translateX(-5px)
+    background: linear-gradient(90deg, var(--color2), var(--main));
+    transform:translateX(-8px) scale(1.02);
+    border-color: var(--color3);
+    box-shadow: 0 5px 20px rgba(106, 90, 249, 0.4);
 }
 .badge{
     font-size:.7rem;
-    background:#ff4757;
-    padding:2px 8px;
-    border-radius:5px
+    background:var(--color1);
+    padding:4px 10px;
+    border-radius:20px;
+    font-weight:bold;
+    box-shadow: 0 2px 10px rgba(255, 107, 139, 0.3);
 }
 .footer-rights{
-    padding:15px;
+    padding:20px;
     text-align:center;
-    font-size:.85rem;
-    border-top:1px solid #222;
+    font-size:.9rem;
+    border-top:1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.3);
 }
 .footer-rights b{
-    color:var(--glow)
+    background: linear-gradient(to right, var(--color3), var(--color4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .video-container{
     flex:1;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#555;
-    font-size:1.2rem;
-    background: linear-gradient(135deg, rgba(0,102,51,0.1) 0%, rgba(255,255,255,0.05) 33%, rgba(210,16,52,0.1) 66%);
+    color:#fff;
+    font-size:1.8rem;
+    position: relative;
+    z-index: 1;
+    background: rgba(5, 5, 5, 0.7);
+    backdrop-filter: blur(5px);
 }
+.video-container::before {
+    content: '📺';
+    font-size: 5rem;
+    opacity: 0.2;
+    position: absolute;
+    animation: floatEmoji 15s infinite ease-in-out;
+}
+.video-container::after {
+    content: 'MisterAI TV';
+    position: absolute;
+    bottom: 20%;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--color1), var(--color2), var(--color3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.1;
+    font-weight: 900;
+}
+
+@keyframes floatEmoji {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate(-100px, -50px) rotate(90deg) scale(1.2);
+    }
+    50% {
+        transform: translate(100px, 50px) rotate(180deg) scale(0.8);
+    }
+    75% {
+        transform: translate(-50px, 100px) rotate(270deg) scale(1.1);
+    }
+}
+
 @media(max-width:900px){
     body{flex-direction:column}
     .sidebar{width:100%;height:100vh}
@@ -267,21 +408,22 @@ body{
 </head>
 
 <body>
+<!-- خلفية متحركة بألوان جميلة -->
+<div class="bg-animation">
+    <div class="gradient-bg"></div>
+    <div class="waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+    <div class="glow-lines" id="glowLines"></div>
+</div>
 
 <div class="sidebar">
     <div class="brand">
         <div class="logo-container">
             <div class="logo-text">MISTERAI TV</div>
-            
-            <!-- علم الجزائر المصغر -->
-            <div class="algeria-flag">
-                <div class="flag-stripe flag-green"></div>
-                <div class="flag-stripe flag-white">
-                    <div class="crescent"></div>
-                    <div class="star"></div>
-                </div>
-                <div class="flag-stripe flag-red"></div>
-            </div>
             
             <!-- رابط حساب X -->
             <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
@@ -296,10 +438,10 @@ body{
     <div class="footer-rights">
         <div>
             تطوير وبرمجة <b>MisterAI</b><br>
-            © 2026
+            © 2026 - البث المباشر العالمي
         </div>
         <div style="font-size: 0.8rem; opacity: 0.8;">
-            🇩🇿 بألوان علم الجزائر 🇩🇿
+            تجربة مشاهدة استثنائية بألوان ساحرة
         </div>
     </div>
 </div>
@@ -309,6 +451,46 @@ body{
 </div>
 
 <script>
+// إنشاء جسيمات متحركة
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 60; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // خصائص عشوائية
+    const size = 2 + Math.random() * 6;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 15;
+    const duration = 10 + Math.random() * 25;
+    
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${left}%`;
+    particle.style.animationDelay = `${delay}s`;
+    particle.style.animationDuration = `${duration}s`;
+    
+    particlesContainer.appendChild(particle);
+}
+
+// إنشاء خطوط مضيئة
+const glowLines = document.getElementById('glowLines');
+for (let i = 0; i < 10; i++) {
+    const line = document.createElement('div');
+    line.classList.add('glow-line');
+    
+    const top = Math.random() * 100;
+    const width = 50 + Math.random() * 200;
+    const delay = Math.random() * 8;
+    const duration = 5 + Math.random() * 10;
+    
+    line.style.top = `${top}%`;
+    line.style.width = `${width}%`;
+    line.style.animationDelay = `${delay}s`;
+    line.style.animationDuration = `${duration}s`;
+    
+    glowLines.appendChild(line);
+}
+
 const channels = [
 /* ================= beIN MAX ================= */
 {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
