@@ -1,177 +1,68 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>MisterAI TV GLOBAL 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
-
-<style>
-:root{
-    --main:#4834d4;
-    --glow:#00cec9;
-    --bg:#050505;
-}
-*{box-sizing:border-box}
-body{
-    margin:0;
-    background:var(--bg);
-    color:#fff;
-    font-family:'Cairo',sans-serif;
-    display:flex;
-    height:100vh;
-    overflow:hidden
-}
-.sidebar{
-    width:360px;
-    background:#0a0a0a;
-    border-left:2px solid var(--main);
-    display:flex;
-    flex-direction:column
-}
-.brand{
-    padding:25px 10px;
-    border-bottom:2px solid var(--main);
-    text-align:center
-}
-.logo svg{
-    width:220px;
-}
-.logo text{
-    font-weight:900;
-    fill:white;
-    filter:drop-shadow(0 0 10px var(--glow));
-}
-.logo .sub{
-    font-size:14px;
-    fill:var(--glow);
-}
-.list{
-    flex:1;
-    overflow-y:auto;
-    padding:15px
-}
-.cat{
-    margin:15px 0 8px;
-    padding:10px;
-    background:#111;
-    color:var(--glow);
-    font-weight:bold;
-    border-right:4px solid var(--glow)
-}
-.btn{
-    padding:14px;
-    margin:6px 0;
-    background:#161625;
-    border-radius:10px;
-    cursor:pointer;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    transition:.3s;
-    border:1px solid #222
-}
-.btn:hover{
-    background:var(--main);
-    transform:translateX(-5px)
-}
-.badge{
-    font-size:.7rem;
-    background:#ff4757;
-    padding:2px 8px;
-    border-radius:5px
-}
-.footer-rights{
-    padding:15px;
-    text-align:center;
-    font-size:.85rem;
-    border-top:1px solid #222
-}
-.footer-rights b{color:var(--glow)}
-.video-container{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#555;
-    font-size:1.2rem
-}
-@media(max-width:900px){
-    body{flex-direction:column}
-    .sidebar{width:100%;height:100vh}
-    .video-container{display:none}
-}
-</style>
-</head>
-
-<body>
-
-<div class="sidebar">
-    <div class="brand">
-        <!-- LOGO -->
-        <div class="logo">
-            <svg viewBox="0 0 400 120">
-                <text x="200" y="55" font-size="42" text-anchor="middle">
-                    MISTERAI TV
-                </text>
-                <text x="200" y="90" class="sub" text-anchor="middle">
-                    GLOBAL STREAMING 2026
-                </text>
-            </svg>
-        </div>
-    </div>
-
-    <div class="list" id="channels"></div>
-
-    <div class="footer-rights">
-        تطوير وبرمجة <b>MisterAI</b><br>© 2026
-    </div>
-</div>
-
-<div class="video-container">
-    اختر قناة → سيتم فتحها خارج الموقع
-</div>
-
 <script>
 // فك التشفير
 const decode = s => atob(s);
 
 // القنوات (مشفر Base64)
 const channels = [
-{c:"beIN MAX",n:"beIN MAX 1 4K",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwNC5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 1 FHD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMy5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 1 HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMi5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 1 SD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMS5tM3U4"},
+    // beIN MAX
+    {c:"beIN MAX", n:"beIN MAX 1 4K", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwNC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 1 FHD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMy5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 1 HD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMi5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 1 SD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMS5tM3U4"},
 
-{c:"beIN MAX",n:"beIN MAX 2 4K",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMC5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 2 FHD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OS5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 2 HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OC5tM3U4"},
-{c:"beIN MAX",n:"beIN MAX 2 SD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5Ny5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 2 4K", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 2 FHD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OS5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 2 HD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 2 SD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5Ny5tM3U4"},
 
-{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg4OC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 3 4K", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5Ni5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 3 FHD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5NS5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 3 HD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5NC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 3 SD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5My5tM3U4"},
 
-{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0MV8ubTN1OA=="},
-{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0Ml8ubTN1OA=="},
-{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0M18ubTN1OA=="}
+    {c:"beIN MAX", n:"beIN MAX 4 4K", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5Mi5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 4 FHD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5MS5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 4 HD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5MC5tM3U4"},
+    {c:"beIN MAX", n:"beIN MAX 4 SD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg4OS5tM3U4"},
+
+    // القنوات الجزائرية و beIN PREMIUM
+    {c:"ALGERIA", n:"PROGRAMME NATIONAL DZ HD", u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg4OC5tM3U4"},
+    {c:"beIN PREMIUM", n:"beIN SPORT 1", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0MV8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 2", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0Ml8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 3", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0M18ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 4", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0NF8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 5", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0NV8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 6", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0Nl8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 7", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0N18ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 8", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0OF8ubTN1OA=="},
+    {c:"beIN PREMIUM", n:"beIN SPORT 9", u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0OV8ubTN1OA=="},
+    
+    // Rakuten TV (أفلام)
+    {c:"Rakuten TV", n:"Top Movies UK", u:"aHR0cHM6Ly8wMTQ1NDUxOTc1YTY0YjM1ODY2MTcwZmQyZThmYTQ4Ni5tZWRpYXRhaWxvci5ldy13ZXN0LTEuYW1hem9uYXdzLmNvbS92MS9tYXN0ZXIvMDU0N2YxODY0OWJkNzg4YmVjN2I2N2I3NDZlNDc2NzBmNTU4YjZiMi9wcm9kdWN0aW9uLUxpdmVDaGFubmVsLTU5ODcvbWFzdGVyLm0zdTg="},
+    {c:"Rakuten TV", n:"Action Movies Finland", u:"aHR0cHM6Ly9iY2E1YTQyMWE3MGM0NmFkOTExZWZkMGE0NzY3YzRiZi5tZWRpYXRhaWxvci5ldy13ZXN0LTEuYW1hem9uYXdzLmNvbS92MS9tYXN0ZXIvMDU0N2YxODY0OWJkNzg4YmVjN2I2N2I3NDZlNDc2NzBmNTU4YjZiMi9wcm9kdWN0aW9uLUxpdmVDaGFubmVsLTYwNzUvbWFzdGVyLm0zdTg="},
+    {c:"Rakuten TV", n:"Action Movies Germany", u:"aHR0cHM6Ly8yODQ4MjRjZjcwNDA0ZmRmYjZkZGY5MzQ5MDA5Y3cxMTAubWVkaWF0YWlsb3IuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb20vdjEvbWFzdGVyLzA1NDdmMTg2NDliZDc4OGJlYzdiNjd iNzQ2ZTQ3NjcwZjU1OGI2YjIvcHJvZHVjdGlvbi1MaXZlQ2hhbm5lbC02MDY2L21hc3Rlci5tM3U4"},
+    {c:"Rakuten TV", n:"Action Movies Italy", u:"aHR0cHM6Ly84N2YyZTJlNWU3NjI0ZTNiYWQ4NWRhMWNhMmVkMzFhNy5tZWRpYXRhaWxvci5ldy13ZXN0LTEuYW1hem9uYXdzLmNvbS92MS9tYXN0ZXIvMDU0N2YxODY0OWJkNzg4YmVjN2I2N2I3NDZlNDc2NzBmNTU4YjZiMi9wcm9kdWN0aW9uLUxpdmVDaGFubmVsLTYwNjcvbWFzdGVyLm0zdTg="},
+    {c:"Rakuten TV", n:"Action Movies Spain", u:"aHR0cHM6Ly9hOWM1N2VjN2VjNWM0YjdkYWVhY2M2MzFhMGJiNDA0Lm1lZGlhdGFpbG9yLmV1LXdlc3QtMS5hbWF6b25hd3MuY29tL3YxL21hc3Rlci8wNTQ3ZjE4NjQ5YmQ3ODhiYzdiNjdiNzQ2ZTQ3NjcwZjU1OGI2YjIvcHJvZHVjdGlvbi1MaXZlQ2hhbm5lbC02MDY5L21hc3Rlci5tM3U4"},
+    {c:"Rakuten TV", n:"Action Movies UK", u:"aHR0cHM6Ly81NDA0NWYwYzQwZmQ0NDJjOGIwNmRmMDc2YWFmMWU4NS5tZWRpYXRhaWxvci5ldy13ZXN0LTEuYW1hem9uYXdzLmNvbS92MS9tYXN0ZXIvMDU0N2YxODY0OWJkNzg4YmVjN2I2N2I3NDZlNDc2NzBmNTU4YjZiMi9wcm9kdWN0aW9uLUxpdmVDaGFubmVsLTYwNjUvbWFzdGVyLm0zdTg="},
+    {c:"Rakuten TV", n:"Comedy Movies Finland", u:"aHR0cHM6Ly9hMzAwYWY5OGUwMDc0NmUyYWNmMjM0NmY0M2U0N2JkMS5tZWRpYXRhaWxvci5ldy13ZXN0LTEuYW1hem9uYXdzLmNvbS92MS9tYXN0ZXIvMDU0N2YxODY0OWJkNzg4YmVjN2I2N2I3NDZlNDc2NzBmNTU4YjZiMi9wcm9kdWN0aW9uLUxpdmVDaGFubmVsLTYxOTEvbWFzdGVyLm0zdTg="}
+    // وهكذا يمكن إضافة بقية Rakuten TV بنفس الطريقة...
 ];
 
-const list=document.getElementById("channels");
-let last="";
+const list = document.getElementById("channels");
+let last = "";
 
-channels.forEach(ch=>{
-    if(ch.c!==last){
-        const d=document.createElement("div");
-        d.className="cat";
-        d.textContent=ch.c;
+channels.forEach(ch => {
+    if(ch.c !== last){
+        const d = document.createElement("div");
+        d.className = "cat";
+        d.textContent = ch.c;
         list.appendChild(d);
-        last=ch.c;
+        last = ch.c;
     }
-    const b=document.createElement("div");
-    b.className="btn";
-    b.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
-    b.onclick=()=>window.open(decode(ch.u),"_blank");
+    const b = document.createElement("div");
+    b.className = "btn";
+    b.innerHTML = `<span>${ch.n}</span><span class="badge">LIVE</span>`;
+    b.onclick = () => window.open(decode(ch.u), "_blank");
     list.appendChild(b);
 });
 </script>
-
-</body>
-</html>
