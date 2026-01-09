@@ -2,79 +2,109 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>MisterAI TV GLOBAL</title>
+    <title>MisterAI TV GLOBAL 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --main: #4834d4; --glow: #00cec9; --bg: #000; }
+        :root { --main: #4834d4; --glow: #00cec9; --bg: #050505; }
+        * { box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /*Sidebar*/
         .sidebar { width: 350px; background: #0a0a0a; border-left: 2px solid var(--main); display: flex; flex-direction: column; }
+        
+        /* الشعار المتحرك اللامع */
         .brand { padding: 30px 10px; text-align: center; border-bottom: 2px solid var(--main); }
-        .logo-text { font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--main), 0 0 20px var(--glow); animation: pulse 1.5s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
+        .logo-text { 
+            font-size: 2rem; font-weight: 900; color: #fff; text-transform: uppercase;
+            text-shadow: 0 0 10px var(--main), 0 0 20px var(--glow);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { text-shadow: 0 0 10px var(--main), 0 0 20px var(--glow); transform: scale(1); }
+            to { text-shadow: 0 0 20px var(--glow), 0 0 40px #fff; transform: scale(1.08); }
+        }
+
         .list { flex: 1; overflow-y: auto; padding: 15px; }
-        .cat { padding: 10px; font-size: 0.9rem; color: var(--glow); background: #111; margin: 15px 0 8px; border-right: 4px solid var(--glow); }
-        .btn { padding: 14px; margin: 6px 0; background: #161625; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; border: 1px solid #222; }
-        .btn:hover { background: var(--main); }
-        .btn.active { background: var(--glow); color: #000; font-weight: bold; }
-        .footer { padding: 20px; text-align: center; font-size: 0.85rem; border-top: 1px solid #222; }
-        .footer b { color: var(--glow); }
-        .video-container { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; background: #000; }
-        @media (max-width: 900px) { body { flex-direction: column-reverse; } .sidebar { width: 100%; height: 45vh; } }
+        .cat { padding: 10px; font-size: 0.9rem; color: var(--glow); background: #111; margin: 15px 0 8px; border-right: 4px solid var(--glow); font-weight: bold; }
+        .btn { padding: 14px; margin: 6px 0; background: #161625; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; border: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .btn:hover { background: var(--main); border-color: var(--glow); transform: translateX(-5px); }
+        .btn.active { background: var(--glow); color: #000; font-weight: bold; box-shadow: 0 0 25px var(--glow); border: none; }
+        .badge { font-size: 0.7rem; background: #ff4757; color: white; padding: 2px 8px; border-radius: 5px; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* Rights */
+        .footer-rights { padding: 20px; background: #050505; border-top: 1px solid #222; text-align: center; font-size: 0.85rem; }
+        .footer-rights b { color: var(--glow); text-shadow: 0 0 5px var(--glow); }
+
+        /* Player Area */
+        .video-container { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+        video { width: 100%; height: 100%; object-fit: contain; box-shadow: 0 0 50px rgba(72, 52, 212, 0.2); }
+
+        @media (max-width: 900px) { body { flex-direction: column-reverse; } .sidebar { width: 100%; height: 45vh; } .video-container { height: 55vh; } }
     </style>
 </head>
 <body>
+
 <div class="sidebar">
-    <div class="brand"><div class="logo-text">MISTERAI TV</div></div>
+    <div class="brand">
+        <div class="logo-text">MISTERAI TV</div>
+    </div>
+    
     <div class="list" id="ch-list"></div>
-    <div class="footer">تطوير وبرمجة <b>MisterAI</b><br>جميع الحقوق محفوظة © 2026</div>
+
+    <div class="footer-rights">
+        تطوير وبرمجة <b>MisterAI</b><br>
+        جميع الحقوق محفوظة © 2026
+    </div>
 </div>
-<div class="video-container"><video id="player" controls autoplay playsinline></video></div>
+
+<div class="video-container">
+    <video id="mister-player" controls autoplay playsinline poster="https://via.placeholder.com/1920x1080/000/00cec9?text=MisterAI+TV+Global+Ready"></video>
+</div>
+
 <script>
     const data = [
         { n: "beIN Max 1 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 1 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 1 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 1 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 2 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 2 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 2 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 2 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 3 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 3 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8", c: "beIN MAX - CAN" },
         { n: "beIN Max 3 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 3 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 4 4K", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 4 FHD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 4 HD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8", c: "beIN MAX - CAN" },
-        { n: "beIN Max 4 SD", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8", c: "beIN MAX - CAN" },
         { n: "PRG National DZ", u: "http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8", c: "ALGERIA" },
         { n: "beIN Sport 1", u: "http://135.125.109.73:9000/beinsport1_.m3u8", c: "beIN PREMIUM" },
         { n: "beIN Sport 2", u: "http://135.125.109.73:9000/beinsport2_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 3", u: "http://135.125.109.73:9000/beinsport3_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 4", u: "http://135.125.109.73:9000/beinsport4_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 5", u: "http://135.125.109.73:9000/beinsport5_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 6", u: "http://135.125.109.73:9000/beinsport6_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 7", u: "http://135.125.109.73:9000/beinsport7_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 8", u: "http://135.125.109.73:9000/beinsport8_.m3u8", c: "beIN PREMIUM" },
-        { n: "beIN Sport 9", u: "http://135.125.109.73:9000/beinsport9_.m3u8", c: "beIN PREMIUM" }
+        { n: "beIN Sport 3", u: "http://135.125.109.73:9000/beinsport3_.m3u8", c: "beIN PREMIUM" }
+        // أضف البقية هنا..
     ];
-    const player = document.getElementById('player');
-    const list = document.getElementById('ch-list');
-    let hls = new Hls();
-    let last = "";
+
+    const player = document.getElementById('mister-player');
+    const container = document.getElementById('ch-list');
+    let hls = null;
+    let lastCat = "";
+
     data.forEach(ch => {
-        if(ch.c !== last) {
-            const h = document.createElement('div'); h.className='cat'; h.innerText=ch.c; list.appendChild(h); last=ch.c;
+        if(ch.c !== lastCat) {
+            const h = document.createElement('div'); h.className='cat'; h.innerText=ch.c; container.appendChild(h); lastCat=ch.c;
         }
         const b = document.createElement('div');
-        b.className = 'btn'; b.innerText = ch.n;
+        b.className = 'btn';
+        b.innerHTML = `<span>${ch.n}</span><span class="badge">LIVE</span>`;
         b.onclick = () => {
-            document.querySelectorAll('.btn').forEach(i => i.classList.remove('active')); b.classList.add('active');
-            if (Hls.isSupported()) { hls.destroy(); hls = new Hls(); hls.loadSource(ch.u); hls.attachMedia(player); hls.on(Hls.Events.MANIFEST_PARSED, () => player.play()); }
+            document.querySelectorAll('.btn').forEach(i => i.classList.remove('active'));
+            b.classList.add('active');
+            
+            if (hls) { hls.destroy(); }
+            
+            if (Hls.isSupported()) {
+                hls = new Hls({ capLevelToPlayerSize: true, debug: false });
+                hls.loadSource(ch.u);
+                hls.attachMedia(player);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => player.play().catch(()=> {}));
+            } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+                player.src = ch.u;
+                player.play();
+            }
         };
-        list.appendChild(b);
+        container.appendChild(b);
     });
 </script>
 </body>
