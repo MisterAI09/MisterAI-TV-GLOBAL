@@ -6,13 +6,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
-:root { --main:#4834d4; --glow:#00cec9; --bg:#050505; }
+:root{
+    --main:#4834d4;
+    --glow:#00cec9;
+    --bg:#050505;
+}
 *{box-sizing:border-box}
 body{
     margin:0;
-    font-family:'Cairo',sans-serif;
     background:var(--bg);
     color:#fff;
+    font-family:'Cairo',sans-serif;
     display:flex;
     height:100vh;
     overflow:hidden
@@ -25,19 +29,21 @@ body{
     flex-direction:column
 }
 .brand{
-    padding:30px 10px;
-    text-align:center;
-    border-bottom:2px solid var(--main)
+    padding:25px 10px;
+    border-bottom:2px solid var(--main);
+    text-align:center
 }
-.logo-text{
-    font-size:2rem;
+.logo svg{
+    width:220px;
+}
+.logo text{
     font-weight:900;
-    text-shadow:0 0 10px var(--main),0 0 20px var(--glow);
-    animation:pulse 1.5s infinite alternate
+    fill:white;
+    filter:drop-shadow(0 0 10px var(--glow));
 }
-@keyframes pulse{
-    from{transform:scale(1)}
-    to{transform:scale(1.08)}
+.logo .sub{
+    font-size:14px;
+    fill:var(--glow);
 }
 .list{
     flex:1;
@@ -45,8 +51,8 @@ body{
     padding:15px
 }
 .cat{
-    padding:10px;
     margin:15px 0 8px;
+    padding:10px;
     background:#111;
     color:var(--glow);
     font-weight:bold;
@@ -80,9 +86,7 @@ body{
     font-size:.85rem;
     border-top:1px solid #222
 }
-.footer-rights b{
-    color:var(--glow)
-}
+.footer-rights b{color:var(--glow)}
 .video-container{
     flex:1;
     display:flex;
@@ -103,80 +107,69 @@ body{
 
 <div class="sidebar">
     <div class="brand">
-        <div class="logo-text">MISTERAI TV</div>
+        <!-- LOGO -->
+        <div class="logo">
+            <svg viewBox="0 0 400 120">
+                <text x="200" y="55" font-size="42" text-anchor="middle">
+                    MISTERAI TV
+                </text>
+                <text x="200" y="90" class="sub" text-anchor="middle">
+                    GLOBAL STREAMING 2026
+                </text>
+            </svg>
+        </div>
     </div>
 
     <div class="list" id="channels"></div>
 
     <div class="footer-rights">
-        تطوير وبرمجة <b>MisterAI</b><br>
-        © 2026
+        تطوير وبرمجة <b>MisterAI</b><br>© 2026
     </div>
 </div>
 
 <div class="video-container">
-    اختر قناة للمشاهدة الخارجية
+    اختر قناة → سيتم فتحها خارج الموقع
 </div>
 
 <script>
+// فك التشفير
+const decode = s => atob(s);
+
+// القنوات (مشفر Base64)
 const channels = [
-/* ================= beIN MAX ================= */
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
+{c:"beIN MAX",n:"beIN MAX 1 4K",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwNC5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 1 FHD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMy5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 1 HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMi5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 1 SD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMS5tM3U4"},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
+{c:"beIN MAX",n:"beIN MAX 2 4K",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjkwMC5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 2 FHD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OS5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 2 HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5OC5tM3U4"},
+{c:"beIN MAX",n:"beIN MAX 2 SD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg5Ny5tM3U4"},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8"},
+{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"aHR0cDovL2ZyLm90dHYucHJvL2xpdmUvNDQ3NjY0NzE4ODQwNzE1OS80NDc2NjQ3MTg4NDA3MTU5LzQzMjg4OC5tM3U4"},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8"},
-
-/* ================= ALGERIA ================= */
-{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
-
-/* ================= CANAL / beIN FR ================= */
-{c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
-{c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
-{c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
-
-/* ================= beIN PREMIUM ================= */
-{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8"}
+{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0MV8ubTN1OA=="},
+{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0Ml8ubTN1OA=="},
+{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"aHR0cDovLzEzNS4xMjUuMTA5LjczOjkwMDAvYmVpbnNwb3J0M18ubTN1OA=="}
 ];
 
 const list=document.getElementById("channels");
-let lastCat="";
+let last="";
 
 channels.forEach(ch=>{
-    if(ch.c!==lastCat){
-        const cat=document.createElement("div");
-        cat.className="cat";
-        cat.textContent=ch.c;
-        list.appendChild(cat);
-        lastCat=ch.c;
+    if(ch.c!==last){
+        const d=document.createElement("div");
+        d.className="cat";
+        d.textContent=ch.c;
+        list.appendChild(d);
+        last=ch.c;
     }
-    const btn=document.createElement("div");
-    btn.className="btn";
-    btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
-    btn.onclick=()=>window.open(ch.u,"_blank");
-    list.appendChild(btn);
+    const b=document.createElement("div");
+    b.className="btn";
+    b.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
+    b.onclick=()=>window.open(decode(ch.u),"_blank");
+    list.appendChild(b);
 });
 </script>
 
