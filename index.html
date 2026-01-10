@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>MisterAI TV GLOBAL 2026</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root{
+:root { 
+    --main:#4834d4; 
+    --glow:#00cec9; 
     --bg:#050505;
-    --green:#006233;
-    --white:#ffffff;
-    --red:#d21034;
-    --main:#4834d4;
-    --glow:#00cec9;
+    --color1:#FF6B8B;
+    --color2:#6A5AF9;
+    --color3:#00D4FF;
+    --color4:#00F5A0;
+    --color5:#FFD166;
 }
 *{box-sizing:border-box}
 body{
@@ -25,471 +26,1024 @@ body{
     display:flex;
     height:100vh;
     overflow:hidden;
+    position: relative;
 }
 
-/* خلفية */
-.bg{
-    position:fixed;
-    inset:0;
-    background:
-    radial-gradient(circle at 20% 20%,rgba(0,98,51,.15),transparent 40%),
-    radial-gradient(circle at 80% 80%,rgba(210,16,52,.15),transparent 40%);
-    z-index:-1;
+/* خلفية متحركة بألوان جميلة */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
 }
 
-/* الشريط الجانبي */
-.sidebar{
-    width:360px;
-    background:rgba(10,10,10,.9);
-    border-left:3px solid var(--green);
-    display:flex;
-    flex-direction:column;
+.gradient-bg {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    opacity: 0.15;
+    animation: rotateGradient 30s linear infinite;
 }
 
-.brand{
-    padding:25px;
-    text-align:center;
-    border-bottom:2px solid var(--green);
-}
-.logo{
-    font-size:2.4rem;
-    font-weight:900;
-    animation:logoColor 4s infinite alternate;
-    background-size: 200% 200%;
-}
-@keyframes logoColor {
+@keyframes rotateGradient {
     0% {
-        background: linear-gradient(90deg, var(--white), var(--green));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    33% {
-        background: linear-gradient(90deg, var(--green), var(--white));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    66% {
-        background: linear-gradient(90deg, var(--white), var(--red));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        transform: rotate(0deg);
     }
     100% {
-        background: linear-gradient(90deg, var(--red), var(--white), var(--green));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        transform: rotate(360deg);
     }
 }
 
-.social{
-    margin-top:15px;
-    display:inline-block;
-    background:linear-gradient(45deg,var(--green),var(--red));
-    padding:10px 20px;
-    border-radius:30px;
-    color:#000;
-    font-weight:bold;
-    text-decoration:none;
+/* موجات متحركة */
+.waves {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
-/* القنوات */
-.list{flex:1;overflow:auto;padding:15px}
+.wave {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, 
+        rgba(255,107,139,0.1) 0%, 
+        rgba(106,90,249,0.08) 25%, 
+        rgba(0,212,255,0.06) 50%, 
+        rgba(0,245,160,0.04) 75%, 
+        transparent 100%);
+    animation: waveMove 20s linear infinite;
+}
+
+.wave:nth-child(1) {
+    top: -100%;
+    left: -100%;
+    animation-delay: 0s;
+}
+
+.wave:nth-child(2) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -5s;
+    animation-duration: 25s;
+    opacity: 0.7;
+}
+
+.wave:nth-child(3) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -10s;
+    animation-duration: 30s;
+    opacity: 0.5;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* جسيمات متحركة */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color3);
+    animation: float 15s infinite linear;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.particle:nth-child(5n) {
+    background: var(--color1);
+    color: var(--color1);
+}
+.particle:nth-child(5n+1) {
+    background: var(--color2);
+    color: var(--color2);
+}
+.particle:nth-child(5n+2) {
+    background: var(--color3);
+    color: var(--color3);
+}
+.particle:nth-child(5n+3) {
+    background: var(--color4);
+    color: var(--color4);
+}
+.particle:nth-child(5n+4) {
+    background: var(--color5);
+    color: var(--color5);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(100px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* خطوط مضيئة */
+.glow-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.glow-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--color3), 
+        transparent);
+    box-shadow: 0 0 10px var(--color3),
+                0 0 20px var(--color3),
+                0 0 30px var(--color3);
+    animation: lineGlow 8s infinite linear;
+}
+
+@keyframes lineGlow {
+    0%, 100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.sidebar{
+    width:360px;
+    background:rgba(10, 10, 10, 0.85);
+    border-left:2px solid var(--main);
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+.brand{
+    padding:25px 10px;
+    text-align:center;
+    border-bottom:2px solid var(--main);
+    position: relative;
+    overflow: hidden;
+}
+.brand::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    opacity: 0.1;
+    z-index: 0;
+}
+.logo-container {
+    position: relative;
+    z-index: 1;
+}
+.logo-text{
+    font-size:2.5rem;
+    font-weight:900;
+    text-shadow:0 0 10px var(--main),
+                0 0 20px var(--glow),
+                0 0 30px var(--color2),
+                0 0 40px var(--color3);
+    animation:pulse 2s infinite alternate;
+    background: linear-gradient(to right, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    margin-bottom: 15px;
+}
+@keyframes pulse{
+    0%{transform:scale(1); text-shadow:0 0 10px var(--main),0 0 20px var(--glow)}
+    100%{transform:scale(1.05); text-shadow:0 0 20px var(--color2),0 0 40px var(--color3)}
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    background: linear-gradient(45deg, var(--color2), var(--color3));
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
+}
+.social-link:hover {
+    background: linear-gradient(45deg, var(--color1), var(--color4));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 139, 0.6);
+}
+.social-link i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+.social-link:hover i {
+    transform: rotate(360deg);
+}
+
+.list{
+    flex:1;
+    overflow-y:auto;
+    padding:15px
+}
 .cat{
+    padding:12px;
     margin:15px 0 8px;
-    padding:10px;
-    background:#111;
-    border-right:4px solid var(--red);
+    background:rgba(17, 17, 17, 0.8);
+    color:var(--color3);
     font-weight:bold;
+    border-right:4px solid var(--color3);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 .btn{
-    padding:12px;
-    background:#1a1a1a;
+    padding:14px;
+    margin:8px 0;
+    background:rgba(22, 22, 37, 0.8);
     border-radius:10px;
-    margin:6px 0;
     cursor:pointer;
     display:flex;
     justify-content:space-between;
+    align-items:center;
     transition:.3s;
+    border:1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
 }
 .btn:hover{
-    background:linear-gradient(90deg,var(--green),var(--red));
-    color:#000;
-    transform:translateX(-5px);
+    background: linear-gradient(90deg, var(--color2), var(--main));
+    transform:translateX(-8px) scale(1.02);
+    border-color: var(--color3);
+    box-shadow: 0 5px 20px rgba(106, 90, 249, 0.4);
 }
 .badge{
-    background:var(--red);
-    color:#fff;
+    font-size:.7rem;
+    background:var(--color1);
     padding:4px 10px;
     border-radius:20px;
-    font-size:.7rem;
+    font-weight:bold;
+    box-shadow: 0 2px 10px rgba(255, 107, 139, 0.3);
+}
+.footer-rights{
+    padding:20px;
+    text-align:center;
+    font-size:.9rem;
+    border-top:1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.3);
+}
+.footer-rights b{
+    background: linear-gradient(to right, var(--color3), var(--color4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* الفيديو */
-.video{
-    flex:1;
+/* منطقة المحتوى الرئيسي */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* منطقة البث المباشر */
+.stream-area {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* منطقة الفيديو */
+.video-container{
+    flex: 1;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:2rem;
-    background:rgba(0,0,0,.6);
-}
-
-/* تنبيه المباراة */
-.match-rule{
-    position:fixed;
-    bottom:20px;
-    left:20px;
-    padding:14px 24px;
-    border-radius:30px;
-    font-weight:900;
-    background:linear-gradient(45deg,var(--green),var(--white),var(--red));
-    color:#000;
-    box-shadow:0 0 20px rgba(0,0,0,.6);
-    animation:rulePulse 2s infinite alternate;
-    z-index:9999;
-}
-@keyframes rulePulse{
-    from{transform:scale(1);opacity:.9}
-    to{transform:scale(1.05);opacity:1}
-}
-
-/* استطلاع الرأي */
-.poll-container {
-    margin: 20px 15px;
-    padding: 20px;
-    background: rgba(20,20,20,.9);
+    color:#fff;
+    font-size:1.8rem;
+    position: relative;
+    z-index: 1;
+    background: rgba(5, 5, 5, 0.7);
+    backdrop-filter: blur(5px);
     border-radius: 15px;
-    border: 2px solid var(--green);
+    min-height: 400px;
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+.video-container::before {
+    content: '📺';
+    font-size: 5rem;
+    opacity: 0.2;
+    position: absolute;
+    animation: floatEmoji 15s infinite ease-in-out;
+}
+.video-container::after {
+    content: 'MisterAI TV';
+    position: absolute;
+    bottom: 20%;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--color1), var(--color2), var(--color3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.1;
+    font-weight: 900;
+}
+
+@keyframes floatEmoji {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate(-100px, -50px) rotate(90deg) scale(1.2);
+    }
+    50% {
+        transform: translate(100px, 50px) rotate(180deg) scale(0.8);
+    }
+    75% {
+        transform: translate(-50px, 100px) rotate(270deg) scale(1.1);
+    }
+}
+
+/* منطقة الاستطلاع */
+.poll-container {
+    width: 400px;
+    background: rgba(10, 10, 15, 0.9);
+    border-radius: 15px;
+    padding: 25px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(106, 90, 249, 0.3);
+    box-shadow: 0 0 40px rgba(106, 90, 249, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.poll-header {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
 }
 
 .poll-title {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    color: var(--white);
-    border-bottom: 2px solid var(--red);
-    padding-bottom: 10px;
+    font-size: 1.8rem;
+    background: linear-gradient(to right, var(--color3), var(--color4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    margin-bottom: 10px;
 }
 
+.poll-subtitle {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* معلومات المباراة */
 .match-info {
+    background: rgba(20, 20, 30, 0.8);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.teams {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    background: rgba(0,0,0,.5);
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.1);
+    margin-bottom: 15px;
 }
 
 .team {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 40%;
+    flex: 1;
 }
 
 .team-flag {
-    font-size: 2.5rem;
-    margin-bottom: 8px;
+    font-size: 3rem;
+    margin-bottom: 10px;
 }
 
 .team-name {
-    font-weight: bold;
-    font-size: 1.2rem;
-    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: white;
+}
+
+.team:nth-child(1) .team-name {
+    color: var(--color4);
+}
+
+.team:nth-child(3) .team-name {
+    color: var(--color1);
 }
 
 .vs {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 900;
-    color: var(--red);
-    animation: vsPulse 1.5s infinite alternate;
+    color: var(--color3);
+    padding: 0 20px;
+    animation: vsGlow 2s infinite alternate;
 }
 
-@keyframes vsPulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.2); }
+@keyframes vsGlow {
+    0% { text-shadow: 0 0 10px var(--color3); }
+    100% { text-shadow: 0 0 20px var(--color3), 0 0 30px var(--color3); }
 }
 
 .match-details {
-    text-align: center;
-    font-size: 0.9rem;
     color: #aaa;
-    margin-bottom: 5px;
+    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
 }
 
+/* خيارات الاستطلاع */
 .poll-options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .poll-option {
-    background: #1a1a1a;
-    border-radius: 10px;
-    padding: 15px;
+    background: rgba(30, 30, 40, 0.8);
+    border-radius: 12px;
+    padding: 18px;
     cursor: pointer;
-    transition: all 0.3s;
-    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
     position: relative;
     overflow: hidden;
 }
 
 .poll-option:hover {
-    background: rgba(0,98,51,.2);
-    border-color: var(--green);
+    background: rgba(40, 40, 60, 0.9);
     transform: translateX(-5px);
 }
 
 .poll-option.selected {
-    background: rgba(0,98,51,.4);
-    border-color: var(--green);
-    box-shadow: 0 0 15px rgba(0,98,51,.5);
+    background: rgba(40, 40, 60, 0.9);
+    border-color: var(--color3);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
 }
 
-.option-text {
+.option-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 10px;
+}
+
+.option-text {
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
 .option-percentage {
-    font-weight: bold;
-    color: var(--white);
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: var(--color3);
 }
 
 .vote-bar {
-    height: 6px;
-    background: rgba(255,255,255,.1);
-    border-radius: 3px;
-    margin-top: 10px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .vote-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--green), var(--red));
-    border-radius: 3px;
-    width: 0;
-    transition: width 1.5s ease-out;
+    background: linear-gradient(90deg, var(--color2), var(--color3));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1s ease-out;
 }
 
-.vote-count {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #aaa;
-    margin-top: 10px;
-}
-
-.poll-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px;
-}
-
+/* زر التصويت */
 .vote-btn {
-    background: linear-gradient(45deg, var(--green), var(--red));
-    color: #000;
+    background: linear-gradient(45deg, var(--color2), var(--color3));
+    color: white;
     border: none;
-    padding: 12px 25px;
-    border-radius: 30px;
-    font-weight: bold;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 900;
     cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .vote-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(210,16,52,.5);
+    background: linear-gradient(45deg, var(--color1), var(--color4));
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 107, 139, 0.4);
 }
 
 .vote-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none !important;
+}
+
+/* إحصائيات التصويت */
+.vote-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* قسم التعليقات */
+.comments-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comments-title {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--color3);
+}
+
+.comment-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(106, 90, 249, 0.3);
+    background: rgba(20, 20, 30, 0.8);
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+}
+
+.comment-input input:focus {
+    outline: none;
+    border-color: var(--color3);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+.comment-btn {
+    padding: 12px 20px;
+    background: linear-gradient(45deg, var(--color2), var(--color3));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.comment-btn:hover {
+    background: linear-gradient(45deg, var(--color1), var(--color4));
+    transform: translateY(-2px);
+}
+
+.comments-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.comment-item {
+    background: rgba(30, 30, 40, 0.6);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--color3);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+}
+
+.comment-user {
+    color: var(--color4);
+    font-weight: 700;
+}
+
+.comment-time {
+    color: #888;
+}
+
+.comment-text {
+    color: #ddd;
+    line-height: 1.4;
+}
+
+/* زر مشاركة تويتر */
+.twitter-share {
+    background: #1DA1F2;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.twitter-share:hover {
+    background: #0d8bd9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(29, 161, 242, 0.4);
 }
 
 @media(max-width:900px){
     body{flex-direction:column}
-    .video{display:none}
-    .sidebar{width:100%}
+    .sidebar{width:100%;height:100vh}
+    .stream-area {
+        flex-direction: column;
+        padding: 10px;
+    }
+    .video-container, .poll-container {
+        width: 100%;
+    }
+    .poll-container {
+        height: auto;
+        max-height: none;
+    }
 }
 </style>
 </head>
 
 <body>
-<div class="bg"></div>
+<!-- خلفية متحركة بألوان جميلة -->
+<div class="bg-animation">
+    <div class="gradient-bg"></div>
+    <div class="waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+    <div class="glow-lines" id="glowLines"></div>
+</div>
 
 <div class="sidebar">
     <div class="brand">
-        <div class="logo">MISTERAI TV</div>
-        <a class="social" href="https://x.com/neurosisnet" target="_blank">
-            <i class="fab fa-twitter"></i> تابعنا على X
-        </a>
-    </div>
-
-    <!-- استطلاع الرأي -->
-    <div class="poll-container">
-        <div class="poll-title">استطلاع الرأي: توقع نتيجة المباراة</div>
-        
-        <div class="match-info">
-            <div class="team">
-                <div class="team-flag">🇳🇬</div>
-                <div class="team-name">نيجيريا</div>
-            </div>
+        <div class="logo-container">
+            <div class="logo-text">MISTERAI TV</div>
             
-            <div class="vs">VS</div>
-            
-            <div class="team">
-                <div class="team-flag">🇩🇿</div>
-                <div class="team-name">الجزائر</div>
-            </div>
-        </div>
-        
-        <div class="match-details">الدور ربع النهائي - اليوم: 17:00</div>
-        
-        <div class="poll-options">
-            <div class="poll-option" data-vote="nigeria">
-                <div class="option-text">
-                    <span>فوز نيجيريا</span>
-                    <span class="option-percentage" id="nigeria-percent">32%</span>
-                </div>
-                <div class="vote-bar">
-                    <div class="vote-fill" id="nigeria-bar" style="width: 32%"></div>
-                </div>
-            </div>
-            
-            <div class="poll-option" data-vote="draw">
-                <div class="option-text">
-                    <span>تعادل</span>
-                    <span class="option-percentage" id="draw-percent">21%</span>
-                </div>
-                <div class="vote-bar">
-                    <div class="vote-fill" id="draw-bar" style="width: 21%"></div>
-                </div>
-            </div>
-            
-            <div class="poll-option" data-vote="algeria">
-                <div class="option-text">
-                    <span>فوز الجزائر</span>
-                    <span class="option-percentage" id="algeria-percent">47%</span>
-                </div>
-                <div class="vote-bar">
-                    <div class="vote-fill" id="algeria-bar" style="width: 47%"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="vote-count" id="total-votes">إجمالي الأصوات: 1,248</div>
-        
-        <div class="poll-buttons">
-            <button class="vote-btn" id="vote-button">صوت الآن</button>
+            <!-- رابط حساب X -->
+            <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
+                <i class="fab fa-twitter"></i>
+                تابعنا على X: @neurosisnet
+            </a>
         </div>
     </div>
 
     <div class="list" id="channels"></div>
 
-    <div style="padding:15px;text-align:center;font-size:.85rem;border-top:1px solid #222">
-        © 2026 MisterAI TV GLOBAL
+    <div class="footer-rights">
+        <div>
+            تطوير وبرمجة <b>MisterAI</b><br>
+            © 2026 - البث المباشر العالمي
+        </div>
+        <div style="font-size: 0.8rem; opacity: 0.8;">
+            MisterAI TV GLOBAL 2026
+        </div>
     </div>
 </div>
 
-<div class="video">
-    📺 البث المباشر
-</div>
-
-<div class="match-rule" id="matchRule">
-⚽ لا يوجد تعادل — وقت إضافي ⏱️ ثم ضربات ترجيح 🎯
+<div class="main-content">
+    <div class="stream-area">
+        <!-- منطقة البث المباشر -->
+        <div class="video-container">
+            MisterAI TV GLOBAL 2026
+        </div>
+        
+        <!-- منطقة الاستطلاع -->
+        <div class="poll-container">
+            <div class="poll-header">
+                <div class="poll-title">استطلاع الرأي</div>
+                <div class="poll-subtitle">توقع نتيجة مباراة ربع النهائي</div>
+            </div>
+            
+            <div class="match-info">
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-flag">🇳🇬</div>
+                        <div class="team-name">نيجيريا</div>
+                    </div>
+                    
+                    <div class="vs">VS</div>
+                    
+                    <div class="team">
+                        <div class="team-flag">🇩🇿</div>
+                        <div class="team-name">الجزائر</div>
+                    </div>
+                </div>
+                
+                <div class="match-details">
+                    الدور ربع النهائي - اليوم: 17:00
+                </div>
+            </div>
+            
+            <div class="poll-options">
+                <div class="poll-option" data-vote="nigeria">
+                    <div class="option-content">
+                        <div class="option-text">فوز نيجيريا</div>
+                        <div class="option-percentage" id="nigeria-percent">45%</div>
+                    </div>
+                    <div class="vote-bar">
+                        <div class="vote-fill" id="nigeria-bar" style="width: 45%"></div>
+                    </div>
+                </div>
+                
+                <div class="poll-option" data-vote="draw">
+                    <div class="option-content">
+                        <div class="option-text">تعادل</div>
+                        <div class="option-percentage" id="draw-percent">22%</div>
+                    </div>
+                    <div class="vote-bar">
+                        <div class="vote-fill" id="draw-bar" style="width: 22%"></div>
+                    </div>
+                </div>
+                
+                <div class="poll-option" data-vote="algeria">
+                    <div class="option-content">
+                        <div class="option-text">فوز الجزائر</div>
+                        <div class="option-percentage" id="algeria-percent">33%</div>
+                    </div>
+                    <div class="vote-bar">
+                        <div class="vote-fill" id="algeria-bar" style="width: 33%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vote-stats">
+                <span>إجمالي الأصوات: <span id="total-votes">1,847</span></span>
+                <span>آخر تحديث: <span id="last-update">الآن</span></span>
+            </div>
+            
+            <button class="vote-btn" id="vote-button">
+                <i class="fas fa-vote-yea"></i>
+                صوت الآن
+            </button>
+            
+            <!-- قسم التعليقات -->
+            <div class="comments-section">
+                <div class="comments-title">التعليقات</div>
+                
+                <div class="comment-input">
+                    <input type="text" id="comment-input" placeholder="شارك برأيك في المباراة...">
+                    <button class="comment-btn" id="comment-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="comments-list" id="comments-list">
+                    <!-- التعليقات ستضاف هنا -->
+                </div>
+            </div>
+            
+            <!-- زر مشاركة تويتر -->
+            <a href="#" class="twitter-share" id="twitter-share-btn" target="_blank">
+                <i class="fab fa-twitter"></i>
+                شارك رأيك على تويتر
+            </a>
+        </div>
+    </div>
 </div>
 
 <script>
-/* تنبيه متغير */
-const rules=[
- "⚽ لا يوجد تعادل",
- "⏱️ في حال التعادل ➜ وقت إضافي",
- "🎯 إن استمر التعادل ➜ ضربات ترجيح",
- "🇩🇿 الحسم واجب!"
-];
-let r=0;
-setInterval(()=>{
- document.getElementById("matchRule").textContent=rules[r];
- r=(r+1)%rules.length;
-},3000);
+// إنشاء جسيمات متحركة
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 60; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // خصائص عشوائية
+    const size = 2 + Math.random() * 6;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 15;
+    const duration = 10 + Math.random() * 25;
+    
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${left}%`;
+    particle.style.animationDelay = `${delay}s`;
+    particle.style.animationDuration = `${duration}s`;
+    
+    particlesContainer.appendChild(particle);
+}
 
-/* جميع القنوات */
-const channels=[
+// إنشاء خطوط مضيئة
+const glowLines = document.getElementById('glowLines');
+for (let i = 0; i < 10; i++) {
+    const line = document.createElement('div');
+    line.classList.add('glow-line');
+    
+    const top = Math.random() * 100;
+    const width = 50 + Math.random() * 200;
+    const delay = Math.random() * 8;
+    const duration = 5 + Math.random() * 10;
+    
+    line.style.top = `${top}%`;
+    line.style.width = `${width}%`;
+    line.style.animationDelay = `${delay}s`;
+    line.style.animationDuration = `${duration}s`;
+    
+    glowLines.appendChild(line);
+}
 
-/* ===== beIN MAX ===== */
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
+const channels = [
+/* ================= beIN MAX ================= */
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8 "},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8 "},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8"},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8 "},
 
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8"},
-{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8"},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8 "},
 
-/* ===== ALGERIA ===== */
-{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
+/* ================= ALGERIA ================= */
+{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8 "},
 
-/* ===== FRANCE / beIN ===== */
-{c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
-{c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
-{c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
+/* ================= CANAL / beIN FR ================= */
+{c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8 "},
+{c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8 "},
+{c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8 "},
 
-/* ===== beIN PREMIUM ===== */
-{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8"},
-{c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8"}
+/* ================= beIN PREMIUM ================= */
+{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8 "},
 
+/* ================= RAKUTEN TV UK ================= */
+{c:"RAKUTEN TV UK",n:"Rakuten TV Top Movies UK (1080p)",u:"https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Action Movies UK (1080p)",u:"https://54045f0c40fd442c8b06df076aaf1e85.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6065/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Comedy Movies UK (1080p)",u:"https://9be783d652cd4b099cf63e1dc134c4a3.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6181/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Drama Movies UK (1080p)",u:"https://fee09fd665814f51b939b6d106cf5f66.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6093/master.m3u8"},
+
+/* ================= RAKUTEN TV GERMANY ================= */
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Top Movies Germany (1080p)",u:"https://cbb622b29f5d43b598991f3fa19de291.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5985/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Action Movies Germany (1080p)",u:"https://284824cf70404fdfb6ddf9349009c710.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6066/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Comedy Movies Germany (1080p)",u:"https://ecac08c9e2214375b907d6825aaf9a01.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6182/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Drama Movies Germany (1080p)",u:"https://968754c2483045c1a9a7f677caec35b6.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6096/master.m3u8"},
+
+/* ================= RAKUTEN TV ITALY ================= */
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Top Movies Italy (1080p)",u:"https://87f2e2e5e7624e3bad85da1ca2ed31a7.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6067/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Action Movies Italy (1080p)",u:"https://87f2e2e5e7624e3bad85da1ca2ed31a7.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6067/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Comedy Movies Italy (1080p)",u:"https://b8bc6c4b9be64bd6aeb3b92aa8521ed4.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6184/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Drama Movies Italy (1080p)",u:"https://f84e0b1628464fab846160df957f269e.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6094/master.m3u8"},
+
+/* ================= RAKUTEN TV SPAIN ================= */
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Action Movies Spain (1080p)",u:"https://a9c57ec7ec5e4b7daeacc6316a0bb404.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6069/master.m3u8"},
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Comedy Movies Spain (1080p)",u:"https://71db867f03ce4d71a29e92155f07ab87.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6180/master.m3u8"},
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Drama Movies Spain (1080p)",u:"https://a7089c89d85f453d850c4a1518b43076.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6092/master.m3u8"},
+
+/* ================= RAKUTEN TV FINLAND ================= */
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Top Movies Finland (1080p)",u:"https://1d1b0d4cb6ae4c31985d13221795695b.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6057/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Action Movies Finland (1080p)",u:"https://bca5a421a70c46ad911efd0a4767c4bf.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6075/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Comedy Movies Finland (1080p)",u:"https://a300af98e00746e2acf2346f43e47bd1.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6191/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Drama Movies Finland (1080p)",u:"https://d7e8ee3c924d4305a0c1840fe94c5d36.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6102/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Nordic Films (1080p)",u:"https://4aa9ef08b70d4b0c8f3519c5950b1930.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6303/master.m3u8"}
 ];
 
 const list=document.getElementById("channels");
-let last="";
+let lastCat="";
+
 channels.forEach(ch=>{
- if(ch.c!==last){
-  const d=document.createElement("div");
-  d.className="cat";
-  d.textContent=ch.c;
-  list.appendChild(d);
-  last=ch.c;
- }
- const b=document.createElement("div");
- b.className="btn";
- b.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
- b.onclick=()=>window.open(ch.u,"_blank");
- list.appendChild(b);
+    if(ch.c!==lastCat){
+        const cat=document.createElement("div");
+        cat.className="cat";
+        cat.textContent=ch.c;
+        list.appendChild(cat);
+        lastCat=ch.c;
+    }
+    const btn=document.createElement("div");
+    btn.className="btn";
+    btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
+    btn.onclick=()=>window.open(ch.u,"_blank");
+    list.appendChild(btn);
 });
 
-/* استطلاع الرأي */
+// كود الاستطلاع
 let selectedVote = null;
-let voteSubmitted = false;
+let hasVoted = false;
 
 // بيانات الاستطلاع الأولية
 const pollData = {
-    nigeria: { votes: 400, percent: 32 },
-    draw: { votes: 262, percent: 21 },
-    algeria: { votes: 586, percent: 47 },
-    total: 1248
+    nigeria: { votes: 831, percent: 45 },
+    draw: { votes: 406, percent: 22 },
+    algeria: { votes: 610, percent: 33 },
+    total: 1847
 };
+
+// تعليقات أولية
+const initialComments = [
+    { user: "محب الكرة", time: "منذ 5 دقائق", text: "الجزائر أقوى ولا يستهان بنيجيريا، ستكون مباراة صعبة!" },
+    { user: "مشجع مغربي", time: "منذ 12 دقيقة", text: "أتمنى فوز الجزائر 🇩🇿 حتى تواجه المغرب في نصف النهائي!" },
+    { user: "خبير الكرة", time: "منذ 25 دقيقة", text: "نيجيريا لديها خط هجومي قوي، لكن دفاع الجزائر منظم جداً." },
+    { user: "مشجع مصري", time: "منذ 40 دقيقة", text: "انتصار الجزائر سيكون مفاجأة كبيرة في هذه البطولة!" }
+];
 
 // تحديث عرض البيانات
 function updatePollDisplay() {
@@ -501,13 +1055,35 @@ function updatePollDisplay() {
     document.getElementById('draw-bar').style.width = pollData.draw.percent + '%';
     document.getElementById('algeria-bar').style.width = pollData.algeria.percent + '%';
     
-    document.getElementById('total-votes').textContent = `إجمالي الأصوات: ${pollData.total.toLocaleString()}`;
+    document.getElementById('total-votes').textContent = pollData.total.toLocaleString();
+}
+
+// تحميل التعليقات الأولية
+function loadInitialComments() {
+    const commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    initialComments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment-item';
+        commentElement.innerHTML = `
+            <div class="comment-header">
+                <span class="comment-user">${comment.user}</span>
+                <span class="comment-time">${comment.time}</span>
+            </div>
+            <div class="comment-text">${comment.text}</div>
+        `;
+        commentsList.appendChild(commentElement);
+    });
 }
 
 // اختيار خيار التصويت
 document.querySelectorAll('.poll-option').forEach(option => {
     option.addEventListener('click', function() {
-        if (voteSubmitted) return;
+        if (hasVoted) {
+            alert('لقد قمت بالتصويت مسبقاً! شكراً لمشاركتك.');
+            return;
+        }
         
         // إزالة التحديد من جميع الخيارات
         document.querySelectorAll('.poll-option').forEach(opt => {
@@ -523,9 +1099,55 @@ document.querySelectorAll('.poll-option').forEach(option => {
     });
 });
 
+// إضافة تعليق جديد
+document.getElementById('comment-btn').addEventListener('click', function() {
+    const commentInput = document.getElementById('comment-input');
+    const commentText = commentInput.value.trim();
+    
+    if (!commentText) {
+        alert('يرجى كتابة تعليق قبل الإرسال!');
+        return;
+    }
+    
+    if (commentText.length > 200) {
+        alert('التعليق طويل جداً! الحد الأقصى 200 حرف.');
+        return;
+    }
+    
+    const commentsList = document.getElementById('comments-list');
+    const commentElement = document.createElement('div');
+    commentElement.className = 'comment-item';
+    
+    // اسم مستخدم عشوائي
+    const userNames = ['مشجع كرة', 'محب الرياضة', 'متابع المباراة', 'خبير تكتيكي', 'مشجع عربي'];
+    const randomUser = userNames[Math.floor(Math.random() * userNames.length)];
+    
+    commentElement.innerHTML = `
+        <div class="comment-header">
+            <span class="comment-user">${randomUser}</span>
+            <span class="comment-time">الآن</span>
+        </div>
+        <div class="comment-text">${commentText}</div>
+    `;
+    
+    // إضافة التعليق في الأعلى
+    commentsList.insertBefore(commentElement, commentsList.firstChild);
+    
+    // مسح حقل الإدخال
+    commentInput.value = '';
+    
+    // تمرير إلى الأعلى
+    commentsList.scrollTop = 0;
+    
+    // إظهار رسالة نجاح
+    setTimeout(() => {
+        alert('شكراً لتعليقك! تم إضافة رأيك بنجاح.');
+    }, 300);
+});
+
 // التصويت
 document.getElementById('vote-button').addEventListener('click', function() {
-    if (!selectedVote || voteSubmitted) return;
+    if (!selectedVote || hasVoted) return;
     
     // زيادة عدد الأصوات
     pollData[selectedVote].votes += 1;
@@ -542,10 +1164,16 @@ document.getElementById('vote-button').addEventListener('click', function() {
     updatePollDisplay();
     
     // تعطيل المزيد من التصويت
-    voteSubmitted = true;
-    this.textContent = 'شكراً لتصويتك!';
+    hasVoted = true;
+    this.innerHTML = '<i class="fas fa-check"></i> شكراً لتصويتك!';
     this.disabled = true;
-    this.style.background = 'linear-gradient(45deg, #666, #999)';
+    this.style.background = 'linear-gradient(45deg, var(--color4), var(--color5))';
+    
+    // تحديث وقت التحديث
+    document.getElementById('last-update').textContent = 'الآن';
+    
+    // تحديث رابط تويتر
+    updateTwitterShareLink(selectedVote);
     
     // إظهار رسالة نجاح
     setTimeout(() => {
@@ -553,9 +1181,31 @@ document.getElementById('vote-button').addEventListener('click', function() {
     }, 300);
 });
 
-// تهيئة الاستطلاع
+// تحديث رابط مشاركة تويتر
+function updateTwitterShareLink(voteType) {
+    const voteText = voteType === 'nigeria' ? 'نيجيريا' : 
+                    voteType === 'algeria' ? 'الجزائر' : 'تعادل';
+    
+    const tweetText = `صوّيت لصالح ${voteText} في مباراة نيجيريا 🆚 الجزائر عبر MisterAI TV! تفضلوا بالمشاركة في الاستطلاع:`;
+    const twitterShareBtn = document.getElementById('twitter-share-btn');
+    twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(window.location.href)}`;
+}
+
+// المساعدة في إدخال التعليق عند الضغط على Enter
+document.getElementById('comment-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('comment-btn').click();
+    }
+});
+
+// تحديث رابط تويتر الافتراضي
+updateTwitterShareLink('algeria');
+
+// تهيئة الاستطلاع والتعليقات
 updatePollDisplay();
+loadInitialComments();
 document.getElementById('vote-button').disabled = true;
 </script>
+
 </body>
 </html>
