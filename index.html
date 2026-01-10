@@ -15,40 +15,39 @@
         :root { 
             --main:#4834d4; --glow:#00cec9; --bg:#050505;
             --color1:#FF6B8B; --color2:#6A5AF9; --color3:#00D4FF;
-            --color4:#00F5A0; --color5:#FFD166; --twitter: #1DA1F2;
+            --color4:#00F5A0; --color5:#FFD166;
         }
         * { box-sizing:border-box; margin: 0; padding: 0; }
         body { font-family:'Cairo',sans-serif; background:var(--bg); color:#fff; display:flex; height:100vh; overflow:hidden; }
 
         /* Sidebar */
-        .sidebar { width:380px; background:rgba(10, 10, 10, 0.95); border-left:2px solid var(--main); display:flex; flex-direction:column; backdrop-filter: blur(10px); z-index: 10; }
+        .sidebar { width:380px; background:rgba(10, 10, 10, 0.98); border-left:2px solid var(--main); display:flex; flex-direction:column; backdrop-filter: blur(10px); }
         
         /* Auth Section */
-        .auth-section { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .btn-twitter { background: var(--twitter); color: white; border: none; padding: 12px; border-radius: 25px; cursor: pointer; width: 100%; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; }
-        .user-card { display: none; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; border: 1px solid var(--color4); }
-        .user-card img { width: 35px; border-radius: 50%; }
+        .auth-section { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .btn-auth { background: #fff; color: #000; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .user-info { display: none; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--color4); }
+        .user-info img { width: 30px; border-radius: 50%; }
 
         /* Chat Section */
-        .chat-section { height: 280px; display: flex; flex-direction: column; padding: 10px; border-bottom: 1px solid #222; background: rgba(0,0,0,0.2); }
-        #chatBox { flex: 1; overflow-y: auto; padding: 5px; display: flex; flex-direction: column; gap: 10px; }
-        .msg-bubble { background: #1a1b2e; padding: 10px; border-radius: 12px; border-right: 3px solid var(--color3); border: 1px solid #2d2e4d; }
-        .msg-header { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; }
-        .msg-name { color: var(--color3); font-weight: bold; }
-        .chat-input-area { display: flex; gap: 8px; margin-top: 10px; }
-        #chatInp { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px; font-family: 'Cairo'; }
+        .chat-container { flex: 1; display: flex; flex-direction: column; padding: 10px; overflow: hidden; max-height: 350px; }
+        #chatMessages { flex: 1; overflow-y: auto; padding: 5px; display: flex; flex-direction: column; gap: 8px; }
+        .msg-box { background: #161b22; padding: 10px; border-radius: 12px; border-right: 3px solid var(--color2); }
+        .msg-user { color: var(--color3); font-weight: bold; font-size: 0.8rem; display: block; }
+        
+        .chat-input { display: flex; gap: 5px; margin-top: 10px; background: #000; padding: 5px; border-radius: 8px; border: 1px solid #333; }
+        #msgInput { flex: 1; background: transparent; border: none; color: #fff; padding: 8px; outline: none; font-family: 'Cairo'; }
 
         /* Channels List */
-        .list { flex: 1; overflow-y: auto; padding: 15px; }
-        .cat { padding: 12px; margin: 15px 0 8px; background: rgba(72, 52, 212, 0.2); color: var(--color3); font-weight: bold; border-right: 4px solid var(--color3); border-radius: 8px; }
-        .btn { padding: 14px; margin: 8px 0; background: rgba(22, 22, 37, 0.8); border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: .3s; border: 1px solid rgba(255,255,255,0.05); }
-        .btn:hover { background: var(--main); transform: translateX(-8px); }
-        .badge { font-size: .7rem; background: var(--color1); padding: 4px 10px; border-radius: 20px; font-weight: bold; }
+        .channels-list { flex: 1; overflow-y: auto; border-top: 1px solid #222; padding: 10px; }
+        .cat-name { padding: 10px; background: rgba(72, 52, 212, 0.2); color: var(--color3); font-weight: bold; border-radius: 5px; margin: 15px 0 5px; font-size: 0.85rem; }
+        .chan-item { padding: 12px; background: #111; margin-bottom: 6px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); }
+        .chan-item:hover { background: var(--main); transform: translateX(-5px); }
+        .live-dot { color: var(--color1); font-size: 0.7rem; font-weight: bold; }
 
-        /* Main Video View */
-        .video-view { flex: 1; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .player-placeholder { text-align: center; }
-        .player-placeholder h1 { font-size: 3rem; background: linear-gradient(var(--color3), var(--color2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* Player View */
+        .player-view { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+        .logo-main { font-size: 3.5rem; font-weight: 900; background: linear-gradient(var(--color3), var(--color2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         @media (max-width: 900px) { body { flex-direction: column; } .sidebar { width: 100%; height: auto; } }
     </style>
@@ -57,115 +56,165 @@
 
 <div class="sidebar">
     <div class="auth-section">
-        <button id="loginBtn" class="btn-twitter" onclick="loginTwitter()">
-            <i class="fab fa-twitter"></i> سجل دخولك عبر X للدردشة
+        <button id="loginBtn" class="btn-auth" onclick="signIn()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> دخول بـ Google للدردشة
         </button>
-        <div id="userProfile" class="user-card">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img id="uImg" src="" alt="Avatar">
-                <span id="uName" style="font-size:0.85rem; font-weight:bold;"></span>
+        <div id="userProfile" class="user-info">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img id="userImg" src="">
+                <span id="userName" style="font-size:0.8rem; font-weight:bold;"></span>
             </div>
-            <button onclick="logout()" style="background:none; border:none; color:var(--color1); cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+            <i class="fas fa-sign-out-alt" onclick="signOut()" style="cursor:pointer; color:var(--color1)"></i>
         </div>
     </div>
 
-    <div class="chat-section">
-        <div id="chatBox"></div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInp" placeholder="سجل دخولك لتتمكن من الكتابة..." disabled>
-            <button onclick="sendMsg()" style="background:var(--color4); border:none; padding:10px 15px; border-radius:8px; cursor:pointer; color:#000;"><i class="fas fa-paper-plane"></i></button>
+    <div class="chat-container">
+        <div id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="msgInput" placeholder="سجل دخولك لتكتب..." disabled>
+            <button onclick="send()" style="background:var(--color4); border:none; border-radius:5px; padding:0 12px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div class="list" id="fullChannelsList"></div>
+    <div class="channels-list" id="list"></div>
 </div>
 
-<div class="video-view">
-    <div class="player-placeholder">
-        <h1>MisterAI TV</h1>
-        <p style="color:var(--color5); margin-top:10px;">البث المباشر - دور ربع النهائي 2026</p>
+<div class="player-view">
+    <div style="text-align:center">
+        <div class="logo-main">MisterAI TV</div>
+        <p style="color:var(--color5);">البث المباشر - دور ربع النهائي 2026</p>
     </div>
 </div>
 
 <script>
-// إعدادات Firebase من الصور الخاصة بك
+// إعدادات Firebase الخاصة بك
 const firebaseConfig = {
     apiKey: "AIzaSyClWIg83c4GDFNrZxxVFI6QEldRzX8vB90",
     authDomain: "mister-ai-tv-global.firebaseapp.com",
     projectId: "mister-ai-tv-global",
     storageBucket: "mister-ai-tv-global.firebasestorage.app",
     messagingSenderId: "400120947350",
-    appId: "1:400120947350:web:163e52bffb0c5129e9d8b7",
-    measurementId: "G-8D17GJTMB1"
+    appId: "1:400120947350:web:163e52bffb0c5129e9d8b7"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// --- نظام القنوات الأصلي (كامل) ---
+// --- القنوات (كل القنوات كاملة دون حذف) ---
 const channels = [
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8 "},
-    {c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8 "},
-    {c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8 "},
-    {c:"RAKUTEN TV UK",n:"Rakuten TV Top Movies UK",u:"https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8"}
+    /* beIN MAX */
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 1 4K", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 1 FHD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 1 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 1 SD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 2 4K", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 2 FHD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 2 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 2 SD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 3 4K", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 3 FHD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 3 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 3 SD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 4 4K", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 4 FHD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 4 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8 "},
+    {c:"beIN SPORTS MAX (CAN)", n:"beIN MAX 4 SD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8 "},
+    
+    /* ALGERIA */
+    {c:"ALGERIA", n:"PROGRAMME NATIONAL DZ HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8 "},
+    
+    /* FRANCE */
+    {c:"FRANCE", n:"CANAL+ CAN HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8 "},
+    {c:"FRANCE", n:"beIN SPORTS 1 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8 "},
+    {c:"FRANCE", n:"beIN SPORTS 2 HD", u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8 "},
+
+    /* beIN PREMIUM */
+    {c:"beIN PREMIUM", n:"beIN SPORT 1", u:"http://135.125.109.73:9000/beinsport1_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 2", u:"http://135.125.109.73:9000/beinsport2_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 3", u:"http://135.125.109.73:9000/beinsport3_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 4", u:"http://135.125.109.73:9000/beinsport4_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 5", u:"http://135.125.109.73:9000/beinsport5_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 6", u:"http://135.125.109.73:9000/beinsport6_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 7", u:"http://135.125.109.73:9000/beinsport7_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 8", u:"http://135.125.109.73:9000/beinsport8_.m3u8 "},
+    {c:"beIN PREMIUM", n:"beIN SPORT 9", u:"http://135.125.109.73:9000/beinsport9_.m3u8 "},
+
+    /* RAKUTEN TV UK */
+    {c:"RAKUTEN TV UK", n:"Rakuten TV Top Movies UK (1080p)", u:"https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8"},
+    {c:"RAKUTEN TV UK", n:"Rakuten TV Action Movies UK (1080p)", u:"https://54045f0c40fd442c8b06df076aaf1e85.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6065/master.m3u8"},
+    {c:"RAKUTEN TV UK", n:"Rakuten TV Comedy Movies UK (1080p)", u:"https://9be783d652cd4b099cf63e1dc134c4a3.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6181/master.m3u8"},
+    {c:"RAKUTEN TV UK", n:"Rakuten TV Drama Movies UK (1080p)", u:"https://fee09fd665814f51b939b6d106cf5f66.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6093/master.m3u8"},
+
+    /* RAKUTEN TV GERMANY */
+    {c:"RAKUTEN TV GERMANY", n:"Rakuten TV Top Movies Germany (1080p)", u:"https://cbb622b29f5d43b598991f3fa19de291.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5985/master.m3u8"},
+    {c:"RAKUTEN TV GERMANY", n:"Rakuten TV Action Movies Germany (1080p)", u:"https://284824cf70404fdfb6ddf9349009c710.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6066/master.m3u8"},
+    {c:"RAKUTEN TV GERMANY", n:"Rakuten TV Comedy Movies Germany (1080p)", u:"https://ecac08c9e2214375b907d6825aaf9a01.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6182/master.m3u8"},
+    {c:"RAKUTEN TV GERMANY", n:"Rakuten TV Drama Movies Germany (1080p)", u:"https://968754c2483045c1a9a7f677caec35b6.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6096/master.m3u8"},
+
+    /* RAKUTEN TV ITALY */
+    {c:"RAKUTEN TV ITALY", n:"Rakuten TV Top Movies Italy (1080p)", u:"https://87f2e2e5e7624e3bad85da1ca2ed31a7.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6067/master.m3u8"},
+    {c:"RAKUTEN TV ITALY", n:"Rakuten TV Comedy Movies Italy (1080p)", u:"https://b8bc6c4b9be64bd6aeb3b92aa8521ed4.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6184/master.m3u8"},
+    {c:"RAKUTEN TV ITALY", n:"Rakuten TV Drama Movies Italy (1080p)", u:"https://f84e0b1628464fab846160df957f269e.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6094/master.m3u8"},
+
+    /* RAKUTEN TV SPAIN */
+    {c:"RAKUTEN TV SPAIN", n:"Rakuten TV Action Movies Spain (1080p)", u:"https://a9c57ec7ec5e4b7daeacc6316a0bb404.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6069/master.m3u8"},
+    {c:"RAKUTEN TV SPAIN", n:"Rakuten TV Comedy Movies Spain (1080p)", u:"https://71db867f03ce4d71a29e92155f07ab87.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6180/master.m3u8"},
+    {c:"RAKUTEN TV SPAIN", n:"Rakuten TV Drama Movies Spain (1080p)", u:"https://a7089c89d85f453d850c4a1518b43076.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6092/master.m3u8"},
+
+    /* RAKUTEN TV FINLAND */
+    {c:"RAKUTEN TV FINLAND", n:"Rakuten TV Top Movies Finland (1080p)", u:"https://1d1b0d4cb6ae4c31985d13221795695b.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6057/master.m3u8"},
+    {c:"RAKUTEN TV FINLAND", n:"Rakuten TV Action Movies Finland (1080p)", u:"https://bca5a421a70c46ad911efd0a4767c4bf.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6075/master.m3u8"},
+    {c:"RAKUTEN TV FINLAND", n:"Rakuten TV Comedy Movies Finland (1080p)", u:"https://a300af98e00746e2acf2346f43e47bd1.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6191/master.m3u8"},
+    {c:"RAKUTEN TV FINLAND", n:"Rakuten TV Drama Movies Finland (1080p)", u:"https://d7e8ee3c924d4305a0c1840fe94c5d36.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6102/master.m3u8"},
+    {c:"RAKUTEN TV FINLAND", n:"Rakuten TV Nordic Films (1080p)", u:"https://4aa9ef08b70d4b0c8f3519c5950b1930.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6303/master.m3u8"}
 ];
 
-const listElement = document.getElementById("fullChannelsList");
-let currentCat = "";
+const listDiv = document.getElementById("list");
+let lastCat = "";
 channels.forEach(ch => {
-    if(ch.c !== currentCat){
-        const catDiv = document.createElement("div"); catDiv.className = "cat"; catDiv.textContent = ch.c;
-        listElement.appendChild(catDiv); currentCat = ch.c;
+    if(ch.c !== lastCat){
+        const cat = document.createElement("div"); cat.className = "cat-name"; cat.textContent = ch.c;
+        listDiv.appendChild(cat); lastCat = ch.c;
     }
-    const btn = document.createElement("div"); btn.className = "btn";
-    btn.innerHTML = `<span>${ch.n}</span><span class="badge">LIVE</span>`;
-    btn.onclick = () => window.open(ch.u, "_blank");
-    listElement.appendChild(btn);
+    const item = document.createElement("div"); item.className = "chan-item";
+    item.innerHTML = `<span>${ch.n}</span><span class="live-dot">LIVE</span>`;
+    item.onclick = () => window.open(ch.u, "_blank");
+    listDiv.appendChild(item);
 });
 
-// --- وظائف Firebase ---
-function loginTwitter() {
-    const provider = new firebase.auth.TwitterAuthProvider();
-    auth.signInWithPopup(provider).catch(err => console.log(err));
+// --- نظام الشات (Google Login) ---
+function signIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
 }
 
-function logout() { auth.signOut(); }
+function signOut() { auth.signOut(); }
 
 auth.onAuthStateChanged(user => {
+    const loginBtn = document.getElementById('loginBtn');
+    const userProfile = document.getElementById('userProfile');
+    const msgInput = document.getElementById('msgInput');
+    
     if(user) {
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('userProfile').style.display = 'flex';
-        document.getElementById('uImg').src = user.photoURL;
-        document.getElementById('uName').textContent = '@' + user.displayName;
-        document.getElementById('chatInp').disabled = false;
-        document.getElementById('chatInp').placeholder = "اكتب رسالة الآن...";
+        loginBtn.style.display = 'none';
+        userProfile.style.display = 'flex';
+        document.getElementById('userName').textContent = user.displayName;
+        document.getElementById('userImg').src = user.photoURL;
+        msgInput.disabled = false;
+        msgInput.placeholder = "تحدث الآن يا " + user.displayName.split(' ')[0];
     } else {
-        document.getElementById('loginBtn').style.display = 'flex';
-        document.getElementById('userProfile').style.display = 'none';
-        document.getElementById('chatInp').disabled = true;
+        loginBtn.style.display = 'flex';
+        userProfile.style.display = 'none';
+        msgInput.disabled = true;
     }
 });
 
-function sendMsg() {
-    const inp = document.getElementById('chatInp');
+function send() {
+    const inp = document.getElementById('msgInput');
     if(inp.value.trim() && auth.currentUser) {
         db.ref('messages').push({
             name: auth.currentUser.displayName,
-            photo: auth.currentUser.photoURL,
             text: inp.value,
             time: Date.now()
         });
@@ -173,21 +222,18 @@ function sendMsg() {
     }
 }
 
-db.ref('messages').limitToLast(15).on('child_added', (snap) => {
+db.ref('messages').limitToLast(20).on('child_added', snap => {
     const d = snap.val();
-    const box = document.getElementById('chatBox');
-    const msg = document.createElement('div');
-    msg.className = 'msg-bubble';
-    msg.innerHTML = `
-        <div class="msg-header">
-            <span class="msg-name">@${d.name}</span>
-            <span>${new Date(d.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-        </div>
-        <div style="font-size:0.9rem">${d.text}</div>
-    `;
-    box.appendChild(msg);
+    const box = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'msg-box';
+    msgDiv.innerHTML = `<span class="msg-user">@${d.name}</span><div style="font-size:0.9rem">${d.text}</div>`;
+    box.appendChild(msgDiv);
     box.scrollTop = box.scrollHeight;
 });
+
+document.getElementById('msgInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') send(); });
 </script>
+
 </body>
 </html>
