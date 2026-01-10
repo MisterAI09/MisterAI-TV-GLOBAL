@@ -54,14 +54,30 @@ body{
 .logo{
     font-size:2.4rem;
     font-weight:900;
-    background:linear-gradient(90deg,var(--green),var(--white),var(--red));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:pulse 2s infinite alternate;
+    animation:logoColor 4s infinite alternate;
+    background-size: 200% 200%;
 }
-@keyframes pulse{
-    from{transform:scale(1)}
-    to{transform:scale(1.05)}
+@keyframes logoColor {
+    0% {
+        background: linear-gradient(90deg, var(--white), var(--green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    33% {
+        background: linear-gradient(90deg, var(--green), var(--white));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    66% {
+        background: linear-gradient(90deg, var(--white), var(--red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    100% {
+        background: linear-gradient(90deg, var(--red), var(--white), var(--green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 .social{
@@ -136,9 +152,168 @@ body{
     to{transform:scale(1.05);opacity:1}
 }
 
+/* استطلاع الرأي */
+.poll-container {
+    margin: 20px 15px;
+    padding: 20px;
+    background: rgba(20,20,20,.9);
+    border-radius: 15px;
+    border: 2px solid var(--green);
+}
+
+.poll-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: var(--white);
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 10px;
+}
+
+.match-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,.5);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.1);
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+}
+
+.team-flag {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.vs {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--red);
+    animation: vsPulse 1.5s infinite alternate;
+}
+
+@keyframes vsPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+.match-details {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.poll-option {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.poll-option:hover {
+    background: rgba(0,98,51,.2);
+    border-color: var(--green);
+    transform: translateX(-5px);
+}
+
+.poll-option.selected {
+    background: rgba(0,98,51,.4);
+    border-color: var(--green);
+    box-shadow: 0 0 15px rgba(0,98,51,.5);
+}
+
+.option-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.option-percentage {
+    font-weight: bold;
+    color: var(--white);
+}
+
+.vote-bar {
+    height: 6px;
+    background: rgba(255,255,255,.1);
+    border-radius: 3px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.vote-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--red));
+    border-radius: 3px;
+    width: 0;
+    transition: width 1.5s ease-out;
+}
+
+.vote-count {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+.poll-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.vote-btn {
+    background: linear-gradient(45deg, var(--green), var(--red));
+    color: #000;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.vote-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(210,16,52,.5);
+}
+
+.vote-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @media(max-width:900px){
     body{flex-direction:column}
     .video{display:none}
+    .sidebar{width:100%}
 }
 </style>
 </head>
@@ -152,6 +327,65 @@ body{
         <a class="social" href="https://x.com/neurosisnet" target="_blank">
             <i class="fab fa-twitter"></i> تابعنا على X
         </a>
+    </div>
+
+    <!-- استطلاع الرأي -->
+    <div class="poll-container">
+        <div class="poll-title">استطلاع الرأي: توقع نتيجة المباراة</div>
+        
+        <div class="match-info">
+            <div class="team">
+                <div class="team-flag">🇳🇬</div>
+                <div class="team-name">نيجيريا</div>
+            </div>
+            
+            <div class="vs">VS</div>
+            
+            <div class="team">
+                <div class="team-flag">🇩🇿</div>
+                <div class="team-name">الجزائر</div>
+            </div>
+        </div>
+        
+        <div class="match-details">الدور ربع النهائي - اليوم: 17:00</div>
+        
+        <div class="poll-options">
+            <div class="poll-option" data-vote="nigeria">
+                <div class="option-text">
+                    <span>فوز نيجيريا</span>
+                    <span class="option-percentage" id="nigeria-percent">32%</span>
+                </div>
+                <div class="vote-bar">
+                    <div class="vote-fill" id="nigeria-bar" style="width: 32%"></div>
+                </div>
+            </div>
+            
+            <div class="poll-option" data-vote="draw">
+                <div class="option-text">
+                    <span>تعادل</span>
+                    <span class="option-percentage" id="draw-percent">21%</span>
+                </div>
+                <div class="vote-bar">
+                    <div class="vote-fill" id="draw-bar" style="width: 21%"></div>
+                </div>
+            </div>
+            
+            <div class="poll-option" data-vote="algeria">
+                <div class="option-text">
+                    <span>فوز الجزائر</span>
+                    <span class="option-percentage" id="algeria-percent">47%</span>
+                </div>
+                <div class="vote-bar">
+                    <div class="vote-fill" id="algeria-bar" style="width: 47%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="vote-count" id="total-votes">إجمالي الأصوات: 1,248</div>
+        
+        <div class="poll-buttons">
+            <button class="vote-btn" id="vote-button">صوت الآن</button>
+        </div>
     </div>
 
     <div class="list" id="channels"></div>
@@ -244,6 +478,84 @@ channels.forEach(ch=>{
  b.onclick=()=>window.open(ch.u,"_blank");
  list.appendChild(b);
 });
+
+/* استطلاع الرأي */
+let selectedVote = null;
+let voteSubmitted = false;
+
+// بيانات الاستطلاع الأولية
+const pollData = {
+    nigeria: { votes: 400, percent: 32 },
+    draw: { votes: 262, percent: 21 },
+    algeria: { votes: 586, percent: 47 },
+    total: 1248
+};
+
+// تحديث عرض البيانات
+function updatePollDisplay() {
+    document.getElementById('nigeria-percent').textContent = pollData.nigeria.percent + '%';
+    document.getElementById('draw-percent').textContent = pollData.draw.percent + '%';
+    document.getElementById('algeria-percent').textContent = pollData.algeria.percent + '%';
+    
+    document.getElementById('nigeria-bar').style.width = pollData.nigeria.percent + '%';
+    document.getElementById('draw-bar').style.width = pollData.draw.percent + '%';
+    document.getElementById('algeria-bar').style.width = pollData.algeria.percent + '%';
+    
+    document.getElementById('total-votes').textContent = `إجمالي الأصوات: ${pollData.total.toLocaleString()}`;
+}
+
+// اختيار خيار التصويت
+document.querySelectorAll('.poll-option').forEach(option => {
+    option.addEventListener('click', function() {
+        if (voteSubmitted) return;
+        
+        // إزالة التحديد من جميع الخيارات
+        document.querySelectorAll('.poll-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // تحديد الخيار المختار
+        this.classList.add('selected');
+        selectedVote = this.getAttribute('data-vote');
+        
+        // تفعيل زر التصويت
+        document.getElementById('vote-button').disabled = false;
+    });
+});
+
+// التصويت
+document.getElementById('vote-button').addEventListener('click', function() {
+    if (!selectedVote || voteSubmitted) return;
+    
+    // زيادة عدد الأصوات
+    pollData[selectedVote].votes += 1;
+    pollData.total += 1;
+    
+    // إعادة حساب النسب المئوية
+    Object.keys(pollData).forEach(key => {
+        if (key !== 'total') {
+            pollData[key].percent = Math.round((pollData[key].votes / pollData.total) * 100);
+        }
+    });
+    
+    // تحديث العرض
+    updatePollDisplay();
+    
+    // تعطيل المزيد من التصويت
+    voteSubmitted = true;
+    this.textContent = 'شكراً لتصويتك!';
+    this.disabled = true;
+    this.style.background = 'linear-gradient(45deg, #666, #999)';
+    
+    // إظهار رسالة نجاح
+    setTimeout(() => {
+        alert('شكراً لتصويتك! تم تسجيل صوتك بنجاح.');
+    }, 300);
+});
+
+// تهيئة الاستطلاع
+updatePollDisplay();
+document.getElementById('vote-button').disabled = true;
 </script>
 </body>
 </html>
