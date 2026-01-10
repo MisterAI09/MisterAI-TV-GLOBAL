@@ -1,3202 +1,586 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MisterAI TV - بث مباشر كأس أفريقيا 2026 مع دردشة مباشرة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    
-    <style>
-        /* ===== المتغيرات الأساسية ===== */
-        :root {
-            --primary: #00A859;
-            --primary-dark: #006233;
-            --secondary: #FFD700;
-            --danger: #D62828;
-            --danger-dark: #b22222;
-            --info: #1DA1F2;
-            --info-dark: #0d8bd9;
-            --warning: #FF9800;
-            --success: #4CAF50;
-            --dark: #050505;
-            --dark-light: #0a0a0f;
-            --darker: #020202;
-            --light: #ffffff;
-            --gray: #aaaaaa;
-            --gray-dark: #666666;
-            --border-radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            --sidebar-width: 350px;
-        }
-
-        /* ===== إعادة الضبط ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: var(--dark);
-            color: var(--light);
-            line-height: 1.6;
-            position: relative;
-        }
-
-        /* ===== خلفية متحركة ===== */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .gradient-bg {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                var(--primary),
-                var(--primary-dark),
-                var(--danger),
-                var(--secondary),
-                var(--info),
-                var(--dark)
-            );
-            opacity: 0.1;
-            animation: gradientRotate 30s linear infinite;
-        }
-
-        @keyframes gradientRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ===== شاشة تسجيل الدخول ===== */
-        .login-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--darker) 0%, rgba(0, 40, 40, 0.95) 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            padding: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .login-container {
-            background: rgba(20, 25, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            border: 3px solid var(--primary);
-            box-shadow: 
-                0 0 50px rgba(0, 168, 89, 0.3),
-                0 0 100px rgba(29, 161, 242, 0.1);
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .login-logo {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--danger));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            animation: logoGlow 3s infinite alternate;
-        }
-
-        @keyframes logoGlow {
-            0% { 
-                filter: drop-shadow(0 0 10px rgba(0, 168, 89, 0.5));
-            }
-            100% { 
-                filter: drop-shadow(0 0 20px rgba(0, 168, 89, 0.8)) 
-                       drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
-            }
-        }
-
-        .login-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--secondary);
-            margin-bottom: 10px;
-        }
-
-        .login-subtitle {
-            color: var(--gray);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .login-form {
-            margin-bottom: 30px;
-        }
-
-        .login-label {
-            display: block;
-            text-align: right;
-            color: var(--info);
-            font-weight: 700;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-
-        .login-input {
-            width: 100%;
-            padding: 16px 20px;
-            border-radius: 10px;
-            border: 2px solid rgba(29, 161, 242, 0.3);
-            background: rgba(15, 20, 30, 0.9);
-            color: var(--light);
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            direction: ltr;
-            text-align: left;
-            margin-bottom: 20px;
-            transition: var(--transition);
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: var(--info);
-            box-shadow: 0 0 0 3px rgba(29, 161, 242, 0.2);
-            background: rgba(20, 25, 35, 0.95);
-        }
-
-        .login-input::placeholder {
-            color: var(--gray-dark);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(45deg, var(--primary), var(--info));
-            color: var(--light);
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.2), 
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        .login-btn:hover {
-            background: linear-gradient(45deg, var(--info), var(--primary));
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
-        }
-
-        .login-btn:hover::before {
-            left: 100%;
-        }
-
-        .login-info {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-top: 25px;
-            line-height: 1.8;
-        }
-
-        .login-info i {
-            margin-left: 5px;
-        }
-
-        .login-error {
-            color: var(--danger);
-            font-size: 0.9rem;
-            margin-top: 10px;
-            padding: 12px;
-            background: rgba(214, 40, 40, 0.1);
-            border-radius: 8px;
-            border-right: 3px solid var(--danger);
-            display: none;
-            animation: shake 0.5s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        /* ===== مؤشر الاتصال ===== */
-        .connection-status {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            border: 1px solid;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .connection-status.connected {
-            background: rgba(0, 168, 89, 0.15);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .connection-status.connecting {
-            background: rgba(255, 215, 0, 0.15);
-            border-color: var(--secondary);
-            color: var(--secondary);
-        }
-
-        .connection-status.disconnected {
-            background: rgba(214, 40, 40, 0.15);
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        .connected .status-dot {
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-        }
-
-        .connecting .status-dot {
-            background: var(--secondary);
-            box-shadow: 0 0 10px var(--secondary);
-            animation: pulse 1s infinite;
-        }
-
-        .disconnected .status-dot {
-            background: var(--danger);
-            box-shadow: 0 0 10px var(--danger);
-        }
-
-        @keyframes pulse {
-            0%, 100% { 
-                opacity: 1; 
-                transform: scale(1);
-            }
-            50% { 
-                opacity: 0.5; 
-                transform: scale(1.1);
-            }
-        }
-
-        /* ===== التصميم الرئيسي ===== */
-        .main-layout {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            animation: fadeIn 0.5s ease;
-        }
-
-        /* ===== الشريط الجانبي ===== */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: rgba(15, 20, 30, 0.95);
-            backdrop-filter: blur(20px);
-            border-left: 3px solid var(--primary);
-            display: flex;
-            flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                180deg,
-                transparent 0%,
-                rgba(0, 168, 89, 0.05) 100%
-            );
-            pointer-events: none;
-        }
-
-        .brand {
-            padding: 25px;
-            text-align: center;
-            border-bottom: 2px solid var(--primary);
-            background: rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .brand::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .logo-text {
-            font-size: 2.3rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--danger));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(0, 168, 89, 0.3);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(30, 35, 45, 0.8);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 1;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary), var(--info));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-
-        .user-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .user-name {
-            font-weight: 700;
-            color: var(--secondary);
-            font-size: 1rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .user-twitter {
-            font-size: 0.85rem;
-            color: var(--info);
-            margin-top: 3px;
-        }
-
-        .online-counter {
-            background: var(--primary);
-            color: var(--light);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-top: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            animation: pulse 2s infinite;
-        }
-
-        .logout-btn {
-            background: var(--danger);
-            color: var(--light);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .logout-btn:hover {
-            background: var(--danger-dark);
-            transform: rotate(90deg);
-            box-shadow: 0 0 15px rgba(214, 40, 40, 0.4);
-        }
-
-        /* ===== قائمة القنوات ===== */
-        .channels-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .channels-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 0 5px;
-        }
-
-        .channels-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .refresh-btn {
-            background: var(--info);
-            color: var(--light);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .refresh-btn:hover {
-            background: var(--info-dark);
-            transform: rotate(180deg);
-        }
-
-        .category {
-            padding: 12px 15px;
-            margin: 15px 0 10px;
-            background: rgba(30, 35, 45, 0.9);
-            color: var(--secondary);
-            font-weight: 700;
-            border-right: 3px solid var(--primary);
-            border-radius: 8px;
-            font-size: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .category-count {
-            background: var(--danger);
-            color: var(--light);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .channel-btn {
-            padding: 14px 15px;
-            margin: 8px 0;
-            background: rgba(40, 45, 60, 0.9);
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .channel-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        .channel-btn:hover {
-            background: linear-gradient(90deg, var(--primary), var(--danger));
-            transform: translateX(-5px);
-            border-color: var(--secondary);
-            box-shadow: 0 5px 15px rgba(0, 168, 89, 0.3);
-        }
-
-        .channel-btn:hover::before {
-            left: 100%;
-        }
-
-        .channel-name {
-            font-weight: 600;
-            flex: 1;
-        }
-
-        .live-badge {
-            background: var(--danger);
-            color: var(--light);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* ===== الفوتر ===== */
-        .sidebar-footer {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.4);
-            flex-shrink: 0;
-        }
-
-        .footer-title {
-            color: var(--light);
-            font-weight: 800;
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-
-        .footer-title span {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .server-stats {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .version {
-            font-size: 0.75rem;
-            color: var(--gray-dark);
-            margin-top: 5px;
-        }
-
-        /* ===== المحتوى الرئيسي ===== */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: rgba(10, 15, 25, 0.9);
-            position: relative;
-        }
-
-        .stream-area {
-            flex: 1;
-            display: flex;
-            padding: 25px;
-            gap: 25px;
-            overflow: hidden;
-            height: 100%;
-        }
-
-        /* ===== منطقة الفيديو ===== */
-        .video-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: var(--border-radius);
-            position: relative;
-            overflow: hidden;
-            border: 2px solid rgba(0, 168, 89, 0.3);
-            box-shadow: 
-                0 0 30px rgba(0, 168, 89, 0.2),
-                inset 0 0 30px rgba(0, 0, 0, 0.5);
-            min-width: 0;
-        }
-
-        .video-container::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(
-                45deg,
-                var(--primary),
-                var(--secondary),
-                var(--danger),
-                var(--info)
-            );
-            border-radius: calc(var(--border-radius) + 2px);
-            z-index: -1;
-            animation: borderAnimation 4s linear infinite;
-            opacity: 0.7;
-        }
-
-        @keyframes borderAnimation {
-            0% { 
-                filter: hue-rotate(0deg);
-                transform: rotate(0deg);
-            }
-            100% { 
-                filter: hue-rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-
-        .video-placeholder {
-            text-align: center;
-            padding: 30px;
-            max-width: 80%;
-            z-index: 1;
-        }
-
-        .video-title {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--danger));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 168, 89, 0.3);
-        }
-
-        .video-subtitle {
-            color: var(--gray);
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--danger);
-            color: var(--light);
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 800;
-            font-size: 1rem;
-            animation: livePulse 1.5s infinite;
-        }
-
-        @keyframes livePulse {
-            0%, 100% { 
-                box-shadow: 0 0 10px var(--danger);
-            }
-            50% { 
-                box-shadow: 
-                    0 0 20px var(--danger),
-                    0 0 40px var(--danger);
-            }
-        }
-
-        /* ===== منطقة الاستطلاع والشات ===== */
-        .poll-chat-container {
-            width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            overflow: hidden;
-        }
-
-        /* ===== استطلاع الرأي ===== */
-        .poll-container {
-            background: rgba(20, 25, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 30px rgba(0, 168, 89, 0.2);
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .poll-header {
-            text-align: center;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .poll-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .poll-subtitle {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-
-        .poll-timer {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--gray);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-        }
-
-        /* ===== معلومات المباراة ===== */
-        .match-info {
-            background: rgba(30, 35, 45, 0.9);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .match-info::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--danger));
-        }
-
-        .teams {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .team {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-
-        .team-flag {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-        }
-
-        .team-name {
-            font-size: 1.3rem;
-            font-weight: 900;
-        }
-
-        .team:nth-child(1) .team-name {
-            color: var(--primary);
-        }
-
-        .team:nth-child(3) .team-name {
-            color: var(--danger);
-        }
-
-        .vs {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--secondary);
-            padding: 0 20px;
-            animation: vsGlow 2s infinite alternate;
-        }
-
-        @keyframes vsGlow {
-            0% { 
-                text-shadow: 0 0 5px var(--secondary);
-            }
-            100% { 
-                text-shadow: 
-                    0 0 10px var(--secondary),
-                    0 0 20px var(--secondary);
-            }
-        }
-
-        .match-details {
-            color: var(--gray);
-            font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 18px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        /* ===== خيارات الاستطلاع ===== */
-        .poll-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .poll-option {
-            background: rgba(40, 45, 60, 0.9);
-            border-radius: 10px;
-            padding: 18px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .poll-option:hover {
-            background: rgba(50, 55, 70, 0.95);
-            transform: translateX(-5px);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .poll-option.selected {
-            background: rgba(50, 55, 70, 0.95);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 168, 89, 0.3);
-        }
-
-        .poll-option.selected::after {
-            content: '✓';
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--primary);
-            color: var(--light);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .option-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .option-text {
-            font-size: 1.1rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .option-percentage {
-            font-weight: 900;
-            font-size: 1.3rem;
-            color: var(--secondary);
-        }
-
-        .vote-bar {
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .vote-fill {
-            height: 100%;
-            border-radius: 5px;
-            width: 0%;
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vote-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            animation: fillShine 2s infinite;
-        }
-
-        @keyframes fillShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .vote-fill.nigeria {
-            background: linear-gradient(90deg, var(--primary), #00ff88);
-        }
-
-        .vote-fill.algeria {
-            background: linear-gradient(90deg, var(--danger), #ff6b8b);
-        }
-
-        /* ===== زر التصويت ===== */
-        .vote-btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: var(--dark);
-            border: none;
-            padding: 16px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vote-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        .vote-btn:hover:not(:disabled) {
-            background: linear-gradient(45deg, var(--secondary), var(--danger));
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-        }
-
-        .vote-btn:hover:not(:disabled)::before {
-            left: 100%;
-        }
-
-        .vote-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== إحصائيات التصويت ===== */
-        .vote-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-
-        .vote-count {
-            font-weight: 700;
-            color: var(--secondary);
-        }
-
-        /* ===== إجراءات سريعة ===== */
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .quick-action {
-            flex: 1;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: var(--light);
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .quick-action:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            border-color: var(--info);
-        }
-
-        /* ===== قسم الشات ===== */
-        .chat-container {
-            background: rgba(20, 25, 35, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            border: 2px solid var(--info);
-            box-shadow: 0 0 30px rgba(29, 161, 242, 0.2);
-            flex: 2;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .chat-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--info), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .chat-subtitle {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-
-        .online-users {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 168, 89, 0.2);
-            color: var(--primary);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--primary);
-        }
-
-        /* ===== قائمة الرسائل ===== */
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background: rgba(30, 35, 45, 0.7);
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            min-height: 0;
-        }
-
-        .chat-messages:empty::before {
-            content: '📝 لا توجد رسائل بعد. كن أول من يعلق!';
-            display: block;
-            text-align: center;
-            color: var(--gray);
-            padding: 40px 20px;
-            font-style: italic;
-            font-size: 1.1rem;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: rgba(40, 45, 60, 0.9);
-            border-radius: 10px;
-            border-left: 4px solid var(--primary);
-            animation: messageIn 0.3s ease;
-            transition: var(--transition);
-        }
-
-        @keyframes messageIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px) scale(0.95);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .message:hover {
-            background: rgba(50, 55, 70, 0.95);
-            transform: translateX(-3px);
-        }
-
-        .message.system {
-            background: rgba(255, 215, 0, 0.15);
-            border-left-color: var(--secondary);
-        }
-
-        .message.vote {
-            background: rgba(0, 168, 89, 0.15);
-            border-left-color: var(--primary);
-        }
-
-        .message.new {
-            animation: highlightMessage 2s ease;
-        }
-
-        @keyframes highlightMessage {
-            0% { 
-                background-color: rgba(0, 168, 89, 0.3); 
-            }
-            100% { 
-                background-color: rgba(40, 45, 60, 0.9); 
-            }
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .message-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .message-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary), var(--info));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .twitter-badge {
-            background: var(--info);
-            color: var(--light);
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .message-time {
-            color: var(--gray);
-            font-size: 0.85rem;
-        }
-
-        .message-text {
-            color: var(--light);
-            line-height: 1.5;
-            font-size: 1rem;
-            margin-top: 8px;
-            word-break: break-word;
-        }
-
-        /* ===== إجراءات الرسالة ===== */
-        .message-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .message-action {
-            background: none;
-            border: none;
-            color: var(--gray);
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-
-        .message-action:hover {
-            color: var(--info);
-            background: rgba(29, 161, 242, 0.1);
-        }
-
-        .like-btn.liked {
-            color: var(--danger);
-        }
-
-        /* ===== مؤشر الكتابة ===== */
-        .typing-indicator {
-            display: none;
-            padding: 10px 15px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            font-style: italic;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 15px;
-        }
-
-        .typing-indicator.show {
-            display: block;
-            animation: typingPulse 1.5s infinite;
-        }
-
-        @keyframes typingPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        /* ===== إدخال الشات ===== */
-        .chat-input-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 14px;
-            border-radius: 10px;
-            border: 2px solid rgba(0, 168, 89, 0.3);
-            background: rgba(30, 35, 45, 0.9);
-            color: var(--light);
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition);
-            resize: none;
-            min-height: 50px;
-            max-height: 150px;
-        }
-
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 168, 89, 0.2);
-            background: rgba(35, 40, 50, 0.95);
-        }
-
-        .chat-input::placeholder {
-            color: var(--gray-dark);
-        }
-
-        .send-btn {
-            padding: 0 25px;
-            background: linear-gradient(45deg, var(--primary), var(--info));
-            color: var(--light);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            position: relative;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        .send-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        .send-btn:hover {
-            background: linear-gradient(45deg, var(--info), var(--primary));
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(29, 161, 242, 0.3);
-        }
-
-        .send-btn:hover::before {
-            left: 100%;
-        }
-
-        .send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== زر مشاركة تويتر ===== */
-        .twitter-share {
-            background: var(--info);
-            color: var(--light);
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .twitter-share:hover {
-            background: var(--info-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(29, 161, 242, 0.3);
-        }
-
-        /* ===== أزرار التحكم ===== */
-        .control-buttons {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .control-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--light);
-            border: 2px solid var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
-            backdrop-filter: blur(10px);
-        }
-
-        .control-btn:hover {
-            background: var(--primary);
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 0 20px rgba(0, 168, 89, 0.5);
-        }
-
-        /* ===== شريط التمرير ===== */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, var(--primary), var(--info));
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, var(--info), var(--primary));
-        }
-
-        /* ===== تصميم متجاوب ===== */
-        @media (max-width: 1400px) {
-            .poll-chat-container {
-                width: 450px;
-            }
-        }
-
-        @media (max-width: 1200px) {
-            .stream-area {
-                flex-direction: column;
-            }
-            
-            .video-container {
-                height: 300px;
-                min-height: 300px;
-            }
-            
-            .poll-chat-container {
-                width: 100%;
-                flex-direction: row;
-            }
-            
-            .poll-container,
-            .chat-container {
-                flex: 1;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                max-height: 60vh;
-            }
-            
-            .stream-area {
-                padding: 15px;
-            }
-            
-            .video-container {
-                height: 250px;
-                min-height: 250px;
-            }
-            
-            .poll-chat-container {
-                flex-direction: column;
-            }
-            
-            .login-container {
-                padding: 30px 20px;
-            }
-            
-            .login-logo {
-                font-size: 2.8rem;
-            }
-            
-            .login-title {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 100%;
-            }
-            
-            .logo-text {
-                font-size: 1.8rem;
-            }
-            
-            .video-title {
-                font-size: 2rem;
-            }
-            
-            .poll-title,
-            .chat-title {
-                font-size: 1.5rem;
-            }
-            
-            .teams {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .team-flag {
-                font-size: 2.5rem;
-            }
-            
-            .team-name {
-                font-size: 1.2rem;
-            }
-            
-            .vs {
-                padding: 10px 0;
-            }
-            
-            .control-buttons {
-                bottom: 15px;
-                left: 15px;
-                gap: 10px;
-            }
-            
-            .control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .login-logo {
-                font-size: 2.2rem;
-            }
-            
-            .login-title {
-                font-size: 1.5rem;
-            }
-            
-            .login-subtitle {
-                font-size: 1rem;
-            }
-            
-            .video-title {
-                font-size: 1.8rem;
-            }
-            
-            .video-subtitle {
-                font-size: 1rem;
-            }
-            
-            .poll-title,
-            .chat-title {
-                font-size: 1.3rem;
-            }
-            
-            .online-users {
-                position: static;
-                transform: none;
-                margin-top: 10px;
-                display: inline-flex;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
-        }
-
-        /* ===== رسائل التحميل ===== */
-        .loading {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            animation: loadingShine 1.5s infinite;
-        }
-
-        @keyframes loadingShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        /* ===== الرسوم المتحركة للنص ===== */
-        .text-gradient {
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--danger), var(--info));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 300% 300%;
-            animation: gradientText 3s ease infinite;
-        }
-
-        @keyframes gradientText {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<title>MisterAI TV GLOBAL 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root { 
+    --main:#4834d4; 
+    --glow:#00cec9; 
+    --bg:#050505;
+    --color1:#FF6B8B;
+    --color2:#6A5AF9;
+    --color3:#00D4FF;
+    --color4:#00F5A0;
+    --color5:#FFD166;
+}
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:'Cairo',sans-serif;
+    background:var(--bg);
+    color:#fff;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+    position: relative;
+}
+
+/* خلفية متحركة بألوان جميلة */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.gradient-bg {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    opacity: 0.15;
+    animation: rotateGradient 30s linear infinite;
+}
+
+@keyframes rotateGradient {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* موجات متحركة */
+.waves {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.wave {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, 
+        rgba(255,107,139,0.1) 0%, 
+        rgba(106,90,249,0.08) 25%, 
+        rgba(0,212,255,0.06) 50%, 
+        rgba(0,245,160,0.04) 75%, 
+        transparent 100%);
+    animation: waveMove 20s linear infinite;
+}
+
+.wave:nth-child(1) {
+    top: -100%;
+    left: -100%;
+    animation-delay: 0s;
+}
+
+.wave:nth-child(2) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -5s;
+    animation-duration: 25s;
+    opacity: 0.7;
+}
+
+.wave:nth-child(3) {
+    top: -100%;
+    left: -100%;
+    animation-delay: -10s;
+    animation-duration: 30s;
+    opacity: 0.5;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* جسيمات متحركة */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--color3);
+    animation: float 15s infinite linear;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.particle:nth-child(5n) {
+    background: var(--color1);
+    color: var(--color1);
+}
+.particle:nth-child(5n+1) {
+    background: var(--color2);
+    color: var(--color2);
+}
+.particle:nth-child(5n+2) {
+    background: var(--color3);
+    color: var(--color3);
+}
+.particle:nth-child(5n+3) {
+    background: var(--color4);
+    color: var(--color4);
+}
+.particle:nth-child(5n+4) {
+    background: var(--color5);
+    color: var(--color5);
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(100px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* خطوط مضيئة */
+.glow-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.glow-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--color3), 
+        transparent);
+    box-shadow: 0 0 10px var(--color3),
+                0 0 20px var(--color3),
+                0 0 30px var(--color3);
+    animation: lineGlow 8s infinite linear;
+}
+
+@keyframes lineGlow {
+    0%, 100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.sidebar{
+    width:360px;
+    background:rgba(10, 10, 10, 0.85);
+    border-left:2px solid var(--main);
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+.brand{
+    padding:25px 10px;
+    text-align:center;
+    border-bottom:2px solid var(--main);
+    position: relative;
+    overflow: hidden;
+}
+.brand::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    opacity: 0.1;
+    z-index: 0;
+}
+.logo-container {
+    position: relative;
+    z-index: 1;
+}
+.logo-text{
+    font-size:2.5rem;
+    font-weight:900;
+    text-shadow:0 0 10px var(--main),
+                0 0 20px var(--glow),
+                0 0 30px var(--color2),
+                0 0 40px var(--color3);
+    animation:pulse 2s infinite alternate;
+    background: linear-gradient(to right, 
+        var(--color1), 
+        var(--color2), 
+        var(--color3), 
+        var(--color4),
+        var(--color5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    margin-bottom: 15px;
+}
+@keyframes pulse{
+    0%{transform:scale(1); text-shadow:0 0 10px var(--main),0 0 20px var(--glow)}
+    100%{transform:scale(1.05); text-shadow:0 0 20px var(--color2),0 0 40px var(--color3)}
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: white;
+    background: linear-gradient(45deg, var(--color2), var(--color3));
+    padding: 10px 20px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
+}
+.social-link:hover {
+    background: linear-gradient(45deg, var(--color1), var(--color4));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 139, 0.6);
+}
+.social-link i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+.social-link:hover i {
+    transform: rotate(360deg);
+}
+
+.list{
+    flex:1;
+    overflow-y:auto;
+    padding:15px
+}
+.cat{
+    padding:12px;
+    margin:15px 0 8px;
+    background:rgba(17, 17, 17, 0.8);
+    color:var(--color3);
+    font-weight:bold;
+    border-right:4px solid var(--color3);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+.btn{
+    padding:14px;
+    margin:8px 0;
+    background:rgba(22, 22, 37, 0.8);
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:.3s;
+    border:1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+.btn:hover{
+    background: linear-gradient(90deg, var(--color2), var(--main));
+    transform:translateX(-8px) scale(1.02);
+    border-color: var(--color3);
+    box-shadow: 0 5px 20px rgba(106, 90, 249, 0.4);
+}
+.badge{
+    font-size:.7rem;
+    background:var(--color1);
+    padding:4px 10px;
+    border-radius:20px;
+    font-weight:bold;
+    box-shadow: 0 2px 10px rgba(255, 107, 139, 0.3);
+}
+.footer-rights{
+    padding:20px;
+    text-align:center;
+    font-size:.9rem;
+    border-top:1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.3);
+}
+.footer-rights b{
+    background: linear-gradient(to right, var(--color3), var(--color4));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.video-container{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:1.8rem;
+    position: relative;
+    z-index: 1;
+    background: rgba(5, 5, 5, 0.7);
+    backdrop-filter: blur(5px);
+}
+.video-container::before {
+    content: '📺';
+    font-size: 5rem;
+    opacity: 0.2;
+    position: absolute;
+    animation: floatEmoji 15s infinite ease-in-out;
+}
+.video-container::after {
+    content: 'MisterAI TV';
+    position: absolute;
+    bottom: 20%;
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, var(--color1), var(--color2), var(--color3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.1;
+    font-weight: 900;
+}
+
+@keyframes floatEmoji {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate(-100px, -50px) rotate(90deg) scale(1.2);
+    }
+    50% {
+        transform: translate(100px, 50px) rotate(180deg) scale(0.8);
+    }
+    75% {
+        transform: translate(-50px, 100px) rotate(270deg) scale(1.1);
+    }
+}
+
+@media(max-width:900px){
+    body{flex-direction:column}
+    .sidebar{width:100%;height:100vh}
+    .video-container{display:none}
+}
+</style>
 </head>
+
 <body>
-    <!-- خلفية متحركة -->
-    <div class="bg-animation">
-        <div class="gradient-bg"></div>
+<!-- خلفية متحركة بألوان جميلة -->
+<div class="bg-animation">
+    <div class="gradient-bg"></div>
+    <div class="waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
     </div>
+    <div class="particles" id="particles"></div>
+    <div class="glow-lines" id="glowLines"></div>
+</div>
 
-    <!-- مؤشر حالة الاتصال -->
-    <div class="connection-status connecting" id="connection-status">
-        <div class="status-dot"></div>
-        <span id="status-text">جاري الاتصال بالخادم...</span>
-    </div>
-
-    <!-- شاشة تسجيل الدخول -->
-    <div class="login-screen" id="login-screen">
-        <div class="login-container">
-            <div class="login-logo">MISTERAI TV</div>
-            <div class="login-title">مرحباً بك في كأس أفريقيا 2026</div>
-            <div class="login-subtitle">
-                شاهد البث المباشر، شارك في الاستطلاع، وتحدث مع المشجعين في الدردشة المباشرة
-            </div>
+<div class="sidebar">
+    <div class="brand">
+        <div class="logo-container">
+            <div class="logo-text">MISTERAI TV</div>
             
-            <div class="login-form">
-                <label class="login-label">
-                    <i class="fab fa-twitter"></i>
-                    أدخل حسابك على تويتر:
-                </label>
-                <input type="text" class="login-input" id="login-twitter" 
-                       placeholder="@neurosisnet" autocomplete="off" autofocus>
-                <div class="login-error" id="login-error"></div>
-                <button class="login-btn" id="login-btn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    تسجيل الدخول والدخول للدردشة
-                </button>
-            </div>
-            
-            <div class="login-info">
-                <i class="fas fa-bolt"></i> دردشة مباشرة عبر WebSocket<br>
-                <i class="fas fa-users"></i> رؤية المستخدمين المتصلين مباشرة<br>
-                <i class="fas fa-sync"></i> تحديثات فورية للتصويت والرسائل<br>
-                <i class="fas fa-shield-alt"></i> بيانات محمية وآمنة
-            </div>
+            <!-- رابط حساب X -->
+            <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
+                <i class="fab fa-twitter"></i>
+                تابعنا على X: @neurosisnet
+            </a>
         </div>
     </div>
 
-    <!-- التصميم الرئيسي -->
-    <div class="main-layout" id="main-layout" style="display: none;">
-        <!-- الشريط الجانبي -->
-        <div class="sidebar">
-            <!-- العلامة التجارية والمستخدم -->
-            <div class="brand">
-                <div class="logo-text">MISTERAI TV</div>
-                <div class="user-info" id="user-info">
-                    <!-- سيتم ملؤه بالجافاسكريبت -->
-                </div>
-            </div>
+    <div class="list" id="channels"></div>
 
-            <!-- قائمة القنوات -->
-            <div class="channels-container">
-                <div class="channels-header">
-                    <div class="channels-title">
-                        <i class="fas fa-satellite-dish"></i>
-                        قنوات البث المباشر
-                    </div>
-                    <button class="refresh-btn" id="refresh-channels" title="تحديث القنوات">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-                
-                <div id="channels">
-                    <!-- سيتم تحميل القنوات هنا -->
-                </div>
-            </div>
-
-            <!-- الفوتر -->
-            <div class="sidebar-footer">
-                <div class="footer-title">
-                    <span>كأس أفريقيا 2026</span> - البث المباشر والدردشة
-                </div>
-                <div class="server-stats" id="server-stats">
-                    <i class="fas fa-server"></i>
-                    <span>جاري الاتصال...</span>
-                </div>
-                <div class="version">
-                    MisterAI TV v4.0 | WebSocket Chat
-                </div>
-            </div>
+    <div class="footer-rights">
+        <div>
+            تطوير وبرمجة <b>MisterAI</b><br>
+            © 2026 - البث المباشر العالمي
         </div>
-
-        <!-- المحتوى الرئيسي -->
-        <div class="main-content">
-            <div class="stream-area">
-                <!-- منطقة البث المباشر -->
-                <div class="video-container">
-                    <div class="video-placeholder">
-                        <div class="video-title">كأس أفريقيا 2026</div>
-                        <div class="video-subtitle">البث المباشر - دور ربع النهائي</div>
-                        <div class="live-indicator">
-                            <i class="fas fa-circle"></i>
-                            بث مباشر - دردشة مباشرة
-                        </div>
-                    </div>
-                </div>
-
-                <!-- منطقة الاستطلاع والشات -->
-                <div class="poll-chat-container">
-                    <!-- استطلاع الرأي -->
-                    <div class="poll-container">
-                        <div class="poll-header">
-                            <div class="poll-title">استطلاع رأي ربع النهائي</div>
-                            <div class="poll-subtitle">من سيفوز ويتأهل لنصف النهائي؟</div>
-                            <div class="poll-timer" id="poll-timer">
-                                <i class="far fa-clock"></i>
-                                <span id="poll-update-time">--:--</span>
-                            </div>
-                        </div>
-
-                        <div class="match-info">
-                            <div class="teams">
-                                <div class="team">
-                                    <div class="team-flag">🇳🇬</div>
-                                    <div class="team-name">نيجيريا</div>
-                                </div>
-
-                                <div class="vs">VS</div>
-
-                                <div class="team">
-                                    <div class="team-flag">🇩🇿</div>
-                                    <div class="team-name">الجزائر</div>
-                                </div>
-                            </div>
-
-                            <div class="match-details">
-                                <i class="far fa-calendar-alt"></i>
-                                دور ربع النهائي - 
-                                <i class="far fa-clock"></i>
-                                الساعة: 17:00
-                            </div>
-                        </div>
-
-                        <div class="poll-options">
-                            <div class="poll-option" data-vote="nigeria">
-                                <div class="option-content">
-                                    <div class="option-text">
-                                        <i class="fas fa-futbol"></i>
-                                        فوز نيجيريا
-                                    </div>
-                                    <div class="option-percentage" id="nigeria-percent">60%</div>
-                                </div>
-                                <div class="vote-bar">
-                                    <div class="vote-fill nigeria" id="nigeria-bar" style="width: 60%"></div>
-                                </div>
-                            </div>
-
-                            <div class="poll-option" data-vote="algeria">
-                                <div class="option-content">
-                                    <div class="option-text">
-                                        <i class="fas fa-futbol"></i>
-                                        فوز الجزائر
-                                    </div>
-                                    <div class="option-percentage" id="algeria-percent">40%</div>
-                                </div>
-                                <div class="vote-bar">
-                                    <div class="vote-fill algeria" id="algeria-bar" style="width: 40%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="vote-btn" id="vote-button">
-                            <i class="fas fa-vote-yea"></i>
-                            <span id="vote-button-text">اختر فريقاً أولاً</span>
-                        </button>
-
-                        <div class="vote-stats">
-                            <span>
-                                <i class="fas fa-users"></i>
-                                إجمالي الأصوات: 
-                                <span class="vote-count" id="total-votes">250</span>
-                            </span>
-                            <span>
-                                <i class="fas fa-history"></i>
-                                آخر تحديث: 
-                                <span id="last-update">--:--</span>
-                            </span>
-                        </div>
-
-                        <div class="quick-actions">
-                            <button class="quick-action" id="reset-poll-btn">
-                                <i class="fas fa-redo"></i>
-                                إعادة تعيين
-                            </button>
-                            <button class="quick-action" id="share-poll-btn">
-                                <i class="fas fa-share-alt"></i>
-                                مشاركة النتائج
-                            </button>
-                            <button class="quick-action" id="test-connection-btn">
-                                <i class="fas fa-vial"></i>
-                                اختبار الاتصال
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- قسم الشات -->
-                    <div class="chat-container">
-                        <div class="chat-header">
-                            <div class="chat-title">شات كأس أفريقيا المباشر</div>
-                            <div class="chat-subtitle">ناقش المباراة مع المشجعين في الوقت الحقيقي</div>
-                            <div class="online-users" id="online-users">
-                                <i class="fas fa-users"></i>
-                                <span id="online-count">0</span>
-                                متصل
-                            </div>
-                        </div>
-
-                        <div class="chat-messages" id="chat-messages">
-                            <!-- الرسائل ستضاف هنا من قبل المستخدمين -->
-                        </div>
-
-                        <div class="typing-indicator" id="typing-indicator">
-                            <i class="fas fa-pencil-alt"></i>
-                            <span id="typing-text">جاري الكتابة...</span>
-                        </div>
-
-                        <div class="chat-input-container">
-                            <textarea class="chat-input" id="chat-input" 
-                                      placeholder="اكتب رسالتك هنا (اضغط Enter للإرسال، Shift+Enter للسطر الجديد)..." 
-                                      maxlength="500" rows="2"></textarea>
-                            <button class="send-btn" id="send-btn">
-                                <i class="fas fa-paper-plane"></i>
-                                إرسال
-                            </button>
-                        </div>
-
-                        <div class="quick-actions">
-                            <button class="quick-action" id="clear-chat-btn">
-                                <i class="fas fa-trash-alt"></i>
-                                مسح الشات
-                            </button>
-                            <button class="quick-action" id="emoji-btn">
-                                <i class="far fa-smile"></i>
-                                إيموجي
-                            </button>
-                            <button class="quick-action" id="history-btn">
-                                <i class="fas fa-history"></i>
-                                سجل المحادثة
-                            </button>
-                        </div>
-
-                        <a href="#" class="twitter-share" id="twitter-share-btn" target="_blank">
-                            <i class="fab fa-twitter"></i>
-                            شارك الدردشة على تويتر
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div style="font-size: 0.8rem; opacity: 0.8;">
+            MisterAI TV GLOBAL 2026
         </div>
     </div>
+</div>
 
-    <!-- أزرار التحكم -->
-    <div class="control-buttons">
-        <button class="control-btn" id="debug-btn" title="معلومات التصحيح">
-            <i class="fas fa-bug"></i>
-        </button>
-        <button class="control-btn" id="sound-btn" title="تفعيل/تعطيل الأصوات">
-            <i class="fas fa-volume-up"></i>
-        </button>
-        <button class="control-btn" id="fullscreen-btn" title="ملء الشاشة">
-            <i class="fas fa-expand"></i>
-        </button>
-    </div>
+<div class="video-container">
+   MisterAI TV GLOBAL 2026
+</div>
 
-    <!-- تحميل المكتبات -->
-    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+// إنشاء جسيمات متحركة
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 60; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    // خصائص عشوائية
+    const size = 2 + Math.random() * 6;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 15;
+    const duration = 10 + Math.random() * 25;
+    
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${left}%`;
+    particle.style.animationDelay = `${delay}s`;
+    particle.style.animationDuration = `${duration}s`;
+    
+    particlesContainer.appendChild(particle);
+}
 
-    <!-- الكود الرئيسي -->
-    <script>
-        // ============ تهيئة التطبيق ============
-        class MisterAITV {
-            constructor() {
-                // المتغيرات العامة
-                this.socket = null;
-                this.currentUser = null;
-                this.isConnected = false;
-                this.reconnectAttempts = 0;
-                this.MAX_RECONNECT_ATTEMPTS = 15;
-                this.RECONNECT_DELAY = 2000;
-                this.typingTimeout = null;
-                this.lastTypingTime = 0;
-                this.soundEnabled = true;
-                this.selectedVote = null;
-                this.messageQueue = [];
-                this.isProcessingQueue = false;
-                
-                // تهيئة العناصر
-                this.initElements();
-                
-                // بدء التطبيق
-                this.init();
-            }
-            
-            // ============ تهيئة العناصر ============
-            initElements() {
-                this.elements = {
-                    // شاشة تسجيل الدخول
-                    loginScreen: document.getElementById('login-screen'),
-                    loginTwitter: document.getElementById('login-twitter'),
-                    loginBtn: document.getElementById('login-btn'),
-                    loginError: document.getElementById('login-error'),
-                    
-                    // التصميم الرئيسي
-                    mainLayout: document.getElementById('main-layout'),
-                    
-                    // حالة الاتصال
-                    connectionStatus: document.getElementById('connection-status'),
-                    statusText: document.getElementById('status-text'),
-                    
-                    // معلومات المستخدم
-                    userInfo: document.getElementById('user-info'),
-                    
-                    // القنوات
-                    channels: document.getElementById('channels'),
-                    refreshChannels: document.getElementById('refresh-channels'),
-                    
-                    // إحصائيات الخادم
-                    serverStats: document.getElementById('server-stats'),
-                    
-                    // الاستطلاع
-                    nigeriaPercent: document.getElementById('nigeria-percent'),
-                    nigeriaBar: document.getElementById('nigeria-bar'),
-                    algeriaPercent: document.getElementById('algeria-percent'),
-                    algeriaBar: document.getElementById('algeria-bar'),
-                    totalVotes: document.getElementById('total-votes'),
-                    lastUpdate: document.getElementById('last-update'),
-                    pollUpdateTime: document.getElementById('poll-update-time'),
-                    voteButton: document.getElementById('vote-button'),
-                    voteButtonText: document.getElementById('vote-button-text'),
-                    
-                    // زر التصويت
-                    pollOptions: document.querySelectorAll('.poll-option'),
-                    
-                    // أزرار الاستطلاع
-                    resetPollBtn: document.getElementById('reset-poll-btn'),
-                    sharePollBtn: document.getElementById('share-poll-btn'),
-                    testConnectionBtn: document.getElementById('test-connection-btn'),
-                    
-                    // الشات
-                    onlineUsers: document.getElementById('online-users'),
-                    onlineCount: document.getElementById('online-count'),
-                    chatMessages: document.getElementById('chat-messages'),
-                    typingIndicator: document.getElementById('typing-indicator'),
-                    typingText: document.getElementById('typing-text'),
-                    chatInput: document.getElementById('chat-input'),
-                    sendBtn: document.getElementById('send-btn'),
-                    
-                    // أزرار الشات
-                    clearChatBtn: document.getElementById('clear-chat-btn'),
-                    emojiBtn: document.getElementById('emoji-btn'),
-                    historyBtn: document.getElementById('history-btn'),
-                    twitterShareBtn: document.getElementById('twitter-share-btn'),
-                    
-                    // أزرار التحكم
-                    debugBtn: document.getElementById('debug-btn'),
-                    soundBtn: document.getElementById('sound-btn'),
-                    fullscreenBtn: document.getElementById('fullscreen-btn')
-                };
-            }
-            
-            // ============ تهيئة التطبيق ============
-            init() {
-                this.checkAuth();
-                this.setupEventListeners();
-                this.setupGlobalEvents();
-            }
-            
-            // ============ التحقق من المصادقة ============
-            checkAuth() {
-                const savedUser = localStorage.getItem('misterai_user');
-                if (savedUser) {
-                    try {
-                        this.currentUser = JSON.parse(savedUser);
-                        this.showMainApp();
-                    } catch (error) {
-                        console.error('خطأ في تحميل بيانات المستخدم:', error);
-                        this.showLoginScreen();
-                    }
-                } else {
-                    this.showLoginScreen();
-                }
-            }
-            
-            // ============ إعداد مستمعي الأحداث ============
-            setupEventListeners() {
-                // تسجيل الدخول
-                this.elements.loginBtn.addEventListener('click', () => this.handleLogin());
-                this.elements.loginTwitter.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.handleLogin();
-                });
-                
-                // تحديث القنوات
-                this.elements.refreshChannels.addEventListener('click', () => this.loadChannels());
-                
-                // خيارات التصويت
-                this.elements.pollOptions.forEach(option => {
-                    option.addEventListener('click', (e) => this.handleVoteSelect(e));
-                });
-                
-                // زر التصويت
-                this.elements.voteButton.addEventListener('click', () => this.handleVote());
-                
-                // أزرار الاستطلاع
-                this.elements.resetPollBtn.addEventListener('click', () => this.resetPoll());
-                this.elements.sharePollBtn.addEventListener('click', () => this.sharePollResults());
-                this.elements.testConnectionBtn.addEventListener('click', () => this.testConnection());
-                
-                // إرسال الرسائل
-                this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
-                this.elements.chatInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-                
-                // مؤشر الكتابة
-                this.elements.chatInput.addEventListener('input', () => this.handleTyping());
-                
-                // أزرار الشات
-                this.elements.clearChatBtn.addEventListener('click', () => this.clearChat());
-                this.elements.emojiBtn.addEventListener('click', () => this.showEmojiPicker());
-                this.elements.historyBtn.addEventListener('click', () => this.loadChatHistory());
-                
-                // أزرار التحكم
-                this.elements.debugBtn.addEventListener('click', () => this.showDebugInfo());
-                this.elements.soundBtn.addEventListener('click', () => this.toggleSound());
-                this.elements.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
-                
-                // مستمع للنقر على الإعجابات
-                document.addEventListener('click', (e) => {
-                    if (e.target.closest('.message-action.like-btn')) {
-                        const messageId = e.target.closest('.message-action').dataset.messageId;
-                        this.likeMessage(messageId);
-                    }
-                });
-            }
-            
-            // ============ إعداد الأحداث العامة ============
-            setupGlobalEvents() {
-                // إعادة الاتصال عند العودة للصفحة
-                document.addEventListener('visibilitychange', () => {
-                    if (!document.hidden && !this.isConnected) {
-                        setTimeout(() => this.connectSocket(), 1000);
-                    }
-                });
-                
-                // تحديث إحصائيات الخادم كل 30 ثانية
-                setInterval(() => {
-                    if (this.isConnected) {
-                        this.updateServerStats();
-                    }
-                }, 30000);
-                
-                // الحفاظ على الاتصال كل دقيقة
-                setInterval(() => {
-                    if (this.socket && this.isConnected) {
-                        this.socket.emit('ping');
-                    }
-                }, 60000);
-            }
-            
-            // ============ معالجة تسجيل الدخول ============
-            handleLogin() {
-                const twitterHandle = this.elements.loginTwitter.value.trim();
-                
-                if (!twitterHandle) {
-                    this.showError('يرجى إدخال حساب تويتر');
-                    return;
-                }
-                
-                if (!twitterHandle.startsWith('@')) {
-                    this.showError('يجب أن يبدأ حساب تويتر بـ @');
-                    return;
-                }
-                
-                if (twitterHandle.length < 2) {
-                    this.showError('حساب تويتر قصير جداً');
-                    return;
-                }
-                
-                if (twitterHandle.length > 20) {
-                    this.showError('حساب تويتر طويل جداً');
-                    return;
-                }
-                
-                // حفظ بيانات المستخدم
-                this.currentUser = {
-                    name: `مشجع ${twitterHandle.substring(1)}`,
-                    twitter: twitterHandle,
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(twitterHandle)}&background=00A859&color=fff&bold=true`,
-                    joined: Date.now()
-                };
-                
-                localStorage.setItem('misterai_user', JSON.stringify(this.currentUser));
-                
-                // الانتقال للتطبيق الرئيسي
-                this.showMainApp();
-                
-                // إظهار رسالة نجاح
-                this.showToast(`مرحباً ${twitterHandle}!`, 'success');
-            }
-            
-            // ============ عرض شاشة تسجيل الدخول ============
-            showLoginScreen() {
-                this.elements.loginScreen.style.display = 'flex';
-                this.elements.mainLayout.style.display = 'none';
-                this.elements.loginTwitter.focus();
-            }
-            
-            // ============ عرض التطبيق الرئيسي ============
-            showMainApp() {
-                this.elements.loginScreen.style.display = 'none';
-                this.elements.mainLayout.style.display = 'flex';
-                
-                // تحديث معلومات المستخدم
-                this.updateUserInfo();
-                
-                // تحميل القنوات
-                this.loadChannels();
-                
-                // الاتصال بالخادم
-                setTimeout(() => this.connectSocket(), 500);
-            }
-            
-            // ============ تحديث معلومات المستخدم ============
-            updateUserInfo() {
-                if (!this.currentUser) return;
-                
-                this.elements.userInfo.innerHTML = `
-                    <div class="user-avatar">
-                        <i class="fab fa-twitter"></i>
-                    </div>
-                    <div class="user-details">
-                        <div class="user-name">${this.currentUser.name}</div>
-                        <div class="user-twitter">${this.currentUser.twitter}</div>
-                        <div class="online-counter" id="user-online-counter">
-                            <i class="fas fa-users"></i> جاري الاتصال...
-                        </div>
-                    </div>
-                    <button class="logout-btn" id="logout-btn" title="تسجيل الخروج">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                `;
-                
-                // إضافة مستمع لزر تسجيل الخروج
-                const logoutBtn = document.getElementById('logout-btn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', () => this.logout());
-                }
-            }
-            
-            // ============ تحميل القنوات ============
-            loadChannels() {
-                const channels = [
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
-                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
-                    {c:"القنوات الوطنية",n:"البرنامج الوطني الجزائري",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
-                    {c:"القنوات الفرنسية",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
-                    {c:"القنوات الفرنسية",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
-                    {c:"القنوات الفرنسية",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
-                    {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
-                    {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
-                    {c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
-                    {c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
-                    {c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"}
-                ];
+// إنشاء خطوط مضيئة
+const glowLines = document.getElementById('glowLines');
+for (let i = 0; i < 10; i++) {
+    const line = document.createElement('div');
+    line.classList.add('glow-line');
+    
+    const top = Math.random() * 100;
+    const width = 50 + Math.random() * 200;
+    const delay = Math.random() * 8;
+    const duration = 5 + Math.random() * 10;
+    
+    line.style.top = `${top}%`;
+    line.style.width = `${width}%`;
+    line.style.animationDelay = `${delay}s`;
+    line.style.animationDuration = `${duration}s`;
+    
+    glowLines.appendChild(line);
+}
 
-                const container = this.elements.channels;
-                container.innerHTML = '';
-                
-                let lastCategory = "";
-                let categoryCount = 0;
-                
-                channels.forEach(channel => {
-                    if (channel.c !== lastCategory) {
-                        if (lastCategory !== "") {
-                            const countSpan = document.createElement('span');
-                            countSpan.className = 'category-count';
-                            countSpan.textContent = categoryCount;
-                            container.querySelector('.category:last-child').appendChild(countSpan);
-                        }
-                        
-                        const category = document.createElement("div");
-                        category.className = "category";
-                        category.textContent = channel.c;
-                        container.appendChild(category);
-                        lastCategory = channel.c;
-                        categoryCount = 0;
-                    }
-                    
-                    const button = document.createElement("div");
-                    button.className = "channel-btn";
-                    button.innerHTML = `
-                        <span class="channel-name">${channel.n}</span>
-                        <span class="live-badge">LIVE</span>
-                    `;
-                    button.onclick = () => {
-                        if (channel.u && channel.u.trim()) {
-                            window.open(channel.u.trim(), "_blank", "noopener,noreferrer");
-                        }
-                    };
-                    container.appendChild(button);
-                    categoryCount++;
-                });
-                
-                // إضافة العدد للفئة الأخيرة
-                if (lastCategory !== "") {
-                    const countSpan = document.createElement('span');
-                    countSpan.className = 'category-count';
-                    countSpan.textContent = categoryCount;
-                    container.querySelector('.category:last-child').appendChild(countSpan);
-                }
-                
-                this.showToast('تم تحميل القنوات بنجاح', 'success');
-            }
-            
-            // ============ الاتصال بالخادم ============
-            connectSocket() {
-                try {
-                    // قطع الاتصال السابق إذا كان موجوداً
-                    if (this.socket) {
-                        this.socket.disconnect();
-                    }
-                    
-                    // تحديث حالة الاتصال
-                    this.updateConnectionStatus('connecting', 'جاري الاتصال بالخادم...');
-                    
-                    // إنشاء اتصال جديد
-                    this.socket = io(window.location.origin, {
-                        transports: ['websocket', 'polling'],
-                        reconnection: true,
-                        reconnectionAttempts: this.MAX_RECONNECT_ATTEMPTS,
-                        reconnectionDelay: this.RECONNECT_DELAY,
-                        timeout: 10000,
-                        auth: {
-                            user: this.currentUser
-                        }
-                    });
-                    
-                    // إعداد مستمعي الأحداث
-                    this.setupSocketEvents();
-                    
-                } catch (error) {
-                    console.error('❌ خطأ في الاتصال:', error);
-                    this.handleConnectionError();
-                }
-            }
-            
-            // ============ إعداد أحداث السوكيت ============
-            setupSocketEvents() {
-                if (!this.socket) return;
-                
-                // عند الاتصال
-                this.socket.on('connect', () => {
-                    console.log('✅ متصل بالخادم:', this.socket.id);
-                    this.isConnected = true;
-                    this.reconnectAttempts = 0;
-                    this.updateConnectionStatus('connected', 'متصل بالدردشة المباشرة');
-                    
-                    // إرسال انضمام المستخدم
-                    setTimeout(() => {
-                        if (this.currentUser) {
-                            this.socket.emit('join', this.currentUser);
-                        }
-                    }, 500);
-                });
-                
-                // استقبال الترحيب
-                this.socket.on('welcome', (data) => {
-                    console.log('👋 ترحيب من الخادم:', data.message);
-                    this.showToast(data.message, 'success');
-                });
-                
-                // استقبال البيانات الأولية
-                this.socket.on('initialData', (data) => {
-                    console.log('📥 البيانات الأولية:', data);
-                    this.handleInitialData(data);
-                });
-                
-                // استقبال تحديث التصويت
-                this.socket.on('pollUpdate', (pollData) => {
-                    console.log('📊 تحديث التصويت:', pollData);
-                    this.updatePollDisplay(pollData);
-                });
-                
-                // استقبال رسالة جديدة
-                this.socket.on('newMessage', (message) => {
-                    console.log('💬 رسالة جديدة:', message);
-                    this.addMessage(message);
-                    
-                    // تشغيل صوت الإشعار
-                    if (this.soundEnabled && message.userId !== this.socket?.id) {
-                        this.playNotificationSound();
-                    }
-                });
-                
-                // تأكيد إرسال الرسالة
-                this.socket.on('messageSent', (data) => {
-                    console.log('✅ تأكيد إرسال الرسالة:', data.id);
-                    this.showToast('تم إرسال رسالتك', 'success');
-                });
-                
-                // مستخدم جديد انضم
-                this.socket.on('userJoined', (data) => {
-                    console.log('👤 مستخدم جديد:', data.user.twitter);
-                    this.updateOnlineUsers(data.onlineCount);
-                    
-                    if (data.user.twitter !== this.currentUser?.twitter) {
-                        this.showToast(`${data.user.twitter} انضم إلى الدردشة`, 'info');
-                    }
-                });
-                
-                // مستخدم غادر
-                this.socket.on('userLeft', (data) => {
-                    console.log('👋 مستخدم غادر:', data.user.twitter);
-                    this.updateOnlineUsers(data.onlineCount);
-                    
-                    if (data.user.twitter !== this.currentUser?.twitter) {
-                        this.showToast(`${data.user.twitter} غادر الدردشة`, 'warning');
-                    }
-                });
-                
-                // تحديث عدد المستخدمين
-                this.socket.on('usersUpdate', (data) => {
-                    this.updateOnlineUsers(data.count || data);
-                });
-                
-                // تحديث الإعجابات
-                this.socket.on('messageLiked', (data) => {
-                    this.updateMessageLikes(data.messageId, data.likes);
-                });
-                
-                // خطأ في التصويت
-                this.socket.on('voteError', (error) => {
-                    this.showToast(error.message || 'خطأ في التصويت', 'error');
-                });
-                
-                // خطأ عام
-                this.socket.on('error', (error) => {
-                    console.error('❌ خطأ من الخادم:', error);
-                    this.showToast(error.message || 'حدث خطأ في الخادم', 'error');
-                });
-                
-                // انقطع الاتصال
-                this.socket.on('disconnect', (reason) => {
-                    console.log('❌ انقطع الاتصال:', reason);
-                    this.isConnected = false;
-                    this.updateConnectionStatus('disconnected', 'انقطع الاتصال');
-                    
-                    if (reason === 'io server disconnect') {
-                        setTimeout(() => this.socket.connect(), 1000);
-                    }
-                });
-                
-                // خطأ في الاتصال
-                this.socket.on('connect_error', (error) => {
-                    console.error('❌ خطأ في الاتصال:', error);
-                    this.handleConnectionError();
-                });
-                
-                // ping/pong
-                this.socket.on('pong', (data) => {
-                    // console.log('🏓 استجابة ping:', data);
-                });
-            }
-            
-            // ============ معالجة البيانات الأولية ============
-            handleInitialData(data) {
-                // تحديث التصويت
-                if (data.poll) {
-                    this.updatePollDisplay(data.poll);
-                }
-                
-                // تحميل الرسائل السابقة
-                if (data.recentMessages && data.recentMessages.length > 0) {
-                    this.elements.chatMessages.innerHTML = '';
-                    
-                    data.recentMessages.forEach(msg => {
-                        this.addMessage(msg, false);
-                    });
-                    
-                    setTimeout(() => {
-                        this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
-                    }, 100);
-                }
-                
-                // تحديث عدد المستخدمين
-                if (data.totalOnline !== undefined) {
-                    this.updateOnlineUsers(data.totalOnline);
-                }
-                
-                // تحديث التصويت السابق للمستخدم
-                if (data.userVote) {
-                    this.selectedVote = data.userVote;
-                    this.updateVoteButton();
-                }
-            }
-            
-            // ============ تحديث عرض التصويت ============
-            updatePollDisplay(pollData) {
-                if (!pollData) return;
-                
-                const nigeriaPercent = pollData.nigeria?.percentage || 0;
-                const algeriaPercent = pollData.algeria?.percentage || 0;
-                const totalVotes = pollData.total || 0;
-                
-                // تحديث النسب المئوية
-                this.elements.nigeriaPercent.textContent = nigeriaPercent + '%';
-                this.elements.algeriaPercent.textContent = algeriaPercent + '%';
-                
-                // تحديث الأشرطة
-                this.elements.nigeriaBar.style.width = nigeriaPercent + '%';
-                this.elements.algeriaBar.style.width = algeriaPercent + '%';
-                
-                // تحديث إجمالي الأصوات
-                this.elements.totalVotes.textContent = totalVotes.toLocaleString();
-                
-                // تحديث الوقت
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                this.elements.lastUpdate.textContent = timeString;
-                this.elements.pollUpdateTime.textContent = timeString;
-                
-                // تحديث زر التصويت
-                this.updateVoteButton();
-            }
-            
-            // ============ معالجة اختيار التصويت ============
-            handleVoteSelect(event) {
-                const option = event.currentTarget;
-                const vote = option.dataset.vote;
-                
-                // إلغاء تحديد الخيارات الأخرى
-                this.elements.pollOptions.forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                
-                // تحديد الخيار المختار
-                option.classList.add('selected');
-                this.selectedVote = vote;
-                
-                // تحديث زر التصويت
-                this.updateVoteButton();
-            }
-            
-            // ============ تحديث زر التصويت ============
-            updateVoteButton() {
-                if (!this.selectedVote) {
-                    this.elements.voteButton.disabled = true;
-                    this.elements.voteButtonText.textContent = 'اختر فريقاً أولاً';
-                    return;
-                }
-                
-                const teamName = this.selectedVote === 'nigeria' ? 'نيجيريا 🇳🇬' : 'الجزائر 🇩🇿';
-                this.elements.voteButton.disabled = false;
-                this.elements.voteButtonText.textContent = `صوّت لـ ${teamName}`;
-            }
-            
-            // ============ معالجة التصويت ============
-            handleVote() {
-                if (!this.selectedVote) {
-                    this.showToast('يرجى اختيار فريق للتصويت', 'error');
-                    return;
-                }
-                
-                if (!this.socket || !this.isConnected) {
-                    this.showToast('غير متصل بالخادم', 'error');
-                    return;
-                }
-                
-                // إرسال التصويت
-                this.socket.emit('vote', {
-                    team: this.selectedVote,
-                    timestamp: Date.now()
-                });
-                
-                // تعطيل زر التصويت مؤقتاً
-                this.elements.voteButton.disabled = true;
-                this.elements.voteButtonText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التصويت...';
-                
-                // إعادة تمكين الزر بعد 3 ثواني
-                setTimeout(() => {
-                    this.elements.voteButton.disabled = false;
-                    this.updateVoteButton();
-                }, 3000);
-            }
-            
-            // ============ إعادة تعيين التصويت ============
-            resetPoll() {
-                if (confirm('هل تريد إعادة تعيين جميع التصويتات؟')) {
-                    if (this.socket && this.isConnected) {
-                        this.socket.emit('resetPoll');
-                        this.showToast('جاري إعادة تعيين التصويت...', 'info');
-                    } else {
-                        this.showToast('غير متصل بالخادم', 'error');
-                    }
-                }
-            }
-            
-            // ============ مشاركة نتائج التصويت ============
-            sharePollResults() {
-                const nigeriaPercent = this.elements.nigeriaPercent.textContent;
-                const algeriaPercent = this.elements.algeriaPercent.textContent;
-                const totalVotes = this.elements.totalVotes.textContent;
-                
-                const text = `📊 نتائج استطلاع كأس أفريقيا 2026:
-🇳🇬 نيجيريا: ${nigeriaPercent}
-🇩🇿 الجزائر: ${algeriaPercent}
-إجمالي الأصوات: ${totalVotes}
+const channels = [
+/* ================= beIN MAX ================= */
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8 "},
 
-شارك في التصويت الآن على MisterAI TV!`;
-                
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'نتائج استطلاع كأس أفريقيا',
-                        text: text,
-                        url: window.location.href
-                    }).catch(() => this.copyToClipboard(text));
-                } else {
-                    this.copyToClipboard(text);
-                }
-            }
-            
-            // ============ نسخ النص للحافظة ============
-            copyToClipboard(text) {
-                navigator.clipboard.writeText(text)
-                    .then(() => this.showToast('تم نسخ النتائج', 'success'))
-                    .catch(() => this.showToast('تعذر النسخ', 'error'));
-            }
-            
-            // ============ اختبار الاتصال ============
-            testConnection() {
-                if (!this.socket || !this.isConnected) {
-                    this.showToast('غير متصل بالخادم', 'error');
-                    return;
-                }
-                
-                // إرسال رسالة اختبار
-                this.socket.emit('sendMessage', {
-                    text: '🧪 رسالة اختبار الاتصال',
-                    timestamp: Date.now()
-                });
-                
-                this.showToast('تم إرسال رسالة اختبار', 'info');
-            }
-            
-            // ============ معالجة الكتابة ============
-            handleTyping() {
-                const now = Date.now();
-                
-                // إرسال مؤشر الكتابة كل 3 ثواني
-                if (now - this.lastTypingTime > 3000) {
-                    if (this.socket && this.isConnected) {
-                        this.socket.emit('typing');
-                    }
-                    this.lastTypingTime = now;
-                }
-                
-                // إظهار/إخفاء مؤشر الكتابة
-                if (this.elements.chatInput.value.trim().length > 0) {
-                    this.elements.typingIndicator.classList.add('show');
-                } else {
-                    this.elements.typingIndicator.classList.remove('show');
-                }
-                
-                // إعادة تعيين المهلة
-                clearTimeout(this.typingTimeout);
-                this.typingTimeout = setTimeout(() => {
-                    this.elements.typingIndicator.classList.remove('show');
-                }, 2000);
-            }
-            
-            // ============ إرسال رسالة ============
-            sendMessage() {
-                const text = this.elements.chatInput.value.trim();
-                
-                if (!text) {
-                    this.showToast('يرجى كتابة رسالة', 'error');
-                    return;
-                }
-                
-                if (text.length < 2) {
-                    this.showToast('الرسالة قصيرة جداً', 'error');
-                    return;
-                }
-                
-                if (!this.socket || !this.isConnected) {
-                    this.showToast('غير متصل بالخادم', 'error');
-                    return;
-                }
-                
-                // إرسال الرسالة
-                this.socket.emit('sendMessage', {
-                    text: text,
-                    timestamp: Date.now()
-                });
-                
-                // مسح حقل الإدخال
-                this.elements.chatInput.value = '';
-                this.elements.chatInput.focus();
-                
-                // إخفاء مؤشر الكتابة
-                this.elements.typingIndicator.classList.remove('show');
-            }
-            
-            // ============ إضافة رسالة للشات ============
-            addMessage(message, scroll = true) {
-                // إزالة رسالة "لا توجد رسائل"
-                if (this.elements.chatMessages.innerHTML.includes('لا توجد رسائل')) {
-                    this.elements.chatMessages.innerHTML = '';
-                }
-                
-                // إنشاء عنصر الرسالة
-                const messageElement = this.createMessageElement(message);
-                this.elements.chatMessages.appendChild(messageElement);
-                
-                // التمرير لأسفل
-                if (scroll) {
-                    setTimeout(() => {
-                        this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
-                    }, 100);
-                }
-                
-                // تأثير للرسائل الجديدة
-                if (message.userId !== this.socket?.id) {
-                    messageElement.classList.add('new');
-                    setTimeout(() => {
-                        messageElement.classList.remove('new');
-                    }, 2000);
-                }
-            }
-            
-            // ============ إنشاء عنصر رسالة ============
-            createMessageElement(message) {
-                const div = document.createElement('div');
-                div.className = `message ${message.type || 'user'}`;
-                div.dataset.messageId = message.id;
-                
-                // إعداد محتوى الرسالة
-                let actionsHTML = '';
-                if (message.type === 'user') {
-                    actionsHTML = `
-                        <div class="message-actions">
-                            <button class="message-action like-btn" data-message-id="${message.id}">
-                                <i class="far fa-thumbs-up"></i>
-                                <span class="like-count">${message.likes || 0}</span>
-                            </button>
-                        </div>
-                    `;
-                }
-                
-                div.innerHTML = `
-                    <div class="message-header">
-                        <div class="message-user">
-                            <div class="message-avatar">
-                                ${message.twitter?.charAt(1)?.toUpperCase() || '?'}
-                            </div>
-                            ${this.escapeHtml(message.user || 'مستخدم')}
-                            <span class="twitter-badge">${this.escapeHtml(message.twitter || '@unknown')}</span>
-                        </div>
-                        <div class="message-time">${message.time || '--:--'}</div>
-                    </div>
-                    <div class="message-text">${this.escapeHtml(message.text)}</div>
-                    ${actionsHTML}
-                `;
-                
-                return div;
-            }
-            
-            // ============ تحديث عدد الإعجابات ============
-            updateMessageLikes(messageId, likes) {
-                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
-                if (messageElement) {
-                    const likeCount = messageElement.querySelector('.like-count');
-                    if (likeCount) {
-                        likeCount.textContent = likes;
-                    }
-                }
-            }
-            
-            // ============ إعجاب على رسالة ============
-            likeMessage(messageId) {
-                if (!this.socket || !this.isConnected) return;
-                
-                this.socket.emit('likeMessage', messageId);
-            }
-            
-            // ============ مسح الشات ============
-            clearChat() {
-                if (confirm('هل تريد مسح جميع الرسائل في الشات؟')) {
-                    this.elements.chatMessages.innerHTML = '';
-                    this.showToast('تم مسح الشات', 'success');
-                }
-            }
-            
-            // ============ عرض منتقي الإيموجي ============
-            showEmojiPicker() {
-                const emojis = ['😀', '😂', '🥳', '⚽', '🎉', '👍', '❤️', '🔥', '⭐', '🏆', '🇳🇬', '🇩🇿', '👏', '🙏', '🎯'];
-                
-                const picker = document.createElement('div');
-                picker.className = 'emoji-picker';
-                picker.style.cssText = `
-                    position: absolute;
-                    bottom: 70px;
-                    right: 20px;
-                    background: rgba(20, 25, 35, 0.98);
-                    backdrop-filter: blur(20px);
-                    border-radius: 10px;
-                    padding: 15px;
-                    display: grid;
-                    grid-template-columns: repeat(5, 1fr);
-                    gap: 8px;
-                    border: 2px solid var(--info);
-                    z-index: 1000;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-                `;
-                
-                emojis.forEach(emoji => {
-                    const btn = document.createElement('button');
-                    btn.textContent = emoji;
-                    btn.style.cssText = `
-                        background: none;
-                        border: none;
-                        font-size: 1.8rem;
-                        cursor: pointer;
-                        padding: 8px;
-                        border-radius: 8px;
-                        transition: all 0.3s ease;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    `;
-                    btn.onmouseover = () => btn.style.background = 'rgba(255, 255, 255, 0.1)';
-                    btn.onmouseout = () => btn.style.background = 'none';
-                    btn.onclick = () => {
-                        this.elements.chatInput.value += emoji;
-                        this.elements.chatInput.focus();
-                        picker.remove();
-                    };
-                    picker.appendChild(btn);
-                });
-                
-                document.body.appendChild(picker);
-                
-                // إغلاق المنتقي عند النقر خارجياً
-                setTimeout(() => {
-                    const closePicker = (e) => {
-                        if (!picker.contains(e.target) && e.target !== this.elements.emojiBtn) {
-                            picker.remove();
-                            document.removeEventListener('click', closePicker);
-                        }
-                    };
-                    document.addEventListener('click', closePicker);
-                }, 100);
-            }
-            
-            // ============ تحميل سجل المحادثة ============
-            loadChatHistory() {
-                this.showToast('جاري تحميل سجل المحادثة...', 'info');
-                
-                fetch('/api/chat/history?limit=50')
-                    .then(res => res.json())
-                    .then(data => {
-                        const currentMessages = this.elements.chatMessages.innerHTML;
-                        
-                        this.elements.chatMessages.innerHTML = '';
-                        data.messages.forEach(msg => {
-                            this.addMessage(msg, false);
-                        });
-                        
-                        this.showToast(`تم تحميل ${data.messages.length} رسالة`, 'success');
-                    })
-                    .catch(error => {
-                        console.error('❌ خطأ في تحميل السجل:', error);
-                        this.showToast('خطأ في تحميل السجل', 'error');
-                    });
-            }
-            
-            // ============ عرض معلومات التصحيح ============
-            showDebugInfo() {
-                const debugInfo = {
-                    socketId: this.socket?.id,
-                    isConnected: this.isConnected,
-                    currentUser: this.currentUser,
-                    selectedVote: this.selectedVote,
-                    reconnectAttempts: this.reconnectAttempts,
-                    timestamp: new Date().toISOString()
-                };
-                
-                const debugWindow = window.open('', '_blank');
-                debugWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Debug - MisterAI TV</title>
-                        <style>
-                            body { 
-                                font-family: monospace; 
-                                margin: 20px; 
-                                background: #1a1a1a; 
-                                color: #00ff88; 
-                            }
-                            .section { 
-                                background: #2a2a2a; 
-                                padding: 15px; 
-                                margin: 10px 0; 
-                                border-radius: 5px; 
-                                border-left: 4px solid #00A859;
-                            }
-                            pre { 
-                                background: #333; 
-                                padding: 10px; 
-                                border-radius: 5px; 
-                                overflow: auto; 
-                                max-height: 300px;
-                            }
-                            button { 
-                                background: #00A859; 
-                                color: white; 
-                                border: none; 
-                                padding: 10px 20px; 
-                                border-radius: 5px; 
-                                cursor: pointer; 
-                                margin: 5px;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>🐛 معلومات تصحيح MisterAI TV</h1>
-                        
-                        <div class="section">
-                            <h2>🔗 حالة الاتصال</h2>
-                            <p>Socket ID: ${debugInfo.socketId || 'غير متصل'}</p>
-                            <p>الحالة: ${debugInfo.isConnected ? '🟢 متصل' : '🔴 غير متصل'}</p>
-                            <p>محاولات إعادة الاتصال: ${debugInfo.reconnectAttempts}</p>
-                        </div>
-                        
-                        <div class="section">
-                            <h2>👤 بيانات المستخدم</h2>
-                            <pre>${JSON.stringify(debugInfo.currentUser, null, 2)}</pre>
-                        </div>
-                        
-                        <div class="section">
-                            <h2>🗳️ التصويت المحدد</h2>
-                            <p>${debugInfo.selectedVote || 'لم يتم الاختيار'}</p>
-                        </div>
-                        
-                        <div class="section">
-                            <h2>🕐 وقت الخادم</h2>
-                            <p>${debugInfo.timestamp}</p>
-                        </div>
-                        
-                        <button onclick="location.reload()">🔄 تحديث</button>
-                        <button onclick="window.close()">❌ إغلاق</button>
-                        
-                        <script>
-                            // تحديث تلقائي كل 10 ثواني
-                            setInterval(() => location.reload(), 10000);
-                        </script>
-                    </body>
-                    </html>
-                `);
-            }
-            
-            // ============ تبديل الصوت ============
-            toggleSound() {
-                this.soundEnabled = !this.soundEnabled;
-                const icon = this.elements.soundBtn.querySelector('i');
-                
-                if (this.soundEnabled) {
-                    icon.className = 'fas fa-volume-up';
-                    this.showToast('تم تفعيل الأصوات', 'success');
-                } else {
-                    icon.className = 'fas fa-volume-mute';
-                    this.showToast('تم تعطيل الأصوات', 'warning');
-                }
-            }
-            
-            // ============ تشغيل صوت الإشعار ============
-            playNotificationSound() {
-                if (!this.soundEnabled) return;
-                
-                try {
-                    const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
-                    audio.volume = 0.3;
-                    audio.play().catch(() => {});
-                } catch (error) {
-                    console.log('تعذر تشغيل الصوت:', error);
-                }
-            }
-            
-            // ============ تبديل وضع ملء الشاشة ============
-            toggleFullscreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.log('تعذر تفعيل وضع ملء الشاشة:', err);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-            
-            // ============ تحديث عدد المستخدمين المتصلين ============
-            updateOnlineUsers(count) {
-                this.elements.onlineCount.textContent = count;
-                
-                // تحديث العداد في معلومات المستخدم
-                const userCounter = document.getElementById('user-online-counter');
-                if (userCounter) {
-                    userCounter.innerHTML = `<i class="fas fa-users"></i> ${count} متصل`;
-                }
-            }
-            
-            // ============ تحديث حالة الاتصال ============
-            updateConnectionStatus(status, text) {
-                this.elements.connectionStatus.className = `connection-status ${status}`;
-                this.elements.statusText.textContent = text;
-            }
-            
-            // ============ معالجة خطأ الاتصال ============
-            handleConnectionError() {
-                this.reconnectAttempts++;
-                
-                if (this.reconnectAttempts <= this.MAX_RECONNECT_ATTEMPTS) {
-                    this.updateConnectionStatus(
-                        'connecting', 
-                        `محاولة إعادة الاتصال (${this.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS})...`
-                    );
-                    
-                    setTimeout(() => {
-                        this.connectSocket();
-                    }, this.RECONNECT_DELAY * this.reconnectAttempts);
-                } else {
-                    this.updateConnectionStatus('disconnected', 'تعذر الاتصال بالخادم');
-                    this.showToast('تعذر الاتصال بالخادم. جاري استخدام الوضع المحلي.', 'error');
-                }
-            }
-            
-            // ============ تحديث إحصائيات الخادم ============
-            updateServerStats() {
-                if (!this.isConnected) return;
-                
-                fetch('/api/stats')
-                    .then(res => res.json())
-                    .then(data => {
-                        const uptime = Math.floor(data.uptime || 0);
-                        const hours = Math.floor(uptime / 3600);
-                        const minutes = Math.floor((uptime % 3600) / 60);
-                        
-                        this.elements.serverStats.innerHTML = `
-                            <i class="fas fa-server"></i>
-                            <span>${hours}س ${minutes}د | ${data.onlineUsers || 0} متصل</span>
-                        `;
-                    })
-                    .catch(console.error);
-            }
-            
-            // ============ تسجيل الخروج ============
-            logout() {
-                if (confirm('هل تريد تسجيل الخروج من الدردشة؟')) {
-                    // قطع الاتصال
-                    if (this.socket) {
-                        this.socket.disconnect();
-                    }
-                    
-                    // مسح بيانات المستخدم
-                    localStorage.removeItem('misterai_user');
-                    this.currentUser = null;
-                    
-                    // إعادة تحميل الصفحة
-                    setTimeout(() => {
-                        location.reload();
-                    }, 500);
-                }
-            }
-            
-            // ============ عرض رسالة خطأ ============
-            showError(message) {
-                this.elements.loginError.textContent = message;
-                this.elements.loginError.style.display = 'block';
-                this.elements.loginTwitter.focus();
-            }
-            
-            // ============ عرض رسالة toast ============
-            showToast(message, type = 'info') {
-                const colors = {
-                    success: '#00A859',
-                    error: '#D62828',
-                    warning: '#FFD700',
-                    info: '#1DA1F2'
-                };
-                
-                Toastify({
-                    text: message,
-                    duration: 3000,
-                    gravity: "top",
-                    position: "left",
-                    backgroundColor: colors[type] || colors.info,
-                    stopOnFocus: true,
-                    className: 'toast-arabic',
-                    style: {
-                        fontFamily: "'Cairo', sans-serif",
-                        fontWeight: '600',
-                        borderRadius: '8px',
-                        boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
-                    }
-                }).showToast();
-            }
-            
-            // ============ تجنب هجمات XSS ============
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-        }
-        
-        // ============ بدء التطبيق عند تحميل الصفحة ============
-        document.addEventListener('DOMContentLoaded', () => {
-            // إضافة CSS للـ Toast
-            const toastStyle = document.createElement('style');
-            toastStyle.textContent = `
-                .toast-arabic {
-                    font-family: 'Cairo', sans-serif !important;
-                    font-weight: 600 !important;
-                    border-radius: 8px !important;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
-                }
-            `;
-            document.head.appendChild(toastStyle);
-            
-            // التحقق من دعم WebSocket
-            if (!window.WebSocket && !window.MozWebSocket) {
-                alert('⚠️ متصفحك لا يدعم الدردشة المباشرة. يرجى استخدام متصفح حديث مثل Chrome أو Firefox.');
-            }
-            
-            // بدء التطبيق
-            try {
-                window.app = new MisterAITV();
-            } catch (error) {
-                console.error('❌ خطأ في بدء التطبيق:', error);
-                alert('حدث خطأ في تحميل التطبيق. يرجى تحديث الصفحة.');
-            }
-        });
-        
-        // ============ مستمعات الأحداث العالمية ============
-        window.addEventListener('online', () => {
-            if (window.app && !window.app.isConnected) {
-                setTimeout(() => {
-                    window.app.connectSocket();
-                }, 1000);
-            }
-        });
-        
-        window.addEventListener('offline', () => {
-            if (window.app) {
-                window.app.updateConnectionStatus('disconnected', 'غير متصل بالإنترنت');
-            }
-        });
-        
-        // منع إغلاق الصفحة عند وجود رسالة غير مرسلة
-        window.addEventListener('beforeunload', (e) => {
-            const chatInput = document.getElementById('chat-input');
-            if (chatInput && chatInput.value.trim().length > 0) {
-                e.preventDefault();
-                e.returnValue = 'لديك رسالة غير مرسلة. هل تريد المغادرة؟';
-            }
-        });
-    </script>
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8 "},
+
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8 "},
+
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8 "},
+{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8 "},
+
+/* ================= ALGERIA ================= */
+{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8 "},
+
+/* ================= CANAL / beIN FR ================= */
+{c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8 "},
+{c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8 "},
+{c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8 "},
+
+/* ================= beIN PREMIUM ================= */
+{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8 "},
+{c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8 "},
+
+/* ================= RAKUTEN TV UK ================= */
+{c:"RAKUTEN TV UK",n:"Rakuten TV Top Movies UK (1080p)",u:"https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Action Movies UK (1080p)",u:"https://54045f0c40fd442c8b06df076aaf1e85.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6065/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Comedy Movies UK (1080p)",u:"https://9be783d652cd4b099cf63e1dc134c4a3.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6181/master.m3u8"},
+{c:"RAKUTEN TV UK",n:"Rakuten TV Drama Movies UK (1080p)",u:"https://fee09fd665814f51b939b6d106cf5f66.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6093/master.m3u8"},
+
+/* ================= RAKUTEN TV GERMANY ================= */
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Top Movies Germany (1080p)",u:"https://cbb622b29f5d43b598991f3fa19de291.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5985/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Action Movies Germany (1080p)",u:"https://284824cf70404fdfb6ddf9349009c710.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6066/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Comedy Movies Germany (1080p)",u:"https://ecac08c9e2214375b907d6825aaf9a01.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6182/master.m3u8"},
+{c:"RAKUTEN TV GERMANY",n:"Rakuten TV Drama Movies Germany (1080p)",u:"https://968754c2483045c1a9a7f677caec35b6.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6096/master.m3u8"},
+
+/* ================= RAKUTEN TV ITALY ================= */
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Top Movies Italy (1080p)",u:"https://87f2e2e5e7624e3bad85da1ca2ed31a7.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6067/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Action Movies Italy (1080p)",u:"https://87f2e2e5e7624e3bad85da1ca2ed31a7.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6067/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Comedy Movies Italy (1080p)",u:"https://b8bc6c4b9be64bd6aeb3b92aa8521ed4.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6184/master.m3u8"},
+{c:"RAKUTEN TV ITALY",n:"Rakuten TV Drama Movies Italy (1080p)",u:"https://f84e0b1628464fab846160df957f269e.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6094/master.m3u8"},
+
+/* ================= RAKUTEN TV SPAIN ================= */
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Action Movies Spain (1080p)",u:"https://a9c57ec7ec5e4b7daeacc6316a0bb404.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6069/master.m3u8"},
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Comedy Movies Spain (1080p)",u:"https://71db867f03ce4d71a29e92155f07ab87.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6180/master.m3u8"},
+{c:"RAKUTEN TV SPAIN",n:"Rakuten TV Drama Movies Spain (1080p)",u:"https://a7089c89d85f453d850c4a1518b43076.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6092/master.m3u8"},
+
+/* ================= RAKUTEN TV FINLAND ================= */
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Top Movies Finland (1080p)",u:"https://1d1b0d4cb6ae4c31985d13221795695b.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6057/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Action Movies Finland (1080p)",u:"https://bca5a421a70c46ad911efd0a4767c4bf.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6075/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Comedy Movies Finland (1080p)",u:"https://a300af98e00746e2acf2346f43e47bd1.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6191/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Drama Movies Finland (1080p)",u:"https://d7e8ee3c924d4305a0c1840fe94c5d36.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6102/master.m3u8"},
+{c:"RAKUTEN TV FINLAND",n:"Rakuten TV Nordic Films (1080p)",u:"https://4aa9ef08b70d4b0c8f3519c5950b1930.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6303/master.m3u8"}
+];
+
+const list=document.getElementById("channels");
+let lastCat="";
+
+channels.forEach(ch=>{
+    if(ch.c!==lastCat){
+        const cat=document.createElement("div");
+        cat.className="cat";
+        cat.textContent=ch.c;
+        list.appendChild(cat);
+        lastCat=ch.c;
+    }
+    const btn=document.createElement("div");
+    btn.className="btn";
+    btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
+    btn.onclick=()=>window.open(ch.u,"_blank");
+    list.appendChild(btn);
+});
+</script>
+
 </body>
 </html>
