@@ -15,6 +15,7 @@
     --red:#D62828;
     --blue:#1DA1F2;
     --dark-blue:#0d8bd9;
+    --dark-red:#b22222;
 }
 *{box-sizing:border-box; margin:0; padding:0}
 html, body {
@@ -494,6 +495,13 @@ body{
     box-shadow: 0 0 15px rgba(29, 161, 242, 0.3);
 }
 
+.twitter-error {
+    color: var(--red);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    display: none;
+}
+
 /* زر التصويت */
 .vote-btn {
     background: linear-gradient(45deg, var(--green), var(--gold));
@@ -721,6 +729,30 @@ body{
     box-shadow: 0 10px 25px rgba(29, 161, 242, 0.4);
 }
 
+/* رسالة نجاح */
+.success-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, var(--green), var(--gold));
+    color: #000;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: 700;
+    z-index: 10000;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    animation: fadeInOut 3s ease;
+    display: none;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+
 /* شريط التمرير */
 ::-webkit-scrollbar {
     width: 8px;
@@ -813,6 +845,9 @@ body{
     <div class="gradient-bg"></div>
 </div>
 
+<!-- رسالة النجاح -->
+<div class="success-message" id="success-message"></div>
+
 <!-- السايدبار -->
 <div class="sidebar">
     <div class="brand">
@@ -823,7 +858,9 @@ body{
         </a>
     </div>
 
-    <div class="list" id="channels"></div>
+    <div class="list" id="channels">
+        <!-- سيتم تحميل القنوات هنا -->
+    </div>
 
     <div class="footer-rights">
         <div><b>كأس أفريقيا 2026</b> - البث المباشر</div>
@@ -913,7 +950,7 @@ body{
                     </div>
                     <input type="text" class="twitter-input" id="twitter-handle" 
                            placeholder="@neurosisnet" value="@neurosisnet">
-                    <div class="error-message" id="twitter-error" style="color: var(--red); font-size: 0.85rem; margin-top: 5px; display: none;"></div>
+                    <div class="twitter-error" id="twitter-error"></div>
                 </div>
                 
                 <button class="vote-btn" id="vote-button">
@@ -958,57 +995,92 @@ body{
 </div>
 
 <script>
-// تخزين البيانات محلياً
-class StorageManager {
+// ============ نظام التخزين المحسن ============
+class StorageSystem {
     constructor() {
-        this.POLL_KEY = 'afcon_poll_data';
-        this.CHAT_KEY = 'afcon_chat_messages';
-        this.USER_KEY = 'afcon_user_votes';
+        this.POLL_KEY = 'afcon_poll_real_data';
+        this.CHAT_KEY = 'afcon_chat_real_messages';
+        this.USER_VOTES_KEY = 'afcon_user_real_votes';
+        this.USER_ID_KEY = 'afcon_real_user_id';
+    }
+
+    // توليد معرف فريد للمستخدم
+    generateUserId() {
+        return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    getUserId() {
+        let userId = localStorage.getItem(this.USER_ID_KEY);
+        if (!userId) {
+            userId = this.generateUserId();
+            localStorage.setItem(this.USER_ID_KEY, userId);
+        }
+        return userId;
     }
 
     // بيانات الاستطلاع
     getPollData() {
         const defaultData = {
-            nigeria: { votes: 0, percent: 0 },
-            algeria: { votes: 0, percent: 0 },
+            nigeria: { votes: 0 },
+            algeria: { votes: 0 },
             total: 0,
-            voters: new Set()
+            lastUpdated: Date.now()
         };
         
         try {
-            const data = JSON.parse(localStorage.getItem(this.POLL_KEY)) || defaultData;
-            // تحويل voters من array إلى Set
-            if (Array.isArray(data.voters)) {
-                data.voters = new Set(data.voters);
-            } else if (!data.voters) {
-                data.voters = new Set();
-            }
-            return data;
+            const data = JSON.parse(localStorage.getItem(this.POLL_KEY));
+            return data || defaultData;
         } catch (e) {
-            console.error('Error loading poll data:', e);
+            console.error('خطأ في تحميل بيانات الاستطلاع:', e);
             return defaultData;
         }
     }
 
     savePollData(data) {
         try {
-            // تحويل Set إلى array للتخزين
-            const dataToSave = {
-                ...data,
-                voters: Array.from(data.voters)
-            };
-            localStorage.setItem(this.POLL_KEY, JSON.stringify(dataToSave));
+            data.lastUpdated = Date.now();
+            localStorage.setItem(this.POLL_KEY, JSON.stringify(data));
+            return true;
         } catch (e) {
-            console.error('Error saving poll data:', e);
+            console.error('خطأ في حفظ بيانات الاستطلاع:', e);
+            return false;
+        }
+    }
+
+    // تحقق من تصويت المستخدم
+    hasUserVoted(userId) {
+        try {
+            const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
+            return !!votes[userId];
+        } catch (e) {
+            console.error('خطأ في التحقق من تصويت المستخدم:', e);
+            return false;
+        }
+    }
+
+    saveUserVote(userId, vote) {
+        try {
+            const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
+            votes[userId] = {
+                vote: vote,
+                timestamp: Date.now(),
+                ip: 'local'
+            };
+            localStorage.setItem(this.USER_VOTES_KEY, JSON.stringify(votes));
+            return true;
+        } catch (e) {
+            console.error('خطأ في حفظ تصويت المستخدم:', e);
+            return false;
         }
     }
 
     // رسائل الشات
     getChatMessages() {
         try {
-            return JSON.parse(localStorage.getItem(this.CHAT_KEY)) || [];
+            const messages = JSON.parse(localStorage.getItem(this.CHAT_KEY)) || [];
+            return messages.slice(-100); // إرجاع آخر 100 رسالة فقط
         } catch (e) {
-            console.error('Error loading chat messages:', e);
+            console.error('خطأ في تحميل رسائل الشات:', e);
             return [];
         }
     }
@@ -1022,133 +1094,162 @@ class StorageManager {
                 messages.splice(0, messages.length - 100);
             }
             localStorage.setItem(this.CHAT_KEY, JSON.stringify(messages));
+            return true;
         } catch (e) {
-            console.error('Error saving chat message:', e);
-        }
-    }
-
-    // تحقق من تصويت المستخدم
-    hasUserVoted(userId) {
-        try {
-            const votes = JSON.parse(localStorage.getItem(this.USER_KEY)) || {};
-            return !!votes[userId];
-        } catch (e) {
-            console.error('Error checking user vote:', e);
+            console.error('خطأ في حفظ رسالة الشات:', e);
             return false;
         }
     }
 
-    saveUserVote(userId, vote) {
-        try {
-            const votes = JSON.parse(localStorage.getItem(this.USER_KEY)) || {};
-            votes[userId] = { vote, timestamp: Date.now() };
-            localStorage.setItem(this.USER_KEY, JSON.stringify(votes));
-        } catch (e) {
-            console.error('Error saving user vote:', e);
-        }
+    // إحصائيات النظام
+    getStats() {
+        const pollData = this.getPollData();
+        const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
+        const messages = this.getChatMessages();
+        
+        return {
+            totalVotes: pollData.total,
+            totalVoters: Object.keys(votes).length,
+            totalMessages: messages.length,
+            nigeriaVotes: pollData.nigeria.votes,
+            algeriaVotes: pollData.algeria.votes,
+            lastUpdated: pollData.lastUpdated
+        };
     }
 }
 
-// إدارة التطبيق
+// ============ مدير التطبيق ============
 class AppManager {
     constructor() {
-        this.storage = new StorageManager();
+        this.storage = new StorageSystem();
+        this.userId = this.storage.getUserId();
         this.pollData = this.storage.getPollData();
-        this.currentUser = this.getCurrentUser();
         this.selectedVote = null;
-        this.initializeApp();
+        this.isInitialized = false;
+        
+        this.initialize();
     }
 
-    getCurrentUser() {
-        // إنشاء معرف فريد للمستخدم إذا لم يكن موجوداً
-        let userId = localStorage.getItem('afcon_user_id');
-        if (!userId) {
-            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('afcon_user_id', userId);
-        }
-        return userId;
-    }
-
-    initializeApp() {
+    initialize() {
+        if (this.isInitialized) return;
+        
         this.loadChannels();
         this.updatePollDisplay();
         this.loadChatMessages();
         this.setupEventListeners();
         this.updateTwitterShareLink();
+        
+        this.isInitialized = true;
+        console.log('التطبيق جاهز للاستخدام');
     }
 
     loadChannels() {
         const channels = [
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
-            {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
-            {c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
-            {c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
-            {c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
-            {c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"}
+            // beIN MAX Channels
+            {c:"beIN SPORTS MAX",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
+            
+            {c:"beIN SPORTS MAX",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
+            
+            {c:"beIN SPORTS MAX",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8"},
+            {c:"beIN SPORTS MAX",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8"},
+            
+            // القنوات الوطنية
+            {c:"القنوات الوطنية",n:"البرنامج الوطني الجزائري",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
+            
+            // القنوات الفرنسية
+            {c:"القنوات الفرنسية",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
+            {c:"القنوات الفرنسية",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
+            {c:"القنوات الفرنسية",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
+            
+            // beIN PREMIUM
+            {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
+            {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
+            {c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
+            {c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
+            {c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"}
         ];
 
         const list = document.getElementById("channels");
-        let lastCat = "";
-
-        channels.forEach(ch => {
-            if (ch.c !== lastCat) {
-                const cat = document.createElement("div");
-                cat.className = "cat";
-                cat.textContent = ch.c;
-                list.appendChild(cat);
-                lastCat = ch.c;
+        list.innerHTML = '';
+        
+        let lastCategory = "";
+        
+        channels.forEach(channel => {
+            if (channel.c !== lastCategory) {
+                const category = document.createElement("div");
+                category.className = "cat";
+                category.textContent = channel.c;
+                list.appendChild(category);
+                lastCategory = channel.c;
             }
             
-            const btn = document.createElement("div");
-            btn.className = "btn";
-            btn.innerHTML = `<span>${ch.n}</span><span class="badge">LIVE</span>`;
-            btn.onclick = () => window.open(ch.u, "_blank");
-            list.appendChild(btn);
+            const button = document.createElement("div");
+            button.className = "btn";
+            button.innerHTML = `
+                <span>${channel.n}</span>
+                <span class="badge">LIVE</span>
+            `;
+            button.onclick = () => {
+                if (channel.u && channel.u.trim()) {
+                    window.open(channel.u.trim(), "_blank");
+                } else {
+                    this.showError("رابط البث غير متوفر حالياً", "general");
+                }
+            };
+            list.appendChild(button);
         });
     }
 
     updatePollDisplay() {
-        const nigeriaPercent = this.pollData.total > 0 ? 
-            Math.round((this.pollData.nigeria.votes / this.pollData.total) * 100) : 0;
-        const algeriaPercent = this.pollData.total > 0 ? 
-            Math.round((this.pollData.algeria.votes / this.pollData.total) * 100) : 0;
-
+        const total = this.pollData.total;
+        const nigeriaVotes = this.pollData.nigeria.votes;
+        const algeriaVotes = this.pollData.algeria.votes;
+        
+        // حساب النسب المئوية
+        const nigeriaPercent = total > 0 ? Math.round((nigeriaVotes / total) * 100) : 0;
+        const algeriaPercent = total > 0 ? Math.round((algeriaVotes / total) * 100) : 0;
+        
+        // تحديث النسب المئوية
         document.getElementById('nigeria-percent').textContent = nigeriaPercent + '%';
         document.getElementById('algeria-percent').textContent = algeriaPercent + '%';
         
+        // تحديث أشرطة التقدم
         document.getElementById('nigeria-bar').style.width = nigeriaPercent + '%';
         document.getElementById('algeria-bar').style.width = algeriaPercent + '%';
         
-        document.getElementById('total-votes').textContent = this.pollData.total.toLocaleString();
+        // تحديث إجمالي الأصوات
+        document.getElementById('total-votes').textContent = total.toLocaleString();
         
         // تحديث وقت التحديث
         const now = new Date();
-        document.getElementById('last-update').textContent = 
-            `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        document.getElementById('last-update').textContent = timeString;
         
-        // تحديث زر التصويت
-        this.updateVoteButton();
+        // تحديث حالة زر التصويت
+        this.updateVoteButtonState();
     }
 
-    updateVoteButton() {
+    updateVoteButtonState() {
         const voteButton = document.getElementById('vote-button');
-        const hasVoted = this.storage.hasUserVoted(this.currentUser);
+        const hasVoted = this.storage.hasUserVoted(this.userId);
         
         if (hasVoted) {
             voteButton.innerHTML = '<i class="fas fa-check"></i> لقد صوّتت بالفعل';
             voteButton.disabled = true;
         } else if (this.selectedVote) {
-            voteButton.disabled = false;
             voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> صوّت الآن';
+            voteButton.disabled = false;
         } else {
-            voteButton.disabled = true;
             voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> اختر فريقاً أولاً';
+            voteButton.disabled = true;
         }
     }
 
@@ -1157,16 +1258,26 @@ class AppManager {
         const chatMessages = document.getElementById('chat-messages');
         chatMessages.innerHTML = '';
         
+        if (messages.length === 0) {
+            return;
+        }
+        
         messages.forEach(msg => {
-            this.addMessageToChat(msg.user, msg.twitter, msg.time, msg.text, false);
+            this.addMessageToDOM(msg.user, msg.twitter, msg.time, msg.text, false);
         });
         
-        // التمرير لأسفل
+        // التمرير لآخر رسالة
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    addMessageToChat(user, twitter, time, text, save = true) {
+    addMessageToDOM(user, twitter, time, text, shouldSave = true) {
         const chatMessages = document.getElementById('chat-messages');
+        
+        // إذا كانت الرسالة الأولى، أزل رسالة "لا توجد رسائل"
+        if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
+            chatMessages.innerHTML = '';
+        }
+        
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
         messageElement.innerHTML = `
@@ -1185,16 +1296,16 @@ class AppManager {
         
         chatMessages.appendChild(messageElement);
         
-        // التمرير لأسفل
+        // التمرير لآخر رسالة
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
-        // حفظ الرسالة
-        if (save) {
+        // حفظ الرسالة إذا كان مطلوباً
+        if (shouldSave) {
             this.storage.saveChatMessage({
-                user,
-                twitter,
-                time,
-                text,
+                user: user,
+                twitter: twitter,
+                time: time,
+                text: text,
                 timestamp: Date.now()
             });
         }
@@ -1204,8 +1315,8 @@ class AppManager {
         // اختيار خيار التصويت
         document.querySelectorAll('.poll-option').forEach(option => {
             option.addEventListener('click', (e) => {
-                if (this.storage.hasUserVoted(this.currentUser)) {
-                    this.showError('لقد قمت بالتصويت مسبقاً!', 'vote');
+                if (this.storage.hasUserVoted(this.userId)) {
+                    this.showError('لقد قمت بالتصويت مسبقاً!', 'general');
                     return;
                 }
                 
@@ -1219,222 +1330,285 @@ class AppManager {
                 this.selectedVote = e.currentTarget.getAttribute('data-vote');
                 
                 // تحديث زر التصويت
-                this.updateVoteButton();
+                this.updateVoteButtonState();
             });
         });
 
+        // زر التصويت
+        document.getElementById('vote-button').addEventListener('click', () => this.submitVote());
+
         // إرسال رسالة في الشات
         document.getElementById('send-btn').addEventListener('click', () => this.sendChatMessage());
+        
+        // إرسال رسالة عند الضغط على Enter
         document.getElementById('chat-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.sendChatMessage();
             }
         });
 
-        // التصويت
-        document.getElementById('vote-button').addEventListener('click', () => this.submitVote());
+        // تحديث رابط تويتر عند تغيير الحساب
+        document.getElementById('twitter-handle').addEventListener('input', () => {
+            this.updateTwitterShareLink();
+            this.hideError('twitter');
+        });
+    }
+
+    validateTwitterHandle(handle) {
+        if (!handle || handle.trim() === '') {
+            return { valid: false, error: 'يرجى إدخال حساب تويتر' };
+        }
+        
+        const trimmedHandle = handle.trim();
+        
+        if (!trimmedHandle.startsWith('@')) {
+            return { valid: false, error: 'يجب أن يبدأ حساب تويتر بـ @' };
+        }
+        
+        if (trimmedHandle.length < 2) {
+            return { valid: false, error: 'حساب تويتر قصير جداً' };
+        }
+        
+        if (trimmedHandle.length > 20) {
+            return { valid: false, error: 'حساب تويتر طويل جداً' };
+        }
+        
+        // تحقق من الأحرف المسموحة
+        const validPattern = /^@[a-zA-Z0-9_]+$/;
+        if (!validPattern.test(trimmedHandle)) {
+            return { valid: false, error: 'يحتوي حساب تويتر على أحرف غير مسموحة' };
+        }
+        
+        return { valid: true, handle: trimmedHandle };
+    }
+
+    submitVote() {
+        // تحقق إذا كان المستخدم قد صوّت مسبقاً
+        if (this.storage.hasUserVoted(this.userId)) {
+            this.showError('لقد قمت بالتصويت مسبقاً!', 'general');
+            return;
+        }
+        
+        // تحقق من اختيار خيار
+        if (!this.selectedVote) {
+            this.showError('يرجى اختيار فريق للتصويت', 'general');
+            return;
+        }
+        
+        // تحقق من حساب تويتر
+        const twitterHandle = document.getElementById('twitter-handle').value;
+        const validation = this.validateTwitterHandle(twitterHandle);
+        
+        if (!validation.valid) {
+            this.showError(validation.error, 'twitter');
+            return;
+        }
+        
+        // تحديث بيانات الاستطلاع
+        this.pollData[this.selectedVote].votes += 1;
+        this.pollData.total += 1;
+        
+        // حفظ البيانات
+        const pollSaved = this.storage.savePollData(this.pollData);
+        const voteSaved = this.storage.saveUserVote(this.userId, this.selectedVote);
+        
+        if (!pollSaved || !voteSaved) {
+            this.showError('حدث خطأ في حفظ التصويت', 'general');
+            return;
+        }
+        
+        // تحديث العرض
+        this.updatePollDisplay();
+        
+        // إضافة رسالة للشات
+        const voteText = this.selectedVote === 'nigeria' ? 
+            'صوت لصالح نيجيريا ⚽🇳🇬' : 
+            'صوت لصالح الجزائر ⚽🇩🇿';
+        
+        const now = new Date();
+        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        this.addMessageToDOM('مشجع جديد', validation.handle, timeString, 
+            `${voteText} في استطلاع رأي كأس أفريقيا!`);
+        
+        // تحديث رابط تويتر
+        this.updateTwitterShareLink();
+        
+        // إظهار رسالة نجاح
+        this.showSuccess(`شكراً لتصويتك ${validation.handle}! صوتك تم تسجيله بنجاح.`);
+        
+        // إخفاء الأخطاء
+        this.hideError('twitter');
+        this.hideError('general');
     }
 
     sendChatMessage() {
         const chatInput = document.getElementById('chat-input');
         const messageText = chatInput.value.trim();
-        const twitterHandle = document.getElementById('twitter-handle').value.trim() || '@neurosisnet';
-
-        // التحقق من المدخلات
+        
+        // تحقق من الرسالة
         if (!messageText) {
-            this.showError('يرجى كتابة رسالة قبل الإرسال!', 'chat');
+            this.showError('يرجى كتابة رسالة قبل الإرسال', 'chat');
             return;
         }
-
+        
         if (messageText.length < 2) {
-            this.showError('الرسالة قصيرة جداً!', 'chat');
+            this.showError('الرسالة قصيرة جداً', 'chat');
             return;
         }
-
+        
         if (messageText.length > 200) {
-            this.showError('الرسالة طويلة جداً! الحد الأقصى 200 حرف.', 'chat');
+            this.showError('الرسالة طويلة جداً (الحد الأقصى 200 حرف)', 'chat');
             return;
         }
-
-        if (!twitterHandle.startsWith('@') || twitterHandle.length < 2) {
-            this.showError('يرجى إدخال حساب تويتر صحيح يبدأ بـ @', 'twitter');
+        
+        // تحقق من حساب تويتر
+        const twitterHandle = document.getElementById('twitter-handle').value;
+        const validation = this.validateTwitterHandle(twitterHandle);
+        
+        if (!validation.valid) {
+            this.showError(validation.error, 'twitter');
             return;
         }
-
+        
         // إضافة الرسالة
         const now = new Date();
         const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        this.addMessageToChat('مستخدم', twitterHandle, timeString, messageText);
-
+        
+        this.addMessageToDOM('مشجع', validation.handle, timeString, messageText);
+        
         // مسح حقل الإدخال
         chatInput.value = '';
         
-        // إخفاء أي أخطاء
+        // إخفاء الأخطاء
         this.hideError('chat');
-    }
-
-    submitVote() {
-        if (!this.selectedVote || this.storage.hasUserVoted(this.currentUser)) {
-            return;
-        }
-
-        const twitterHandle = document.getElementById('twitter-handle').value.trim() || '@neurosisnet';
-
-        // التحقق من حساب تويتر
-        if (!twitterHandle.startsWith('@') || twitterHandle.length < 2) {
-            this.showError('يرجى إدخال حساب تويتر صحيح يبدأ بـ @', 'twitter');
-            return;
-        }
-
-        // تحديث بيانات الاستطلاع
-        this.pollData[this.selectedVote].votes += 1;
-        this.pollData.total += 1;
-        this.pollData.voters.add(this.currentUser);
-
-        // إعادة حساب النسب المئوية
-        const nigeriaPercent = Math.round((this.pollData.nigeria.votes / this.pollData.total) * 100);
-        const algeriaPercent = Math.round((this.pollData.algeria.votes / this.pollData.total) * 100);
-        
-        this.pollData.nigeria.percent = nigeriaPercent;
-        this.pollData.algeria.percent = algeriaPercent;
-
-        // حفظ البيانات
-        this.storage.savePollData(this.pollData);
-        this.storage.saveUserVote(this.currentUser, this.selectedVote);
-
-        // تحديث العرض
-        this.updatePollDisplay();
-
-        // إضافة رسالة للشات عن التصويت
-        const voteText = this.selectedVote === 'nigeria' ? 
-            `صوت لصالح نيجيريا ⚽🇳🇬` : 
-            `صوت لصالح الجزائر ⚽🇩🇿`;
-        
-        const now = new Date();
-        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        this.addMessageToChat('متصوّت', twitterHandle, timeString, `${voteText} في استطلاع رأي كأس أفريقيا!`);
-
-        // تحديث رابط تويتر
-        this.updateTwitterShareLink();
-
-        // إظهار رسالة نجاح
-        this.showSuccess(`شكراً لتصويتك ${twitterHandle}! صوتك تم تسجيله بنجاح.`);
-        
-        // إخفاء أي أخطاء
         this.hideError('twitter');
+        
+        // إظهار رسالة نجاح
+        this.showSuccess('تم إرسال رسالتك بنجاح!');
     }
 
     updateTwitterShareLink() {
-        const voteText = this.selectedVote === 'nigeria' ? 
-            'صوّتت لصالح نيجيريا 🇳🇬' : 
-            'صوّتت لصالح الجزائر 🇩🇿';
-        
         const twitterHandle = document.getElementById('twitter-handle').value.trim() || '@neurosisnet';
-        const hashtags = 'كأس_أفريقيا, NigeriaVsAlgeria, AFCON2026, MisterAITV';
-        const pollUrl = window.location.href.split('#')[0];
+        const validation = this.validateTwitterHandle(twitterHandle);
+        const handle = validation.valid ? validation.handle : '@neurosisnet';
         
-        const tweetText = `${voteText} في مباراة ربع النهائي لكأس أفريقيا 2026 عبر MisterAI TV! ${twitterHandle} شارك في الاستطلاع:`;
+        const voteText = this.selectedVote === 'nigeria' ? 
+            'صوت لصالح نيجيريا' : 
+            (this.selectedVote === 'algeria' ? 'صوت لصالح الجزائر' : 'شارك في الاستطلاع');
+        
+        const hashtags = 'كأس_أفريقيا, AFCON2026, MisterAITV';
+        const url = window.location.href.split('#')[0];
+        
+        const tweetText = `${voteText} في مباراة نيجيريا ضد الجزائر - دور ربع النهائي لكأس أفريقيا 2026! ${handle} `;
         const twitterShareBtn = document.getElementById('twitter-share-btn');
-        twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=${hashtags}&url=${encodeURIComponent(pollUrl)}`;
+        
+        twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=${hashtags}&url=${encodeURIComponent(url)}`;
     }
 
     showError(message, type = 'general') {
-        let errorElement;
+        // إخفاء جميع رسائل الخطأ أولاً
+        this.hideAllErrors();
         
-        switch(type) {
-            case 'twitter':
-                errorElement = document.getElementById('twitter-error');
-                break;
-            default:
-                errorElement = document.getElementById('twitter-error');
-        }
-        
-        if (errorElement) {
+        if (type === 'twitter') {
+            const errorElement = document.getElementById('twitter-error');
             errorElement.textContent = message;
             errorElement.style.display = 'block';
-            
-            // إخفاء الخطأ بعد 5 ثواني
-            setTimeout(() => {
-                this.hideError(type);
-            }, 5000);
+            errorElement.style.color = 'var(--red)';
+        } else if (type === 'chat') {
+            // لرسائل الشات، استخدم alert بسيط
+            alert('خطأ: ' + message);
         } else {
-            alert(message);
+            // للرسائل العامة، استخدم alert
+            alert('خطأ: ' + message);
         }
     }
 
     hideError(type = 'general') {
-        let errorElement;
-        
-        switch(type) {
-            case 'twitter':
-                errorElement = document.getElementById('twitter-error');
-                break;
-            default:
-                errorElement = document.getElementById('twitter-error');
-        }
-        
-        if (errorElement) {
+        if (type === 'twitter') {
+            const errorElement = document.getElementById('twitter-error');
             errorElement.style.display = 'none';
+            errorElement.textContent = '';
         }
+    }
+
+    hideAllErrors() {
+        this.hideError('twitter');
     }
 
     showSuccess(message) {
-        // إظهار رسالة نجاح مؤقتة
-        const successMsg = document.createElement('div');
-        successMsg.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, var(--green), var(--gold));
-            color: #000;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-weight: 700;
-            z-index: 10000;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            animation: fadeInOut 3s ease;
-        `;
+        const successElement = document.getElementById('success-message');
+        successElement.textContent = message;
+        successElement.style.display = 'block';
         
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInOut {
-                0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-                15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        successMsg.textContent = message;
-        document.body.appendChild(successMsg);
-        
+        // إخفاء الرسالة بعد 3 ثوان
         setTimeout(() => {
-            document.body.removeChild(successMsg);
-            document.head.removeChild(style);
+            successElement.style.display = 'none';
         }, 3000);
+    }
+
+    // دالة للحصول على إحصائيات النظام
+    getSystemStats() {
+        return this.storage.getStats();
     }
 }
 
-// تهيئة التطبيق عند تحميل الصفحة
+// ============ تهيئة التطبيق ============
 document.addEventListener('DOMContentLoaded', () => {
-    // بدء التطبيق
-    window.app = new AppManager();
+    // التحقق من دعم localStorage
+    if (!window.localStorage) {
+        alert('عذراً، متصفحك لا يدعم التخزين المحلي. بعض الميزات قد لا تعمل بشكل صحيح.');
+        return;
+    }
     
-    // تحديث رابط تويتر عند تغيير الحساب
-    document.getElementById('twitter-handle').addEventListener('input', () => {
-        window.app.updateTwitterShareLink();
-        window.app.hideError('twitter');
-    });
-    
-    // تحديث حجم الصفحة
-    window.addEventListener('resize', () => {
-        const chatMessages = document.getElementById('chat-messages');
-        if (chatMessages) {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    });
+    try {
+        // بدء التطبيق
+        window.appManager = new AppManager();
+        
+        // تحديث رابط تويتر عند التحميل
+        window.appManager.updateTwitterShareLink();
+        
+        // إضافة بعض رسائل الترحيب التلقائية إذا كان الشات فارغاً
+        setTimeout(() => {
+            const chatMessages = document.getElementById('chat-messages');
+            if (chatMessages && chatMessages.innerHTML.includes('لا توجد رسائل')) {
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                // رسالة ترحيب واحدة فقط
+                window.appManager.addMessageToDOM(
+                    'نظام MisterAI TV',
+                    '@neurosisnet',
+                    timeString,
+                    'مرحباً بكم في شات كأس أفريقيا! شاركوا آرائكم وتوقعاتكم للمباراة.',
+                    true
+                );
+            }
+        }, 1000);
+        
+        console.log('MisterAI TV - نظام الاستطلاع والشات جاهز للعمل');
+        
+    } catch (error) {
+        console.error('خطأ في تهيئة التطبيق:', error);
+        alert('حدث خطأ في تحميل التطبيق. يرجى تحديث الصفحة.');
+    }
+});
+
+// ============ دالات مساعدة إضافية ============
+// تحديث الوقت كل دقيقة
+setInterval(() => {
+    if (window.appManager) {
+        window.appManager.updatePollDisplay();
+    }
+}, 60000);
+
+// إصلاح المشاكل الشائعة
+window.addEventListener('error', function(e) {
+    console.error('حدث خطأ:', e.error);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('وعد مرفوض غير معالج:', e.reason);
 });
 </script>
 </body>
