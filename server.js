@@ -9,8 +9,10 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
 });
 
 const PORT = process.env.PORT || 3000;
@@ -20,132 +22,226 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// تخزين البيانات في الذاكرة
+// تخزين البيانات
+const activeUsers = new Map();
+const chatMessages = [];
 let pollData = {
   nigeria: { votes: 125, percentage: 62 },
   algeria: { votes: 75, percentage: 38 },
   total: 200,
   lastUpdated: Date.now()
 };
+const userVotes = new Map();
 
-let connectedUsers = new Map();
-let chatMessages = [];
-let userVotes = new Map();
+// تحسين الأداء: تخزين مؤقت للإحصائيات
+let cachedStats = null;
+let statsUpdateTime = 0;
 
 // WebSocket Events
 io.on('connection', (socket) => {
-  console.log('مستخدم جديد متصل:', socket.id);
-
-  // إرسال البيانات الأولية للمستخدم
-  socket.emit('initialData', {
-    poll: pollData,
-    messages: chatMessages.slice(-50),
-    users: Array.from(connectedUsers.values())
+  console.log('✅ مستخدم جديد متصل:', socket.id);
+  
+  // إرسال الترحيب
+  socket.emit('welcome', {
+    message: 'مرحباً بك في MisterAI TV',
+    serverTime: new Date().toISOString(),
+    version: '3.0.0'
   });
 
-  // مستخدم دخل
-  socket.on('userLogin', (userData) => {
+  // انضمام مستخدم
+  socket.on('join', (userData) => {
     const user = {
       id: socket.id,
-      ...userData,
-      joinedAt: Date.now()
+      socketId: socket.id,
+      name: userData.name,
+      twitter: userData.twitter,
+      avatar: userData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=00A859&color=fff`,
+      joinedAt: new Date().toISOString(),
+      lastActive: Date.now()
     };
     
-    connectedUsers.set(socket.id, user);
+    activeUsers.set(socket.id, user);
     
-    // إرسال إشعار للمستخدمين
-    io.emit('userJoined', user);
+    // إرسال بيانات أولية
+    socket.emit('initialData', {
+      poll: pollData,
+      recentMessages: chatMessages.slice(-30),
+      onlineUsers: Array.from(activeUsers.values()).map(u => ({
+        name: u.name,
+        twitter: u.twitter,
+        avatar: u.avatar
+      })),
+      totalOnline: activeUsers.size
+    });
     
-    // إرسال تحديث عدد المستخدمين
-    io.emit('usersUpdate', Array.from(connectedUsers.values()));
+    // إعلام الجميع بمستخدم جديد
+    io.emit('userJoined', {
+      user: {
+        name: user.name,
+        twitter: user.twitter,
+        avatar: user.avatar
+      },
+      onlineCount: activeUsers.size,
+      timestamp: new Date().toISOString()
+    });
     
-    console.log(`المستخدم ${user.twitter} دخل الدردشة`);
+    // رسالة نظام
+    const systemMessage = {
+      id: `sys_${Date.now()}`,
+      type: 'system',
+      user: 'نظام الدردشة',
+      twitter: '@MisterAI_TV',
+      avatar: 'https://ui-avatars.com/api/?name=MisterAI&background=1DA1F2&color=fff',
+      text: `🎉 ${user.twitter} انضم إلى الدردشة!`,
+      time: new Date().toLocaleTimeString('ar-EG', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      timestamp: Date.now()
+    };
+    
+    chatMessages.push(systemMessage);
+    io.emit('newMessage', systemMessage);
+    
+    console.log(`👤 ${user.twitter} انضم إلى الدردشة (المستخدمون: ${activeUsers.size})`);
   });
 
-  // استقبال رسالة شات
+  // استقبال رسالة
   socket.on('sendMessage', (messageData) => {
-    const user = connectedUsers.get(socket.id);
+    const user = activeUsers.get(socket.id);
     if (!user) return;
-
+    
+    if (!messageData.text || messageData.text.trim().length === 0) {
+      socket.emit('error', { message: 'الرسالة لا يمكن أن تكون فارغة' });
+      return;
+    }
+    
+    if (messageData.text.length > 500) {
+      socket.emit('error', { message: 'الرسالة طويلة جداً (الحد الأقصى 500 حرف)' });
+      return;
+    }
+    
     const message = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      type: 'user',
+      userId: socket.id,
       user: user.name,
       twitter: user.twitter,
-      text: messageData.text,
+      avatar: user.avatar,
+      text: messageData.text.trim(),
       time: new Date().toLocaleTimeString('ar-EG', { 
         hour: '2-digit', 
         minute: '2-digit' 
       }),
       timestamp: Date.now(),
-      userId: socket.id
+      likes: 0,
+      replies: []
     };
-
+    
+    // تحديث نشاط المستخدم
+    user.lastActive = Date.now();
+    activeUsers.set(socket.id, user);
+    
     // حفظ الرسالة
     chatMessages.push(message);
     
-    // الحفاظ على 200 رسالة كحد أقصى
-    if (chatMessages.length > 200) {
-      chatMessages = chatMessages.slice(-200);
+    // الحفاظ على 500 رسالة كحد أقصى
+    if (chatMessages.length > 500) {
+      chatMessages.splice(0, 100);
     }
-
-    // إرسال الرسالة للجميع
+    
+    // إرسال للجميع
     io.emit('newMessage', message);
-    console.log(`رسالة جديدة من ${user.twitter}: ${messageData.text}`);
+    
+    console.log(`💬 ${user.twitter}: ${message.text.substring(0, 50)}...`);
   });
 
   // استقبال تصويت
   socket.on('vote', (voteData) => {
-    const user = connectedUsers.get(socket.id);
-    if (!user) return;
-
-    // التحقق إذا كان المستخدم صوت مسبقاً
-    if (userVotes.has(socket.id)) {
-      socket.emit('voteError', 'لقد قمت بالتصويت مسبقاً!');
+    const user = activeUsers.get(socket.id);
+    if (!user) {
+      socket.emit('voteError', { message: 'يجب تسجيل الدخول أولاً' });
       return;
     }
-
-    // تحديث بيانات التصويت
-    const team = voteData.team;
-    pollData[team].votes++;
+    
+    if (!['nigeria', 'algeria'].includes(voteData.team)) {
+      socket.emit('voteError', { message: 'فريق غير صالح' });
+      return;
+    }
+    
+    // التحقق من التصويت السابق
+    if (userVotes.has(socket.id)) {
+      const previousVote = userVotes.get(socket.id);
+      if (previousVote.team === voteData.team) {
+        socket.emit('voteError', { message: 'لقد قمت بالتصويت لهذا الفريق مسبقاً' });
+        return;
+      }
+      
+      // إزالة التصويت السابق
+      pollData[previousVote.team].votes--;
+      pollData.total--;
+    }
+    
+    // تحديث التصويت الجديد
+    pollData[voteData.team].votes++;
     pollData.total++;
     
     // حساب النسب المئوية
     pollData.nigeria.percentage = Math.round((pollData.nigeria.votes / pollData.total) * 100);
     pollData.algeria.percentage = Math.round((pollData.algeria.votes / pollData.total) * 100);
     pollData.lastUpdated = Date.now();
-
+    
     // حفظ تصويت المستخدم
     userVotes.set(socket.id, {
-      team: team,
-      user: user,
+      userId: socket.id,
+      twitter: user.twitter,
+      team: voteData.team,
       timestamp: Date.now()
     });
-
+    
     // إرسال تحديث التصويت للجميع
     io.emit('pollUpdate', pollData);
-
-    // إرسال رسالة في الشات عن التصويت
-    const message = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+    
+    // رسالة نظام عن التصويت
+    const teamName = voteData.team === 'nigeria' ? 'نيجيريا 🇳🇬' : 'الجزائر 🇩🇿';
+    const systemMessage = {
+      id: `vote_${Date.now()}`,
+      type: 'vote',
       user: 'نظام التصويت',
       twitter: '@MisterAI_TV',
-      text: `🎯 ${user.twitter} صوت لصالح ${team === 'nigeria' ? 'نيجيريا 🇳🇬' : 'الجزائر 🇩🇿'}`,
+      avatar: 'https://ui-avatars.com/api/?name=Vote&background=FFD700&color=000',
+      text: `🎯 ${user.twitter} صوت لصالح ${teamName}`,
       time: new Date().toLocaleTimeString('ar-EG', { 
         hour: '2-digit', 
         minute: '2-digit' 
       }),
-      timestamp: Date.now(),
-      isSystem: true
+      timestamp: Date.now()
     };
-
-    chatMessages.push(message);
-    io.emit('newMessage', message);
-
-    console.log(`تصويت جديد لـ ${team} من ${user.twitter}`);
+    
+    chatMessages.push(systemMessage);
+    io.emit('newMessage', systemMessage);
+    
+    console.log(`🗳️ ${user.twitter} صوت لـ ${voteData.team}`);
   });
 
-  // طلب إعادة تعيين التصويت (للتطوير فقط)
-  socket.on('resetVotes', () => {
+  // استقبال تفاعل مع رسالة (إعجاب)
+  socket.on('likeMessage', (messageId) => {
+    const user = activeUsers.get(socket.id);
+    if (!user) return;
+    
+    const messageIndex = chatMessages.findIndex(msg => msg.id === messageId);
+    if (messageIndex !== -1) {
+      chatMessages[messageIndex].likes = (chatMessages[messageIndex].likes || 0) + 1;
+      io.emit('messageLiked', {
+        messageId: messageId,
+        likes: chatMessages[messageIndex].likes,
+        user: user.twitter
+      });
+    }
+  });
+
+  // طلب إعادة تعيين التصويت (للتطوير)
+  socket.on('resetPoll', () => {
     pollData = {
       nigeria: { votes: 125, percentage: 62 },
       algeria: { votes: 75, percentage: 38 },
@@ -154,29 +250,78 @@ io.on('connection', (socket) => {
     };
     userVotes.clear();
     io.emit('pollUpdate', pollData);
-    console.log('تم إعادة تعيين التصويت');
+    
+    const systemMessage = {
+      id: `reset_${Date.now()}`,
+      type: 'system',
+      user: 'نظام التصويت',
+      twitter: '@MisterAI_TV',
+      avatar: 'https://ui-avatars.com/api/?name=Reset&background=D62828&color=fff',
+      text: '🔄 تم إعادة تعيين استطلاع الرأي',
+      time: new Date().toLocaleTimeString('ar-EG', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      timestamp: Date.now()
+    };
+    
+    chatMessages.push(systemMessage);
+    io.emit('newMessage', systemMessage);
+    
+    console.log('🔄 تم إعادة تعيين التصويت');
   });
 
-  // مستخدم انقطع
-  socket.on('disconnect', () => {
-    const user = connectedUsers.get(socket.id);
+  // تحديث نشاط المستخدم
+  socket.on('activity', () => {
+    const user = activeUsers.get(socket.id);
     if (user) {
-      connectedUsers.delete(socket.id);
-      
-      // إرسال تحديث عدد المستخدمين
-      io.emit('usersUpdate', Array.from(connectedUsers.values()));
-      
-      // إرسال إشعار مغادرة
-      if (user.twitter) {
-        io.emit('userLeft', user);
-        console.log(`المستخدم ${user.twitter} غادر الدردشة`);
-      }
+      user.lastActive = Date.now();
+      activeUsers.set(socket.id, user);
     }
   });
 
   // ping/pong للحفاظ على الاتصال
   socket.on('ping', () => {
-    socket.emit('pong');
+    socket.emit('pong', { serverTime: Date.now() });
+  });
+
+  // انفصال المستخدم
+  socket.on('disconnect', () => {
+    const user = activeUsers.get(socket.id);
+    if (user) {
+      activeUsers.delete(socket.id);
+      
+      // إعلام الجميع بمغادرة المستخدم
+      io.emit('userLeft', {
+        user: {
+          name: user.name,
+          twitter: user.twitter,
+          avatar: user.avatar
+        },
+        onlineCount: activeUsers.size,
+        timestamp: new Date().toISOString()
+      });
+      
+      // رسالة نظام
+      const systemMessage = {
+        id: `leave_${Date.now()}`,
+        type: 'system',
+        user: 'نظام الدردشة',
+        twitter: '@MisterAI_TV',
+        avatar: 'https://ui-avatars.com/api/?name=System&background=666&color=fff',
+        text: `👋 ${user.twitter} غادر الدردشة`,
+        time: new Date().toLocaleTimeString('ar-EG', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
+        timestamp: Date.now()
+      };
+      
+      chatMessages.push(systemMessage);
+      io.emit('newMessage', systemMessage);
+      
+      console.log(`👋 ${user.twitter} غادر الدردشة (المستخدمون: ${activeUsers.size})`);
+    }
   });
 });
 
@@ -186,51 +331,94 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/stats', (req, res) => {
+  // تحسين الأداء باستخدام التخزين المؤقت
+  const now = Date.now();
+  if (!cachedStats || now - statsUpdateTime > 5000) { // تحديث كل 5 ثواني
+    cachedStats = {
+      onlineUsers: activeUsers.size,
+      totalMessages: chatMessages.length,
+      totalVotes: pollData.total,
+      serverUptime: process.uptime(),
+      serverTime: new Date().toISOString(),
+      memoryUsage: process.memoryUsage()
+    };
+    statsUpdateTime = now;
+  }
+  
+  res.json(cachedStats);
+});
+
+app.get('/api/chat/history', (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+  const offset = parseInt(req.query.offset) || 0;
+  
+  const messages = chatMessages
+    .slice(-(offset + limit), offset > 0 ? -offset : undefined)
+    .reverse();
+  
   res.json({
-    onlineUsers: connectedUsers.size,
-    totalMessages: chatMessages.length,
-    totalVotes: pollData.total,
-    serverTime: new Date().toISOString()
+    messages: messages,
+    total: chatMessages.length,
+    hasMore: offset + limit < chatMessages.length
   });
 });
 
-app.get('/api/users', (req, res) => {
-  res.json(Array.from(connectedUsers.values()));
+app.get('/api/poll/status', (req, res) => {
+  res.json(pollData);
 });
 
-// API للحصول على آخر الرسائل
-app.get('/api/messages', (req, res) => {
-  const limit = parseInt(req.query.limit) || 50;
-  res.json(chatMessages.slice(-limit));
-});
-
-// API للتصويت (للاستخدام المباشر إذا لزم الأمر)
-app.post('/api/vote', (req, res) => {
-  const { userId, team } = req.body;
+app.get('/api/users/online', (req, res) => {
+  const users = Array.from(activeUsers.values()).map(user => ({
+    name: user.name,
+    twitter: user.twitter,
+    avatar: user.avatar,
+    lastActive: user.lastActive
+  }));
   
-  if (!userId || !['nigeria', 'algeria'].includes(team)) {
-    return res.status(400).json({ error: 'بيانات غير صالحة' });
-  }
-
-  // تنفيذ التصويت عبر WebSocket
-  const fakeSocket = { id: userId };
-  io.emit('pollUpdate', pollData);
-  
-  res.json({ success: true, poll: pollData });
+  res.json({
+    users: users,
+    count: users.length,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// البدء
+// Middleware للتعامل مع الأخطاء
+app.use((err, req, res, next) => {
+  console.error('❌ خطأ في الخادم:', err);
+  res.status(500).json({ 
+    error: 'حدث خطأ في الخادم',
+    message: err.message 
+  });
+});
+
+// بدء الخادم
 server.listen(PORT, () => {
   console.log(`🚀 الخادم يعمل على المنفذ ${PORT}`);
-  console.log(`⚡ الدردشة المباشرة جاهزة عبر WebSocket`);
-  console.log(`👥 المستخدمون المتصلون: 0`);
+  console.log(`⚡ WebSocket جاهز على ws://localhost:${PORT}`);
+  console.log(`🌐 افتح http://localhost:${PORT} في المتصفح`);
 });
 
-// دالة للحفاظ على نظافة الرسائل القديمة
+// تنظيف دوري للمستخدمين غير النشطين
 setInterval(() => {
-  const oneHourAgo = Date.now() - (60 * 60 * 1000);
-  chatMessages = chatMessages.filter(msg => msg.timestamp > oneHourAgo);
-}, 30 * 60 * 1000); // كل 30 دقيقة
+  const now = Date.now();
+  const inactiveTime = 5 * 60 * 1000; // 5 دقائق
+  
+  for (const [socketId, user] of activeUsers.entries()) {
+    if (now - user.lastActive > inactiveTime) {
+      activeUsers.delete(socketId);
+      io.emit('userLeft', {
+        user: {
+          name: user.name,
+          twitter: user.twitter,
+          avatar: user.avatar
+        },
+        onlineCount: activeUsers.size,
+        timestamp: new Date().toISOString()
+      });
+      console.log(`🕐 ${user.twitter} تمت إزالته بسبب عدم النشاط`);
+    }
+  }
+}, 60 * 1000); // كل دقيقة
 
 // Export للـ Vercel
 module.exports = app;
