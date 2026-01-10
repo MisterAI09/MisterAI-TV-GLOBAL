@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MisterAI TV - بث مباشر كأس أفريقيا 2026</title>
+    <title>MisterAI TV - بث مباشر كأس أفريقيا 2026 مع دردشة مباشرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <style>
         :root {
@@ -14,9 +15,14 @@
             --gold: #FFD700;
             --red: #D62828;
             --blue: #1DA1F2;
+            --purple: #9C27B0;
+            --cyan: #00BCD4;
             --dark-blue: #0d8bd9;
             --dark-red: #b22222;
             --sidebar-width: 350px;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --info: #2196F3;
         }
         
         * {
@@ -28,6 +34,7 @@
         html, body {
             width: 100%;
             height: 100%;
+            overflow: hidden;
         }
         
         body {
@@ -58,6 +65,7 @@
                 #006233,
                 var(--red),
                 var(--gold),
+                var(--blue),
                 #000000);
             opacity: 0.08;
             animation: rotateGradient 40s linear infinite;
@@ -68,6 +76,68 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* مؤشر الاتصال */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .connection-status.connected {
+            background: rgba(0, 168, 89, 0.2);
+            color: var(--green);
+            border-color: var(--green);
+        }
+        
+        .connection-status.connecting {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+        
+        .connection-status.disconnected {
+            background: rgba(214, 40, 40, 0.2);
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .connected .status-dot {
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+        }
+        
+        .connecting .status-dot {
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+        }
+        
+        .disconnected .status-dot {
+            background: var(--red);
+            box-shadow: 0 0 10px var(--red);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
         /* شاشة تسجيل الدخول */
         .login-screen {
             position: fixed;
@@ -75,13 +145,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 10, 0.95);
+            background: linear-gradient(135deg, rgba(5,5,10,0.98), rgba(0,40,20,0.95));
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 20px;
+            backdrop-filter: blur(5px);
         }
         
         .login-container {
@@ -92,7 +163,14 @@
             max-width: 500px;
             text-align: center;
             border: 3px solid var(--green);
-            box-shadow: 0 0 50px rgba(0, 168, 89, 0.3);
+            box-shadow: 0 0 50px rgba(0, 168, 89, 0.3),
+                        0 0 100px rgba(29, 161, 242, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .login-logo {
@@ -101,7 +179,8 @@
             background: linear-gradient(to right, 
                 var(--green), 
                 var(--gold), 
-                var(--red));
+                var(--red),
+                var(--blue));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -125,6 +204,7 @@
             color: #aaa;
             font-size: 1rem;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
         
         .login-form {
@@ -152,12 +232,14 @@
             direction: ltr;
             text-align: left;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
         
         .login-input:focus {
             outline: none;
             border-color: var(--blue);
             box-shadow: 0 0 20px rgba(29, 161, 242, 0.3);
+            background: rgba(20, 20, 35, 0.95);
         }
         
         .login-input::placeholder {
@@ -179,6 +261,19 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
         
         .login-btn:hover {
@@ -187,10 +282,15 @@
             box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
         }
         
+        .login-btn:hover::before {
+            left: 100%;
+        }
+        
         .login-info {
             color: #aaa;
             font-size: 0.9rem;
             margin-top: 20px;
+            line-height: 1.6;
         }
         
         .login-error {
@@ -198,6 +298,10 @@
             font-size: 0.9rem;
             margin-top: 10px;
             display: none;
+            padding: 10px;
+            background: rgba(214, 40, 40, 0.1);
+            border-radius: 8px;
+            border-right: 3px solid var(--red);
         }
         
         /* التصميم الرئيسي */
@@ -205,6 +309,12 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         /* السايدبار */
@@ -219,6 +329,7 @@
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
             height: 100%;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         
         .brand {
@@ -229,6 +340,22 @@
             overflow: hidden;
             flex-shrink: 0;
             background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .brand::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0,168,89,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .logo-text {
@@ -245,6 +372,8 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         .user-info {
@@ -255,6 +384,9 @@
             padding: 10px 15px;
             border-radius: 10px;
             margin-top: 10px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
         .user-avatar {
@@ -266,16 +398,39 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            flex-shrink: 0;
         }
         
         .user-details {
             flex: 1;
+            min-width: 0;
         }
         
         .user-name {
             font-weight: 700;
             color: var(--gold);
             font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .user-twitter {
+            font-size: 0.8rem;
+            color: var(--blue);
+            margin-top: 2px;
+        }
+        
+        .online-counter {
+            background: var(--green);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+            animation: pulse 2s infinite;
         }
         
         .logout-btn {
@@ -287,11 +442,13 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
         
         .logout-btn:hover {
             background: var(--dark-red);
             transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(214, 40, 40, 0.3);
         }
         
         /* قائمة القنوات */
@@ -299,6 +456,39 @@
             flex: 1;
             overflow-y: auto;
             padding: 15px;
+        }
+        
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 0 5px;
+        }
+        
+        .list-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .refresh-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+            background: var(--dark-blue);
         }
         
         .cat {
@@ -310,6 +500,17 @@
             border-right: 3px solid var(--green);
             border-radius: 8px;
             font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .cat-count {
+            background: var(--red);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
         }
         
         .btn {
@@ -323,6 +524,19 @@
             align-items: center;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
         }
         
         .btn:hover {
@@ -332,12 +546,23 @@
             box-shadow: 0 3px 10px rgba(0, 168, 89, 0.3);
         }
         
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn.active {
+            background: linear-gradient(90deg, var(--green), var(--blue));
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(0, 168, 89, 0.3);
+        }
+        
         .badge {
             font-size: 0.7rem;
             background: var(--red);
             padding: 3px 8px;
             border-radius: 15px;
             font-weight: 700;
+            animation: pulse 1.5s infinite;
         }
         
         .footer-rights {
@@ -357,6 +582,12 @@
             font-weight: 900;
         }
         
+        .server-stats {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        
         /* المحتوى الرئيسي */
         .main-content {
             flex: 1;
@@ -373,7 +604,7 @@
             padding: 20px;
             gap: 20px;
             overflow: hidden;
-            height: calc(100% - 40px);
+            height: 100%;
         }
         
         /* منطقة الفيديو */
@@ -391,10 +622,29 @@
             min-width: 0;
         }
         
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--green), var(--gold), var(--red), var(--blue));
+            border-radius: 17px;
+            z-index: -1;
+            animation: borderRotate 4s linear infinite;
+        }
+        
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .video-placeholder {
             text-align: center;
             padding: 20px;
             max-width: 80%;
+            z-index: 1;
         }
         
         .video-title {
@@ -426,8 +676,12 @@
         }
         
         @keyframes pulseLive {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { 
+                box-shadow: 0 0 10px var(--red);
+            }
+            50% { 
+                box-shadow: 0 0 20px var(--red), 0 0 30px var(--red);
+            }
         }
         
         /* منطقة الاستطلاع والشات */
@@ -451,11 +705,13 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         
         .poll-header {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
         }
         
         .poll-title {
@@ -471,6 +727,14 @@
         .poll-subtitle {
             color: #aaa;
             font-size: 0.9rem;
+        }
+        
+        .poll-update-time {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 0.8rem;
+            color: #888;
         }
         
         /* معلومات المباراة */
@@ -564,12 +828,30 @@
         .poll-option:hover {
             background: rgba(45, 45, 65, 0.95);
             transform: translateX(-3px);
+            border-color: rgba(255, 255, 255, 0.1);
         }
         
         .poll-option.selected {
             background: rgba(45, 45, 65, 0.95);
             border-color: var(--green);
             box-shadow: 0 0 15px rgba(0, 168, 89, 0.2);
+        }
+        
+        .poll-option.selected::before {
+            content: '✓';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--green);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
         
         .option-content {
@@ -604,7 +886,28 @@
             height: 100%;
             border-radius: 4px;
             width: 0%;
-            transition: width 1s ease-out;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vote-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.3), 
+                transparent);
+            animation: shineBar 2s infinite;
+        }
+        
+        @keyframes shineBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         .vote-fill.nigeria {
@@ -631,6 +934,19 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vote-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
         }
         
         .vote-btn:hover:not(:disabled) {
@@ -639,9 +955,14 @@
             box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
         }
         
+        .vote-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+        
         .vote-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none !important;
         }
         
         /* إحصائيات التصويت */
@@ -670,11 +991,13 @@
             flex-direction: column;
             min-height: 0;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         
         .chat-header {
             text-align: center;
             margin-bottom: 15px;
+            position: relative;
         }
         
         .chat-title {
@@ -690,6 +1013,22 @@
         .chat-subtitle {
             color: #aaa;
             font-size: 0.9rem;
+        }
+        
+        .online-users {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 168, 89, 0.2);
+            color: var(--green);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         /* قائمة الشات */
@@ -720,6 +1059,22 @@
             border-radius: 8px;
             border-left: 3px solid var(--green);
             animation: fadeIn 0.3s ease;
+            transition: all 0.3s ease;
+        }
+        
+        .message:hover {
+            background: rgba(45, 45, 65, 0.95);
+            transform: translateX(-3px);
+        }
+        
+        .message.system {
+            background: rgba(255, 215, 0, 0.1);
+            border-left-color: var(--gold);
+        }
+        
+        .message.vote {
+            background: rgba(0, 168, 89, 0.1);
+            border-left-color: var(--green);
         }
         
         @keyframes fadeIn {
@@ -742,6 +1097,18 @@
             font-size: 0.9rem;
         }
         
+        .message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--green), var(--blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        
         .twitter-badge {
             background: var(--blue);
             color: white;
@@ -761,6 +1128,31 @@
             line-height: 1.4;
             font-size: 0.9rem;
             margin-top: 6px;
+            word-break: break-word;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .message-action {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .message-action:hover {
+            color: var(--blue);
         }
         
         /* إدخال الشات */
@@ -778,12 +1170,14 @@
             color: white;
             font-family: 'Cairo', sans-serif;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
         
         .chat-input:focus {
             outline: none;
             border-color: var(--green);
             box-shadow: 0 0 10px rgba(0, 168, 89, 0.2);
+            background: rgba(30, 30, 45, 0.95);
         }
         
         .send-btn {
@@ -799,11 +1193,29 @@
             align-items: center;
             gap: 6px;
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
         
         .send-btn:hover {
             background: linear-gradient(45deg, var(--blue), var(--green));
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(29, 161, 242, 0.3);
+        }
+        
+        .send-btn:hover::before {
+            left: 100%;
         }
         
         /* زر مشاركة تويتر */
@@ -832,43 +1244,19 @@
             box-shadow: 0 5px 15px rgba(29, 161, 242, 0.3);
         }
         
-        /* رسالة نجاح */
-        .success-message {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, var(--green), var(--gold));
-            color: #000;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            z-index: 10000;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            animation: fadeInOut 3s ease;
-            display: none;
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
-        }
-        
         /* شريط التمرير */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         ::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
+            border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(45deg, var(--green), var(--blue));
-            border-radius: 3px;
+            border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
@@ -926,9 +1314,11 @@
             .poll-chat-container {
                 flex-direction: column;
             }
-        }
-        
-        @media (max-width: 600px) {
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
             .login-logo {
                 font-size: 2.5rem;
             }
@@ -936,7 +1326,9 @@
             .login-title {
                 font-size: 1.5rem;
             }
-            
+        }
+        
+        @media (max-width: 600px) {
             .logo-text {
                 font-size: 1.8rem;
             }
@@ -949,6 +1341,87 @@
             .chat-title {
                 font-size: 1.3rem;
             }
+            
+            .teams {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .team-flag {
+                font-size: 2rem;
+            }
+            
+            .team-name {
+                font-size: 1rem;
+            }
+            
+            .vs {
+                padding: 10px 0;
+            }
+        }
+        
+        /* مؤشر الكتابة */
+        .typing-indicator {
+            display: none;
+            padding: 8px 12px;
+            color: #aaa;
+            font-size: 0.85rem;
+            font-style: italic;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .typing-indicator.show {
+            display: block;
+        }
+        
+        /* زر الإجراءات السريعة */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quick-action {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .quick-action:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* رحلة الإعدادات */
+        .settings-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-toggle:hover {
+            background: var(--blue);
+            transform: rotate(45deg);
         }
     </style>
 </head>
@@ -959,15 +1432,18 @@
         <div class="gradient-bg"></div>
     </div>
 
-    <!-- رسالة النجاح -->
-    <div class="success-message" id="success-message"></div>
+    <!-- مؤشر الاتصال -->
+    <div class="connection-status connecting" id="connection-status">
+        <div class="status-dot"></div>
+        <span id="status-text">جاري الاتصال...</span>
+    </div>
 
     <!-- شاشة تسجيل الدخول -->
     <div class="login-screen" id="login-screen">
         <div class="login-container">
             <div class="login-logo">MISTERAI TV</div>
             <div class="login-title">مرحباً بك في كأس أفريقيا 2026</div>
-            <div class="login-subtitle">للمشاركة في الاستطلاع والدردشة، يرجى تسجيل الدخول بحساب تويتر</div>
+            <div class="login-subtitle">شاهد البث المباشر، شارك في الاستطلاع، وتحدث مع المشجعين في الدردشة المباشرة</div>
             
             <div class="login-form">
                 <label class="login-label">
@@ -975,18 +1451,19 @@
                     أدخل حسابك على تويتر:
                 </label>
                 <input type="text" class="login-input" id="login-twitter" 
-                       placeholder="@neurosisnet" autocomplete="off">
+                       placeholder="@neurosisnet" autocomplete="off" autofocus>
                 <div class="login-error" id="login-error"></div>
                 <button class="login-btn" id="login-btn">
                     <i class="fas fa-sign-in-alt"></i>
-                    تسجيل الدخول والمشاركة
+                    تسجيل الدخول والدخول للدردشة
                 </button>
             </div>
             
             <div class="login-info">
-                ⚽ شارك في استطلاع رأي مباراة نيجيريا vs الجزائر<br>
-                💬 ناقش المباراة مع المشجعين العرب<br>
-                🐦 سيظهر حسابك في جميع مشاركاتك
+                <i class="fas fa-bolt" style="color: var(--gold);"></i> دردشة مباشرة عبر WebSocket<br>
+                <i class="fas fa-users" style="color: var(--green);"></i> رؤية المستخدمين المتصلين مباشرة<br>
+                <i class="fas fa-sync" style="color: var(--blue);"></i> تحديثات فورية للتصويت والرسائل<br>
+                <i class="fas fa-shield-alt" style="color: var(--red);"></i> بيانات محمية وآمنة
             </div>
         </div>
     </div>
@@ -1002,14 +1479,26 @@
                 </div>
             </div>
 
-            <div class="list" id="channels">
-                <!-- سيتم تحميل القنوات هنا -->
+            <div class="list">
+                <div class="list-header">
+                    <div class="list-title">📺 قنوات البث المباشر</div>
+                    <button class="refresh-btn" id="refresh-channels" title="تحديث القنوات">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div id="channels">
+                    <!-- سيتم تحميل القنوات هنا -->
+                </div>
             </div>
 
             <div class="footer-rights">
-                <div><b>كأس أفريقيا 2026</b> - البث المباشر</div>
+                <div><b>كأس أفريقيا 2026</b> - البث المباشر والدردشة</div>
+                <div class="server-stats" id="server-stats">
+                    <i class="fas fa-server"></i> الخادم: جاري الاتصال...
+                </div>
                 <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 3px;">
-                    MisterAI TV GLOBAL © 2026
+                    MisterAI TV GLOBAL © 2026 | WebSocket Chat v3.0
                 </div>
             </div>
         </div>
@@ -1024,7 +1513,7 @@
                         <div class="video-subtitle">البث المباشر - دور ربع النهائي</div>
                         <div class="live-indicator">
                             <i class="fas fa-circle"></i>
-                            بث مباشر
+                            بث مباشر - دردشة مباشرة
                         </div>
                     </div>
                 </div>
@@ -1036,6 +1525,7 @@
                         <div class="poll-header">
                             <div class="poll-title">استطلاع رأي ربع النهائي</div>
                             <div class="poll-subtitle">من سيفوز ويتأهل لنصف النهائي؟</div>
+                            <div class="poll-update-time" id="poll-update-time">--:--</div>
                         </div>
 
                         <div class="match-info">
@@ -1054,7 +1544,7 @@
                             </div>
 
                             <div class="match-details">
-                                دور ربع النهائي - كأس أفريقيا 2026 - الساعة: 17:00
+                                <i class="far fa-clock"></i> دور ربع النهائي - الساعة: 17:00
                             </div>
                         </div>
 
@@ -1062,65 +1552,95 @@
                             <div class="poll-option" data-vote="nigeria">
                                 <div class="option-content">
                                     <div class="option-text">
-                                        <i class="fas fa-trophy" style="color: var(--green);"></i>
+                                        <i class="fas fa-futbol" style="color: var(--green);"></i>
                                         فوز نيجيريا
                                     </div>
-                                    <div class="option-percentage" id="nigeria-percent">0%</div>
+                                    <div class="option-percentage" id="nigeria-percent">62%</div>
                                 </div>
                                 <div class="vote-bar">
-                                    <div class="vote-fill nigeria" id="nigeria-bar" style="width: 0%"></div>
+                                    <div class="vote-fill nigeria" id="nigeria-bar" style="width: 62%"></div>
                                 </div>
                             </div>
 
                             <div class="poll-option" data-vote="algeria">
                                 <div class="option-content">
                                     <div class="option-text">
-                                        <i class="fas fa-trophy" style="color: var(--red);"></i>
+                                        <i class="fas fa-futbol" style="color: var(--red);"></i>
                                         فوز الجزائر
                                     </div>
-                                    <div class="option-percentage" id="algeria-percent">0%</div>
+                                    <div class="option-percentage" id="algeria-percent">38%</div>
                                 </div>
                                 <div class="vote-bar">
-                                    <div class="vote-fill algeria" id="algeria-bar" style="width: 0%"></div>
+                                    <div class="vote-fill algeria" id="algeria-bar" style="width: 38%"></div>
                                 </div>
                             </div>
                         </div>
 
                         <button class="vote-btn" id="vote-button">
                             <i class="fas fa-vote-yea"></i>
-                            صوّت الآن وشارك على تويتر
+                            صوّت الآن (تصويت مباشر)
                         </button>
 
                         <div class="vote-stats">
-                            <span>إجمالي الأصوات: <span class="vote-count" id="total-votes">0</span></span>
-                            <span>آخر تحديث: <span id="last-update">--</span></span>
+                            <span>إجمالي الأصوات: <span class="vote-count" id="total-votes">200</span></span>
+                            <span>آخر تحديث: <span id="last-update">--:--</span></span>
+                        </div>
+
+                        <div class="quick-actions">
+                            <button class="quick-action" id="reset-poll">
+                                <i class="fas fa-redo"></i> إعادة تعيين
+                            </button>
+                            <button class="quick-action" id="share-poll">
+                                <i class="fas fa-share"></i> مشاركة
+                            </button>
                         </div>
                     </div>
 
                     <!-- قسم الشات -->
                     <div class="chat-container">
                         <div class="chat-header">
-                            <div class="chat-title">شات كأس أفريقيا</div>
-                            <div class="chat-subtitle">ناقش المباراة مع المشجعين العرب</div>
+                            <div class="chat-title">شات كأس أفريقيا المباشر</div>
+                            <div class="chat-subtitle">ناقش المباراة مع المشجعين في الوقت الحقيقي</div>
+                            <div class="online-users" id="online-users">
+                                <i class="fas fa-users"></i> <span id="online-count">0</span> متصل
+                            </div>
                         </div>
 
                         <div class="chat-messages" id="chat-messages">
-                            <!-- الرسائل ستضاف هنا من قبل المستخدمين الحقيقيين -->
+                            <!-- الرسائل ستضاف هنا من قبل المستخدمين -->
+                        </div>
+
+                        <div class="typing-indicator" id="typing-indicator">
+                            <span id="typing-text">جاري الكتابة...</span>
                         </div>
 
                         <div class="chat-input-container">
                             <input type="text" class="chat-input" id="chat-input" 
-                                   placeholder="اكتب تعليقك عن المباراة..." maxlength="200">
+                                   placeholder="اكتب رسالتك هنا (اضغط Enter للإرسال)..." 
+                                   maxlength="500" autocomplete="off">
                             <button class="send-btn" id="send-btn">
                                 <i class="fas fa-paper-plane"></i>
                                 إرسال
                             </button>
                         </div>
 
+                        <!-- إجراءات سريعة -->
+                        <div class="quick-actions">
+                            <button class="quick-action" id="clear-chat">
+                                <i class="fas fa-trash"></i> مسح الشات
+                            </button>
+                            <button class="quick-action" id="emoji-btn">
+                                <i class="far fa-smile"></i> إيموجي
+                            </button>
+                            <button class="quick-action" id="history-btn">
+                                <i class="fas fa-history"></i> السجل
+                            </button>
+                        </div>
+
                         <!-- زر مشاركة تويتر -->
                         <a href="#" class="twitter-share" id="twitter-share-btn" target="_blank">
                             <i class="fab fa-twitter"></i>
-                            غرّد برأيك على تويتر
+                            شارك الدردشة على تويتر
                         </a>
                     </div>
                 </div>
@@ -1128,17 +1648,35 @@
         </div>
     </div>
 
+    <!-- زر الإعدادات -->
+    <button class="settings-toggle" id="settings-toggle" title="الإعدادات">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <!-- تحميل مكتبات -->
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <script>
+        // ============ متغيرات عامة ============
+        let socket = null;
+        let currentUser = null;
+        let isConnected = false;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 10;
+        const RECONNECT_DELAY = 2000;
+        let typingTimeout = null;
+        let lastTypingTime = 0;
+
         // ============ نظام إدارة المستخدمين ============
         class UserManager {
             constructor() {
-                this.CURRENT_USER_KEY = 'afcon_current_user';
-                this.USERS_KEY = 'afcon_registered_users';
+                this.CURRENT_USER_KEY = 'misterai_current_user_v3';
+                this.USERS_KEY = 'misterai_registered_users_v3';
                 this.isLoggedIn = false;
                 this.currentUser = null;
             }
 
-            // التحقق من تسجيل الدخول
             checkLogin() {
                 try {
                     const userData = localStorage.getItem(this.CURRENT_USER_KEY);
@@ -1154,7 +1692,6 @@
                 }
             }
 
-            // تسجيل الدخول
             login(twitterHandle) {
                 const validation = this.validateTwitterHandle(twitterHandle);
                 if (!validation.valid) {
@@ -1166,8 +1703,10 @@
                         id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         twitter: validation.handle,
                         name: this.generateNameFromTwitter(validation.handle),
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(validation.handle)}&background=00A859&color=fff&bold=true`,
                         joined: Date.now(),
-                        lastSeen: Date.now()
+                        lastSeen: Date.now(),
+                        socketId: null
                     };
 
                     // حفظ بيانات المستخدم
@@ -1187,12 +1726,16 @@
                 }
             }
 
-            // تسجيل الخروج
             logout() {
                 try {
+                    if (socket && socket.connected) {
+                        socket.disconnect();
+                    }
+                    
                     localStorage.removeItem(this.CURRENT_USER_KEY);
                     this.currentUser = null;
                     this.isLoggedIn = false;
+                    
                     return true;
                 } catch (e) {
                     console.error('خطأ في تسجيل الخروج:', e);
@@ -1200,13 +1743,11 @@
                 }
             }
 
-            // توليد اسم من حساب تويتر
             generateNameFromTwitter(twitterHandle) {
                 const name = twitterHandle.replace('@', '');
                 return `مشجع ${name}`;
             }
 
-            // الحصول على المستخدمين المسجلين
             getRegisteredUsers() {
                 try {
                     return JSON.parse(localStorage.getItem(this.USERS_KEY)) || {};
@@ -1215,7 +1756,6 @@
                 }
             }
 
-            // التحقق من صحة حساب تويتر
             validateTwitterHandle(handle) {
                 if (!handle || handle.trim() === '') {
                     return { valid: false, error: 'يرجى إدخال حساب تويتر' };
@@ -1235,7 +1775,7 @@
                     return { valid: false, error: 'حساب تويتر طويل جداً' };
                 }
                 
-                // تحقق من الأحرف المسموحة (حروف إنجليزية وأرقام وشرطة سفلية فقط)
+                // تحقق من الأحرف المسموحة
                 const validPattern = /^@[a-zA-Z0-9_]+$/;
                 if (!validPattern.test(trimmedHandle)) {
                     return { valid: false, error: 'يحتوي حساب تويتر على أحرف غير مسموحة' };
@@ -1244,103 +1784,439 @@
                 return { valid: true, handle: trimmedHandle };
             }
 
-            // تحديث وقت آخر ظهور
             updateLastSeen() {
                 if (this.currentUser) {
                     this.currentUser.lastSeen = Date.now();
                     localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(this.currentUser));
-                    
-                    // تحديث في قائمة المستخدمين
-                    const users = this.getRegisteredUsers();
-                    if (users[this.currentUser.id]) {
-                        users[this.currentUser.id].lastSeen = Date.now();
-                        localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-                    }
                 }
             }
         }
 
-        // ============ نظام التخزين ============
-        class StorageSystem {
+        // ============ مدير الاتصال ============
+        class ConnectionManager {
             constructor() {
-                this.POLL_KEY = 'afcon_poll_data_v2';
-                this.CHAT_KEY = 'afcon_chat_messages_v2';
-                this.USER_VOTES_KEY = 'afcon_user_votes_v2';
+                this.socket = null;
+                this.isConnected = false;
+                this.reconnectAttempts = 0;
+                this.connectionStatus = document.getElementById('connection-status');
+                this.statusText = document.getElementById('status-text');
             }
 
-            // بيانات الاستطلاع
-            getPollData() {
-                const defaultData = {
-                    nigeria: { votes: 0 },
-                    algeria: { votes: 0 },
-                    total: 0,
-                    lastUpdated: Date.now()
-                };
-                
+            connect() {
                 try {
-                    const data = JSON.parse(localStorage.getItem(this.POLL_KEY));
-                    return data || defaultData;
-                } catch (e) {
-                    return defaultData;
+                    // إنشاء اتصال WebSocket
+                    this.socket = io(window.location.origin, {
+                        transports: ['websocket', 'polling'],
+                        reconnection: true,
+                        reconnectionAttempts: MAX_RECONNECT_ATTEMPTS,
+                        reconnectionDelay: RECONNECT_DELAY,
+                        timeout: 10000
+                    });
+
+                    this.setupEventListeners();
+                    this.updateStatus('connecting', 'جاري الاتصال بالخادم...');
+                } catch (error) {
+                    console.error('❌ خطأ في الاتصال:', error);
+                    this.handleConnectionError();
                 }
             }
 
-            savePollData(data) {
-                try {
-                    data.lastUpdated = Date.now();
-                    localStorage.setItem(this.POLL_KEY, JSON.stringify(data));
-                    return true;
-                } catch (e) {
-                    return false;
-                }
-            }
+            setupEventListeners() {
+                if (!this.socket) return;
 
-            // تحقق من تصويت المستخدم
-            hasUserVoted(userId) {
-                try {
-                    const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
-                    return !!votes[userId];
-                } catch (e) {
-                    return false;
-                }
-            }
+                // عند الاتصال
+                this.socket.on('connect', () => {
+                    console.log('✅ متصل بالخادم:', this.socket.id);
+                    this.isConnected = true;
+                    this.reconnectAttempts = 0;
+                    this.updateStatus('connected', 'متصل بالدردشة المباشرة');
+                    
+                    // إرسال بيانات المستخدم بعد الاتصال
+                    setTimeout(() => {
+                        if (currentUser) {
+                            this.joinChat(currentUser);
+                        }
+                    }, 500);
+                    
+                    // تحديث إحصائيات الخادم
+                    this.updateServerStats();
+                });
 
-            saveUserVote(userId, vote) {
-                try {
-                    const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
-                    votes[userId] = {
-                        vote: vote,
-                        timestamp: Date.now(),
-                        twitter: userManager.currentUser.twitter
-                    };
-                    localStorage.setItem(this.USER_VOTES_KEY, JSON.stringify(votes));
-                    return true;
-                } catch (e) {
-                    return false;
-                }
-            }
+                // استقبال الترحيب
+                this.socket.on('welcome', (data) => {
+                    console.log('👋 ترحيب من الخادم:', data.message);
+                    this.showToast(`مرحباً بك في ${data.message}`, 'success');
+                });
 
-            // رسائل الشات
-            getChatMessages() {
-                try {
-                    const messages = JSON.parse(localStorage.getItem(this.CHAT_KEY)) || [];
-                    return messages.slice(-100);
-                } catch (e) {
-                    return [];
-                }
-            }
+                // استقبال البيانات الأولية
+                this.socket.on('initialData', (data) => {
+                    console.log('📥 البيانات الأولية:', data);
+                    this.handleInitialData(data);
+                });
 
-            saveChatMessage(message) {
-                try {
-                    const messages = this.getChatMessages();
-                    messages.push(message);
-                    if (messages.length > 100) {
-                        messages.splice(0, messages.length - 100);
+                // استقبال تحديث التصويت
+                this.socket.on('pollUpdate', (pollData) => {
+                    console.log('📊 تحديث التصويت:', pollData);
+                    this.updatePollDisplay(pollData);
+                });
+
+                // استقبال رسالة جديدة
+                this.socket.on('newMessage', (message) => {
+                    console.log('💬 رسالة جديدة:', message);
+                    this.addMessage(message);
+                });
+
+                // مستخدم جديد انضم
+                this.socket.on('userJoined', (data) => {
+                    console.log('👤 مستخدم جديد:', data.user.twitter);
+                    this.updateOnlineUsers(data.onlineCount);
+                    
+                    if (message.type !== 'system') {
+                        this.showToast(`${data.user.twitter} انضم إلى الدردشة`, 'info');
                     }
-                    localStorage.setItem(this.CHAT_KEY, JSON.stringify(messages));
-                    return true;
-                } catch (e) {
+                });
+
+                // مستخدم غادر
+                this.socket.on('userLeft', (data) => {
+                    console.log('👋 مستخدم غادر:', data.user.twitter);
+                    this.updateOnlineUsers(data.onlineCount);
+                    
+                    if (message.type !== 'system') {
+                        this.showToast(`${data.user.twitter} غادر الدردشة`, 'warning');
+                    }
+                });
+
+                // تحديث عدد المستخدمين
+                this.socket.on('usersUpdate', (users) => {
+                    this.updateOnlineUsers(users.length || users);
+                });
+
+                // رسالة معجبة
+                this.socket.on('messageLiked', (data) => {
+                    this.updateMessageLikes(data.messageId, data.likes);
+                });
+
+                // خطأ في التصويت
+                this.socket.on('voteError', (error) => {
+                    this.showToast(error.message || 'خطأ في التصويت', 'error');
+                });
+
+                // انقطع الاتصال
+                this.socket.on('disconnect', (reason) => {
+                    console.log('❌ انقطع الاتصال:', reason);
+                    this.isConnected = false;
+                    
+                    if (reason === 'io server disconnect') {
+                        this.updateStatus('disconnected', 'الخادم قطع الاتصال');
+                        setTimeout(() => this.socket.connect(), 1000);
+                    } else {
+                        this.updateStatus('connecting', 'جاري إعادة الاتصال...');
+                    }
+                });
+
+                // خطأ في الاتصال
+                this.socket.on('connect_error', (error) => {
+                    console.error('❌ خطأ في الاتصال:', error);
+                    this.handleConnectionError();
+                });
+
+                // ping/pong
+                this.socket.on('pong', (data) => {
+                    // console.log('🏓 pong:', data);
+                });
+            }
+
+            joinChat(user) {
+                if (!this.socket || !this.isConnected) return;
+
+                this.socket.emit('join', {
+                    name: user.name,
+                    twitter: user.twitter,
+                    avatar: user.avatar
+                });
+                
+                currentUser = user;
+                currentUser.socketId = this.socket.id;
+            }
+
+            sendMessage(text) {
+                if (!this.socket || !this.isConnected) {
+                    this.showToast('غير متصل بالخادم', 'error');
                     return false;
+                }
+
+                if (!text || text.trim().length === 0) {
+                    return false;
+                }
+
+                this.socket.emit('sendMessage', {
+                    text: text.trim(),
+                    timestamp: Date.now()
+                });
+
+                return true;
+            }
+
+            sendVote(team) {
+                if (!this.socket || !this.isConnected) {
+                    this.showToast('غير متصل بالخادم', 'error');
+                    return false;
+                }
+
+                this.socket.emit('vote', {
+                    team: team,
+                    timestamp: Date.now()
+                });
+
+                return true;
+            }
+
+            likeMessage(messageId) {
+                if (!this.socket || !this.isConnected) return;
+                
+                this.socket.emit('likeMessage', messageId);
+            }
+
+            resetPoll() {
+                if (!this.socket || !this.isConnected) return;
+                
+                this.socket.emit('resetPoll');
+            }
+
+            sendActivity() {
+                if (!this.socket || !this.isConnected) return;
+                
+                this.socket.emit('activity');
+            }
+
+            handleInitialData(data) {
+                // تحديث التصويت
+                if (data.poll) {
+                    this.updatePollDisplay(data.poll);
+                }
+
+                // تحميل الرسائل السابقة
+                if (data.recentMessages && data.recentMessages.length > 0) {
+                    const chatMessages = document.getElementById('chat-messages');
+                    chatMessages.innerHTML = '';
+                    
+                    data.recentMessages.forEach(msg => {
+                        this.addMessage(msg, false);
+                    });
+                    
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                }
+
+                // تحديث عدد المستخدمين المتصلين
+                if (data.onlineUsers) {
+                    this.updateOnlineUsers(data.totalOnline || data.onlineUsers.length);
+                }
+            }
+
+            updatePollDisplay(pollData) {
+                const nigeriaPercent = pollData.nigeria.percentage || 0;
+                const algeriaPercent = pollData.algeria.percentage || 0;
+                const totalVotes = pollData.total || 0;
+                
+                document.getElementById('nigeria-percent').textContent = nigeriaPercent + '%';
+                document.getElementById('algeria-percent').textContent = algeriaPercent + '%';
+                
+                document.getElementById('nigeria-bar').style.width = nigeriaPercent + '%';
+                document.getElementById('algeria-bar').style.width = algeriaPercent + '%';
+                
+                document.getElementById('total-votes').textContent = totalVotes.toLocaleString();
+                
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                document.getElementById('last-update').textContent = timeString;
+                document.getElementById('poll-update-time').textContent = timeString;
+                
+                // تحديث زر التصويت
+                this.updateVoteButton();
+            }
+
+            addMessage(message, scroll = true) {
+                const chatMessages = document.getElementById('chat-messages');
+                
+                // إزالة رسالة "لا توجد رسائل"
+                if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
+                    chatMessages.innerHTML = '';
+                }
+                
+                const messageElement = this.createMessageElement(message);
+                chatMessages.appendChild(messageElement);
+                
+                if (scroll) {
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                }
+                
+                // إضافة تأثير للرسائل الجديدة
+                if (message.userId !== currentUser?.socketId) {
+                    messageElement.classList.add('new');
+                    setTimeout(() => {
+                        messageElement.classList.remove('new');
+                    }, 2000);
+                }
+            }
+
+            createMessageElement(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.type || 'user'}`;
+                messageElement.dataset.messageId = message.id;
+                
+                let actionsHTML = '';
+                if (message.type === 'user') {
+                    actionsHTML = `
+                        <div class="message-actions">
+                            <button class="message-action like-btn" data-message-id="${message.id}">
+                                <i class="far fa-thumbs-up"></i>
+                                <span class="like-count">${message.likes || 0}</span>
+                            </button>
+                            <button class="message-action reply-btn">
+                                <i class="far fa-comment"></i> رد
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-user">
+                            <div class="message-avatar" style="background: ${this.getAvatarColor(message.user)}">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            ${message.user}
+                            <span class="twitter-badge">${message.twitter}</span>
+                        </div>
+                        <div class="message-time">${message.time}</div>
+                    </div>
+                    <div class="message-text">${this.escapeHtml(message.text)}</div>
+                    ${actionsHTML}
+                `;
+                
+                return messageElement;
+            }
+
+            updateMessageLikes(messageId, likes) {
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (messageElement) {
+                    const likeCount = messageElement.querySelector('.like-count');
+                    if (likeCount) {
+                        likeCount.textContent = likes;
+                    }
+                }
+            }
+
+            updateOnlineUsers(count) {
+                document.getElementById('online-count').textContent = count;
+                document.getElementById('online-users').innerHTML = `
+                    <i class="fas fa-users"></i> ${count} متصل
+                `;
+            }
+
+            updateVoteButton() {
+                const voteButton = document.getElementById('vote-button');
+                const selectedOption = document.querySelector('.poll-option.selected');
+                
+                if (selectedOption) {
+                    voteButton.disabled = false;
+                    voteButton.innerHTML = `
+                        <i class="fas fa-vote-yea"></i>
+                        صوّت لـ ${selectedOption.dataset.vote === 'nigeria' ? 'نيجيريا 🇳🇬' : 'الجزائر 🇩🇿'}
+                    `;
+                } else {
+                    voteButton.disabled = true;
+                    voteButton.innerHTML = `
+                        <i class="fas fa-vote-yea"></i>
+                        اختر فريقاً أولاً
+                    `;
+                }
+            }
+
+            updateServerStats() {
+                if (!this.isConnected) return;
+                
+                fetch('/api/stats')
+                    .then(res => res.json())
+                    .then(data => {
+                        const uptime = Math.floor(data.serverUptime);
+                        const hours = Math.floor(uptime / 3600);
+                        const minutes = Math.floor((uptime % 3600) / 60);
+                        
+                        document.getElementById('server-stats').innerHTML = `
+                            <i class="fas fa-server"></i> الخادم: ${hours}س ${minutes}د | ${data.onlineUsers} متصل
+                        `;
+                    })
+                    .catch(console.error);
+            }
+
+            updateStatus(status, text) {
+                this.connectionStatus.className = `connection-status ${status}`;
+                this.statusText.textContent = text;
+            }
+
+            handleConnectionError() {
+                this.reconnectAttempts++;
+                
+                if (this.reconnectAttempts <= MAX_RECONNECT_ATTEMPTS) {
+                    this.updateStatus('connecting', 
+                        `محاولة إعادة الاتصال (${this.reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+                    
+                    setTimeout(() => {
+                        this.connect();
+                    }, RECONNECT_DELAY * this.reconnectAttempts);
+                } else {
+                    this.updateStatus('disconnected', 'تعذر الاتصال بالخادم');
+                    this.showToast('تعذر الاتصال بالخادم. جاري استخدام الوضع المحلي.', 'error');
+                }
+            }
+
+            showToast(message, type = 'info') {
+                const backgroundColor = {
+                    success: '#00A859',
+                    error: '#D62828',
+                    warning: '#FFD700',
+                    info: '#1DA1F2'
+                }[type];
+                
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "left",
+                    backgroundColor: backgroundColor,
+                    stopOnFocus: true,
+                    className: 'toast-arabic'
+                }).showToast();
+            }
+
+            getAvatarColor(username) {
+                const colors = [
+                    'linear-gradient(45deg, #00A859, #1DA1F2)',
+                    'linear-gradient(45deg, #FFD700, #D62828)',
+                    'linear-gradient(45deg, #9C27B0, #00BCD4)',
+                    'linear-gradient(45deg, #FF9800, #4CAF50)'
+                ];
+                const index = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
+                return colors[index];
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            disconnect() {
+                if (this.socket) {
+                    this.socket.disconnect();
+                    this.socket = null;
+                    this.isConnected = false;
+                    this.updateStatus('disconnected', 'غير متصل');
                 }
             }
         }
@@ -1349,8 +2225,7 @@
         class AppManager {
             constructor() {
                 this.userManager = new UserManager();
-                this.storage = new StorageSystem();
-                this.pollData = this.storage.getPollData();
+                this.connectionManager = new ConnectionManager();
                 this.selectedVote = null;
                 
                 this.initialize();
@@ -1358,6 +2233,7 @@
 
             initialize() {
                 this.checkAuth();
+                this.setupGlobalEvents();
             }
 
             checkAuth() {
@@ -1380,16 +2256,18 @@
                 
                 this.updateUserInfo();
                 this.loadChannels();
-                this.updatePollDisplay();
-                this.loadChatMessages();
                 this.setupAppEvents();
                 this.updateTwitterShareLink();
                 
-                // تحديث وقت آخر ظهور
-                this.userManager.updateLastSeen();
+                // بدء الاتصال بالخادم
+                setTimeout(() => {
+                    this.connectionManager.connect();
+                }, 300);
                 
-                // إضافة رسالة ترحيب
-                this.addWelcomeMessage();
+                // تحديث نشاط المستخدم كل دقيقة
+                setInterval(() => {
+                    this.userManager.updateLastSeen();
+                }, 60000);
             }
 
             setupLoginEvents() {
@@ -1408,6 +2286,27 @@
                 loginInput.addEventListener('input', () => {
                     loginError.style.display = 'none';
                 });
+                
+                // تركيز على حقل الإدخال
+                loginInput.focus();
+            }
+
+            setupGlobalEvents() {
+                // تحديث إحصائيات الخادم كل 30 ثانية
+                setInterval(() => {
+                    if (this.connectionManager.isConnected) {
+                        this.connectionManager.updateServerStats();
+                    }
+                }, 30000);
+                
+                // إعادة الاتصال عند العودة للصفحة
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden && !this.connectionManager.isConnected) {
+                        setTimeout(() => {
+                            this.connectionManager.connect();
+                        }, 1000);
+                    }
+                });
             }
 
             handleLogin() {
@@ -1417,10 +2316,11 @@
                 const result = this.userManager.login(twitterHandle);
                 if (result.success) {
                     this.showMainApp();
-                    this.showSuccess(`مرحباً ${result.user.twitter}! تم تسجيل دخولك بنجاح.`);
+                    this.connectionManager.showToast(`مرحباً ${result.user.twitter}! تم تسجيل دخولك بنجاح.`, 'success');
                 } else {
                     loginError.textContent = result.error;
                     loginError.style.display = 'block';
+                    loginInput.focus();
                 }
             }
 
@@ -1433,10 +2333,13 @@
                         <i class="fab fa-twitter"></i>
                     </div>
                     <div class="user-details">
-                        <div class="user-name">${user.twitter}</div>
-                        <div style="font-size: 0.8rem; color: #aaa;">${user.name}</div>
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-twitter">${user.twitter}</div>
+                        <div class="online-counter" id="user-online-counter">
+                            <i class="fas fa-users"></i> جاري الاتصال...
+                        </div>
                     </div>
-                    <button class="logout-btn" id="logout-btn">
+                    <button class="logout-btn" id="logout-btn" title="تسجيل الخروج">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 `;
@@ -1467,14 +2370,26 @@
                 list.innerHTML = '';
                 
                 let lastCategory = "";
+                let categoryCount = 0;
                 
                 channels.forEach(channel => {
                     if (channel.c !== lastCategory) {
+                        if (lastCategory !== "") {
+                            const lastCatElement = list.querySelector('.cat:last-child');
+                            if (lastCatElement) {
+                                const countSpan = document.createElement('span');
+                                countSpan.className = 'cat-count';
+                                countSpan.textContent = categoryCount;
+                                lastCatElement.appendChild(countSpan);
+                            }
+                        }
+                        
                         const category = document.createElement("div");
                         category.className = "cat";
                         category.textContent = channel.c;
                         list.appendChild(category);
                         lastCategory = channel.c;
+                        categoryCount = 0;
                     }
                     
                     const button = document.createElement("div");
@@ -1489,119 +2404,16 @@
                         }
                     };
                     list.appendChild(button);
-                });
-            }
-
-            updatePollDisplay() {
-                const total = this.pollData.total;
-                const nigeriaVotes = this.pollData.nigeria.votes;
-                const algeriaVotes = this.pollData.algeria.votes;
-                
-                const nigeriaPercent = total > 0 ? Math.round((nigeriaVotes / total) * 100) : 0;
-                const algeriaPercent = total > 0 ? Math.round((algeriaVotes / total) * 100) : 0;
-                
-                document.getElementById('nigeria-percent').textContent = nigeriaPercent + '%';
-                document.getElementById('algeria-percent').textContent = algeriaPercent + '%';
-                
-                document.getElementById('nigeria-bar').style.width = nigeriaPercent + '%';
-                document.getElementById('algeria-bar').style.width = algeriaPercent + '%';
-                
-                document.getElementById('total-votes').textContent = total.toLocaleString();
-                
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                document.getElementById('last-update').textContent = timeString;
-                
-                this.updateVoteButtonState();
-            }
-
-            updateVoteButtonState() {
-                const voteButton = document.getElementById('vote-button');
-                const hasVoted = this.storage.hasUserVoted(this.userManager.currentUser.id);
-                
-                if (hasVoted) {
-                    voteButton.innerHTML = '<i class="fas fa-check"></i> لقد صوّتت بالفعل';
-                    voteButton.disabled = true;
-                } else if (this.selectedVote) {
-                    voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> صوّت الآن';
-                    voteButton.disabled = false;
-                } else {
-                    voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> اختر فريقاً أولاً';
-                    voteButton.disabled = true;
-                }
-            }
-
-            loadChatMessages() {
-                const messages = this.storage.getChatMessages();
-                const chatMessages = document.getElementById('chat-messages');
-                chatMessages.innerHTML = '';
-                
-                if (messages.length === 0) {
-                    return;
-                }
-                
-                messages.forEach(msg => {
-                    this.addMessageToDOM(msg.user, msg.twitter, msg.time, msg.text, false);
+                    categoryCount++;
                 });
                 
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 100);
-            }
-
-            addMessageToDOM(user, twitter, time, text, shouldSave = true) {
-                const chatMessages = document.getElementById('chat-messages');
-                
-                if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
-                    chatMessages.innerHTML = '';
-                }
-                
-                const messageElement = document.createElement('div');
-                messageElement.className = 'message';
-                messageElement.innerHTML = `
-                    <div class="message-header">
-                        <div class="message-user">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            ${user}
-                            <span class="twitter-badge">${twitter}</span>
-                        </div>
-                        <div class="message-time">${time}</div>
-                    </div>
-                    <div class="message-text">${text}</div>
-                `;
-                
-                chatMessages.appendChild(messageElement);
-                
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 100);
-                
-                if (shouldSave) {
-                    this.storage.saveChatMessage({
-                        user: user,
-                        twitter: twitter,
-                        time: time,
-                        text: text,
-                        timestamp: Date.now()
-                    });
-                }
-            }
-
-            addWelcomeMessage() {
-                const chatMessages = document.getElementById('chat-messages');
-                if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
-                    const now = new Date();
-                    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                    
-                    this.addMessageToDOM(
-                        'نظام MisterAI TV',
-                        '@neurosisnet',
-                        timeString,
-                        `مرحباً ${this.userManager.currentUser.twitter}! شارك في النقاش حول مباراة نيجيريا والجزائر.`,
-                        true
-                    );
+                // إضافة العدد للفئة الأخيرة
+                const lastCatElement = list.querySelector('.cat:last-child');
+                if (lastCatElement) {
+                    const countSpan = document.createElement('span');
+                    countSpan.className = 'cat-count';
+                    countSpan.textContent = categoryCount;
+                    lastCatElement.appendChild(countSpan);
                 }
             }
 
@@ -1609,11 +2421,6 @@
                 // اختيار خيار التصويت
                 document.querySelectorAll('.poll-option').forEach(option => {
                     option.addEventListener('click', (e) => {
-                        if (this.storage.hasUserVoted(this.userManager.currentUser.id)) {
-                            this.showError('لقد قمت بالتصويت مسبقاً!');
-                            return;
-                        }
-                        
                         document.querySelectorAll('.poll-option').forEach(opt => {
                             opt.classList.remove('selected');
                         });
@@ -1621,72 +2428,100 @@
                         e.currentTarget.classList.add('selected');
                         this.selectedVote = e.currentTarget.getAttribute('data-vote');
                         
-                        this.updateVoteButtonState();
+                        this.connectionManager.updateVoteButton();
                     });
                 });
 
                 // زر التصويت
                 document.getElementById('vote-button').addEventListener('click', () => this.submitVote());
 
-                // إرسال رسالة
-                document.getElementById('send-btn').addEventListener('click', () => this.sendChatMessage());
-                document.getElementById('chat-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
+                // إرسال رسالة بالـ Enter
+                const chatInput = document.getElementById('chat-input');
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
                         this.sendChatMessage();
                     }
                 });
 
+                // إرسال رسالة بالزر
+                document.getElementById('send-btn').addEventListener('click', () => this.sendChatMessage());
+
+                // مؤشر الكتابة
+                chatInput.addEventListener('input', () => {
+                    this.handleTyping();
+                });
+
                 // زر تسجيل الخروج
                 document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+
+                // إعادة تعيين التصويت
+                document.getElementById('reset-poll').addEventListener('click', () => {
+                    if (confirm('هل تريد إعادة تعيين استطلاع الرأي؟')) {
+                        this.connectionManager.resetPoll();
+                    }
+                });
+
+                // مسح الشات
+                document.getElementById('clear-chat').addEventListener('click', () => {
+                    if (confirm('هل تريد مسح كل الرسائل في الشات؟')) {
+                        document.getElementById('chat-messages').innerHTML = '';
+                        this.connectionManager.showToast('تم مسح الشات', 'success');
+                    }
+                });
+
+                // زر الإيموجي
+                document.getElementById('emoji-btn').addEventListener('click', () => {
+                    this.showEmojiPicker();
+                });
+
+                // زر السجل
+                document.getElementById('history-btn').addEventListener('click', () => {
+                    this.loadChatHistory();
+                });
+
+                // زر مشاركة التصويت
+                document.getElementById('share-poll').addEventListener('click', () => {
+                    this.sharePollResults();
+                });
+
+                // تحديث القنوات
+                document.getElementById('refresh-channels').addEventListener('click', () => {
+                    this.loadChannels();
+                    this.connectionManager.showToast('تم تحديث القنوات', 'success');
+                });
+
+                // إعدادات
+                document.getElementById('settings-toggle').addEventListener('click', () => {
+                    this.showSettings();
+                });
+
+                // معالجة الإعجابات
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.like-btn')) {
+                        const messageId = e.target.closest('.like-btn').dataset.messageId;
+                        this.connectionManager.likeMessage(messageId);
+                    }
+                });
             }
 
             submitVote() {
-                if (this.storage.hasUserVoted(this.userManager.currentUser.id)) {
-                    this.showError('لقد قمت بالتصويت مسبقاً!');
-                    return;
-                }
-                
                 if (!this.selectedVote) {
-                    this.showError('يرجى اختيار فريق للتصويت');
+                    this.connectionManager.showToast('يرجى اختيار فريق للتصويت', 'error');
                     return;
                 }
                 
-                // تحديث بيانات الاستطلاع
-                this.pollData[this.selectedVote].votes += 1;
-                this.pollData.total += 1;
+                const success = this.connectionManager.sendVote(this.selectedVote);
                 
-                // حفظ البيانات
-                const pollSaved = this.storage.savePollData(this.pollData);
-                const voteSaved = this.storage.saveUserVote(this.userManager.currentUser.id, this.selectedVote);
-                
-                if (!pollSaved || !voteSaved) {
-                    this.showError('حدث خطأ في حفظ التصويت');
-                    return;
+                if (success) {
+                    const voteButton = document.getElementById('vote-button');
+                    voteButton.disabled = true;
+                    voteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التصويت...';
+                    
+                    setTimeout(() => {
+                        voteButton.innerHTML = '<i class="fas fa-check"></i> شكراً لتصويتك!';
+                    }, 2000);
                 }
-                
-                // تحديث العرض
-                this.updatePollDisplay();
-                
-                // إضافة رسالة للشات
-                const voteText = this.selectedVote === 'nigeria' ? 
-                    'صوت لصالح نيجيريا ⚽🇳🇬' : 
-                    'صوت لصالح الجزائر ⚽🇩🇿';
-                
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                
-                this.addMessageToDOM(
-                    this.userManager.currentUser.name,
-                    this.userManager.currentUser.twitter,
-                    timeString,
-                    `${voteText} في استطلاع رأي كأس أفريقيا!`
-                );
-                
-                // تحديث رابط تويتر
-                this.updateTwitterShareLink();
-                
-                // إظهار رسالة نجاح
-                this.showSuccess(`شكراً لتصويتك ${this.userManager.currentUser.twitter}! صوتك تم تسجيله بنجاح.`);
             }
 
             sendChatMessage() {
@@ -1694,100 +2529,299 @@
                 const messageText = chatInput.value.trim();
                 
                 if (!messageText) {
-                    this.showError('يرجى كتابة رسالة قبل الإرسال');
+                    this.connectionManager.showToast('يرجى كتابة رسالة قبل الإرسال', 'error');
                     return;
                 }
                 
                 if (messageText.length < 2) {
-                    this.showError('الرسالة قصيرة جداً');
+                    this.connectionManager.showToast('الرسالة قصيرة جداً', 'error');
                     return;
                 }
                 
-                if (messageText.length > 200) {
-                    this.showError('الرسالة طويلة جداً (الحد الأقصى 200 حرف)');
-                    return;
+                // إرسال الرسالة عبر WebSocket
+                const success = this.connectionManager.sendMessage(messageText);
+                
+                if (success) {
+                    chatInput.value = '';
+                    chatInput.focus();
+                    
+                    // إخفاء مؤشر الكتابة
+                    this.hideTypingIndicator();
+                }
+            }
+
+            handleTyping() {
+                const now = Date.now();
+                
+                // إرسال نشاط الكتابة كل 3 ثواني
+                if (now - lastTypingTime > 3000) {
+                    this.connectionManager.sendActivity();
+                    lastTypingTime = now;
                 }
                 
-                // إضافة الرسالة
-                const now = new Date();
-                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                // إظهار/إخفاء مؤشر الكتابة
+                const chatInput = document.getElementById('chat-input');
+                const typingIndicator = document.getElementById('typing-indicator');
                 
-                this.addMessageToDOM(
-                    this.userManager.currentUser.name,
-                    this.userManager.currentUser.twitter,
-                    timeString,
-                    messageText
-                );
+                if (chatInput.value.trim().length > 0) {
+                    typingIndicator.classList.add('show');
+                } else {
+                    typingIndicator.classList.remove('show');
+                }
                 
-                // مسح حقل الإدخال
-                chatInput.value = '';
+                // إعادة تعيين الوقت
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    typingIndicator.classList.remove('show');
+                }, 2000);
+            }
+
+            hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                typingIndicator.classList.remove('show');
+            }
+
+            logout() {
+                if (confirm('هل تريد تسجيل الخروج من الدردشة؟')) {
+                    this.connectionManager.disconnect();
+                    this.userManager.logout();
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }
+            }
+
+            showEmojiPicker() {
+                const emojis = ['😀', '😂', '🥳', '⚽', '🎉', '👍', '❤️', '🔥', '⭐', '🏆'];
+                const chatInput = document.getElementById('chat-input');
                 
-                // إظهار رسالة نجاح
-                this.showSuccess('تم إرسال رسالتك بنجاح!');
+                const picker = document.createElement('div');
+                picker.className = 'emoji-picker';
+                picker.style.cssText = `
+                    position: absolute;
+                    bottom: 60px;
+                    right: 20px;
+                    background: rgba(20,20,30,0.95);
+                    border-radius: 10px;
+                    padding: 10px;
+                    display: grid;
+                    grid-template-columns: repeat(5, 1fr);
+                    gap: 5px;
+                    border: 2px solid var(--blue);
+                    z-index: 1000;
+                `;
+                
+                emojis.forEach(emoji => {
+                    const btn = document.createElement('button');
+                    btn.textContent = emoji;
+                    btn.style.cssText = `
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        padding: 5px;
+                        border-radius: 5px;
+                        transition: all 0.3s ease;
+                    `;
+                    btn.onmouseover = () => btn.style.background = 'rgba(255,255,255,0.1)';
+                    btn.onmouseout = () => btn.style.background = 'none';
+                    btn.onclick = () => {
+                        chatInput.value += emoji;
+                        chatInput.focus();
+                        picker.remove();
+                    };
+                    picker.appendChild(btn);
+                });
+                
+                document.body.appendChild(picker);
+                
+                // إغلاق المنتقي عند النقر خارجياً
+                setTimeout(() => {
+                    const closePicker = (e) => {
+                        if (!picker.contains(e.target)) {
+                            picker.remove();
+                            document.removeEventListener('click', closePicker);
+                        }
+                    };
+                    document.addEventListener('click', closePicker);
+                }, 100);
+            }
+
+            loadChatHistory() {
+                this.connectionManager.showToast('جاري تحميل سجل المحادثة...', 'info');
+                
+                fetch('/api/chat/history?limit=50')
+                    .then(res => res.json())
+                    .then(data => {
+                        const chatMessages = document.getElementById('chat-messages');
+                        const currentMessages = chatMessages.innerHTML;
+                        
+                        chatMessages.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            this.connectionManager.addMessage(msg, false);
+                        });
+                        
+                        this.connectionManager.showToast(`تم تحميل ${data.messages.length} رسالة`, 'success');
+                    })
+                    .catch(error => {
+                        console.error('خطأ في تحميل السجل:', error);
+                        this.connectionManager.showToast('خطأ في تحميل السجل', 'error');
+                    });
+            }
+
+            sharePollResults() {
+                const nigeriaPercent = document.getElementById('nigeria-percent').textContent;
+                const algeriaPercent = document.getElementById('algeria-percent').textContent;
+                const totalVotes = document.getElementById('total-votes').textContent;
+                
+                const text = `📊 نتائج استطلاع كأس أفريقيا 2026:
+🇳🇬 نيجيريا: ${nigeriaPercent}
+🇩🇿 الجزائر: ${algeriaPercent}
+إجمالي الأصوات: ${totalVotes}
+
+شارك في التصويت الآن على MisterAI TV!`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'نتائج استطلاع كأس أفريقيا',
+                        text: text,
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(text)
+                        .then(() => this.connectionManager.showToast('تم نسخ النتائج', 'success'))
+                        .catch(() => this.connectionManager.showToast('خطأ في النسخ', 'error'));
+                }
             }
 
             updateTwitterShareLink() {
                 const user = this.userManager.currentUser;
-                const voteText = this.selectedVote === 'nigeria' ? 
-                    'صوت لصالح نيجيريا' : 
-                    (this.selectedVote === 'algeria' ? 'صوت لصالح الجزائر' : 'شارك في الاستطلاع');
-                
-                const hashtags = 'كأس_أفريقيا,AFCON2026,MisterAITV';
+                const hashtags = 'كأس_أفريقيا,AFCON2026,MisterAITV,الدردشة_المباشرة';
                 const url = window.location.href.split('#')[0];
                 
-                const tweetText = `${voteText} في مباراة نيجيريا ضد الجزائر - دور ربع النهائي لكأس أفريقيا 2026! ${user.twitter} `;
+                const tweetText = `أنا أشاهد مباراة نيجيريا ضد الجزائر في كأس أفريقيا 2026 على MisterAI TV مع دردشة مباشرة! ${user.twitter} `;
                 const twitterShareBtn = document.getElementById('twitter-share-btn');
                 
                 twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=${hashtags}&url=${encodeURIComponent(url)}`;
             }
 
-            logout() {
-                if (confirm('هل تريد تسجيل الخروج؟')) {
-                    this.userManager.logout();
-                    location.reload();
-                }
-            }
-
-            showError(message) {
-                alert('خطأ: ' + message);
-            }
-
-            showSuccess(message) {
-                const successElement = document.getElementById('success-message');
-                successElement.textContent = message;
-                successElement.style.display = 'block';
+            showSettings() {
+                const settings = `
+                    <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); 
+                    background:rgba(20,20,30,0.98); padding:30px; border-radius:15px; 
+                    border:2px solid var(--blue); z-index:2000; max-width:400px; width:90%;">
+                        <h3 style="color:var(--gold); margin-bottom:20px; text-align:center;">
+                            <i class="fas fa-cog"></i> إعدادات الدردشة
+                        </h3>
+                        
+                        <div style="margin-bottom:15px;">
+                            <label style="color:#aaa; display:block; margin-bottom:5px;">إشعارات الدردشة</label>
+                            <label style="display:flex; align-items:center; gap:10px; color:white;">
+                                <input type="checkbox" id="notifications-toggle" checked>
+                                تفعيل الإشعارات
+                            </label>
+                        </div>
+                        
+                        <div style="margin-bottom:15px;">
+                            <label style="color:#aaa; display:block; margin-bottom:5px;">مظهر الدردشة</label>
+                            <select style="width:100%; padding:8px; border-radius:5px; background:rgba(255,255,255,0.1); 
+                            color:white; border:1px solid var(--green);">
+                                <option value="default">المظهر الافتراضي</option>
+                                <option value="dark">مظلم</option>
+                                <option value="light">فاتح</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display:flex; gap:10px; margin-top:25px;">
+                            <button onclick="this.closest('div').remove()" 
+                            style="flex:1; padding:10px; background:var(--red); color:white; 
+                            border:none; border-radius:8px; cursor:pointer;">
+                                إغلاق
+                            </button>
+                            <button onclick="appManager.saveSettings()" 
+                            style="flex:1; padding:10px; background:var(--green); color:white; 
+                            border:none; border-radius:8px; cursor:pointer;">
+                                حفظ
+                            </button>
+                        </div>
+                    </div>
+                    <div style="position:fixed; top:0; left:0; right:0; bottom:0; 
+                    background:rgba(0,0,0,0.7); z-index:1999;" 
+                    onclick="this.remove(); this.previousElementSibling.remove();"></div>
+                `;
                 
-                setTimeout(() => {
-                    successElement.style.display = 'none';
-                }, 3000);
+                document.body.insertAdjacentHTML('beforeend', settings);
+            }
+
+            saveSettings() {
+                this.connectionManager.showToast('تم حفظ الإعدادات', 'success');
+                document.querySelector('[style*="position:fixed; top:0; left:0"]').click();
             }
         }
 
         // ============ تهيئة التطبيق ============
-        let userManager;
         let appManager;
 
         document.addEventListener('DOMContentLoaded', () => {
+            // إضافة CSS للـ Toast
+            const toastStyle = document.createElement('style');
+            toastStyle.textContent = `
+                .toast-arabic {
+                    font-family: 'Cairo', sans-serif;
+                    font-weight: 600;
+                    border-radius: 8px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                }
+            `;
+            document.head.appendChild(toastStyle);
+            
+            // التحقق من دعم WebSocket
+            if (!window.WebSocket && !window.MozWebSocket) {
+                alert('عذراً، متصفحك لا يدعم الدردشة المباشرة. يرجى استخدام متصفح حديث.');
+            }
+            
+            // التحقق من دعم localStorage
             if (!window.localStorage) {
                 alert('عذراً، متصفحك لا يدعم التخزين المحلي. يرجى استخدام متصفح آخر.');
                 return;
             }
             
             try {
-                userManager = new UserManager();
                 appManager = new AppManager();
+                window.appManager = appManager;
             } catch (error) {
-                console.error('خطأ في تهيئة التطبيق:', error);
+                console.error('❌ خطأ في تهيئة التطبيق:', error);
                 alert('حدث خطأ في تحميل التطبيق. يرجى تحديث الصفحة.');
             }
         });
 
-        // تحديث الوقت كل دقيقة
-        setInterval(() => {
-            if (userManager && userManager.isLoggedIn) {
-                userManager.updateLastSeen();
+        // إعادة الاتصال عند فقدان الاتصال
+        window.addEventListener('online', () => {
+            if (appManager && appManager.connectionManager && !appManager.connectionManager.isConnected) {
+                setTimeout(() => {
+                    appManager.connectionManager.connect();
+                }, 1000);
             }
-        }, 60000);
+        });
+
+        // إظهار حالة الاتصال
+        window.addEventListener('offline', () => {
+            const statusElement = document.getElementById('connection-status');
+            if (statusElement) {
+                statusElement.className = 'connection-status disconnected';
+                document.getElementById('status-text').textContent = 'غير متصل بالإنترنت';
+            }
+        });
+
+        // منع إغلاق الصفحة عند وجود رسالة غير مرسلة
+        window.addEventListener('beforeunload', (e) => {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput && chatInput.value.trim().length > 0) {
+                e.preventDefault();
+                e.returnValue = 'لديك رسالة غير مرسلة. هل تريد المغادرة؟';
+            }
+        });
     </script>
 </body>
 </html>
