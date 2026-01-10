@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MisterAI TV GLOBAL 2026 - كأس أفريقيا</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,7 +20,12 @@
     --green:#00A859;
     --red:#D62828;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box; margin:0; padding:0}
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 body{
     margin:0;
     font-family:'Cairo',sans-serif;
@@ -202,9 +208,11 @@ body{
     }
 }
 
+/* السايدبار */
 .sidebar{
-    width:360px;
-    background:rgba(10, 10, 10, 0.85);
+    width: 380px;
+    min-width: 380px;
+    background:rgba(10, 10, 10, 0.92);
     border-left:2px solid var(--main);
     display:flex;
     flex-direction:column;
@@ -212,13 +220,15 @@ body{
     z-index: 1;
     backdrop-filter: blur(10px);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 }
 .brand{
-    padding:25px 10px;
+    padding:20px 15px;
     text-align:center;
     border-bottom:2px solid var(--main);
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 .brand::before {
     content: '';
@@ -239,7 +249,7 @@ body{
     z-index: 1;
 }
 .logo-text{
-    font-size:2.5rem;
+    font-size:2.4rem;
     font-weight:900;
     text-shadow:0 0 10px var(--green),
                 0 0 20px var(--green),
@@ -271,8 +281,8 @@ body{
     padding: 10px 20px;
     border-radius: 30px;
     text-decoration: none;
-    font-size: 1rem;
-    margin-top: 15px;
+    font-size: 0.95rem;
+    margin-top: 10px;
     transition: all 0.3s ease;
     border: none;
     box-shadow: 0 5px 15px rgba(0, 168, 89, 0.4);
@@ -283,7 +293,7 @@ body{
     box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
 }
 .social-link i {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
 }
 .social-link:hover i {
@@ -293,7 +303,8 @@ body{
 .list{
     flex:1;
     overflow-y:auto;
-    padding:15px
+    padding:15px;
+    min-height: 0;
 }
 .cat{
     padding:12px;
@@ -334,15 +345,16 @@ body{
     box-shadow: 0 2px 10px rgba(214, 40, 40, 0.3);
 }
 .footer-rights{
-    padding:20px;
+    padding:15px;
     text-align:center;
-    font-size:.9rem;
+    font-size:.85rem;
     border-top:1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     backdrop-filter: blur(5px);
     background: rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
 }
 .footer-rights b{
     background: linear-gradient(to right, var(--green), #FFD700);
@@ -356,6 +368,7 @@ body{
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* منطقة البث المباشر */
@@ -364,6 +377,8 @@ body{
     display: flex;
     padding: 20px;
     gap: 20px;
+    overflow: hidden;
+    min-height: 0;
 }
 
 /* منطقة الفيديو */
@@ -379,9 +394,10 @@ body{
     background: rgba(5, 5, 5, 0.7);
     backdrop-filter: blur(5px);
     border-radius: 15px;
-    min-height: 400px;
     box-shadow: 0 0 40px rgba(0, 168, 89, 0.2);
     border: 1px solid rgba(0, 168, 89, 0.3);
+    overflow: hidden;
+    min-width: 0;
 }
 .video-container::before {
     content: '⚽';
@@ -421,26 +437,32 @@ body{
 /* منطقة الاستطلاع والشات */
 .poll-chat-container {
     width: 500px;
+    min-width: 500px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow: hidden;
 }
 
 /* استطلاع الرأي */
 .poll-container {
-    background: rgba(10, 10, 15, 0.9);
+    background: rgba(10, 10, 15, 0.92);
     border-radius: 15px;
-    padding: 25px;
+    padding: 20px;
     backdrop-filter: blur(15px);
     border: 1px solid rgba(0, 168, 89, 0.3);
     box-shadow: 0 0 40px rgba(0, 168, 89, 0.2);
     flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .poll-header {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     position: relative;
+    flex-shrink: 0;
 }
 
 .poll-title {
@@ -450,7 +472,7 @@ body{
     background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 900;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .poll-subtitle {
@@ -462,17 +484,18 @@ body{
 .match-info {
     background: rgba(20, 20, 30, 0.8);
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 25px;
+    padding: 15px;
+    margin-bottom: 20px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
 
 .teams {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .team {
@@ -483,8 +506,8 @@ body{
 }
 
 .team-flag {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
+    font-size: 3rem;
+    margin-bottom: 8px;
     animation: flagWave 3s infinite alternate;
 }
 
@@ -494,7 +517,7 @@ body{
 }
 
 .team-name {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 900;
     color: white;
 }
@@ -508,10 +531,10 @@ body{
 }
 
 .vs {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 900;
     color: #FFD700;
-    padding: 0 20px;
+    padding: 0 15px;
     animation: vsGlow 2s infinite alternate;
 }
 
@@ -522,9 +545,9 @@ body{
 
 .match-details {
     color: #aaa;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     background: rgba(0, 0, 0, 0.3);
-    padding: 8px 15px;
+    padding: 6px 12px;
     border-radius: 20px;
     display: inline-block;
 }
@@ -533,19 +556,22 @@ body{
 .poll-options {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex: 1;
+    min-height: 0;
 }
 
 .poll-option {
     background: rgba(30, 30, 40, 0.8);
     border-radius: 12px;
-    padding: 18px;
+    padding: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid transparent;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .poll-option:hover {
@@ -563,20 +589,20 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .option-text {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .option-percentage {
     font-weight: 900;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--green);
 }
 
@@ -606,29 +632,31 @@ body{
 .twitter-input-container {
     background: rgba(20, 20, 30, 0.8);
     border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
     border: 1px solid rgba(29, 161, 242, 0.3);
+    flex-shrink: 0;
 }
 
 .twitter-input-label {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 8px;
+    margin-bottom: 8px;
     color: #1DA1F2;
     font-weight: 700;
+    font-size: 0.9rem;
 }
 
 .twitter-input {
     width: 100%;
-    padding: 12px 15px;
+    padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid rgba(29, 161, 242, 0.3);
     background: rgba(10, 10, 15, 0.8);
     color: white;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     direction: ltr;
     text-align: left;
 }
@@ -649,9 +677,9 @@ body{
     background: linear-gradient(45deg, var(--green), #FFD700);
     color: #000;
     border: none;
-    padding: 15px;
+    padding: 12px;
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 900;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -659,7 +687,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .vote-btn:hover {
@@ -678,27 +707,31 @@ body{
 .vote-stats {
     display: flex;
     justify-content: space-between;
-    margin-top: 15px;
-    font-size: 0.9rem;
+    margin-top: 12px;
+    font-size: 0.85rem;
     color: #aaa;
+    flex-shrink: 0;
 }
 
 /* قسم الشات */
 .chat-container {
-    background: rgba(10, 10, 15, 0.9);
+    background: rgba(10, 10, 15, 0.92);
     border-radius: 15px;
-    padding: 25px;
+    padding: 20px;
     backdrop-filter: blur(15px);
     border: 1px solid rgba(0, 168, 89, 0.3);
     box-shadow: 0 0 40px rgba(0, 168, 89, 0.2);
     flex: 2;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .chat-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    flex-shrink: 0;
 }
 
 .chat-title {
@@ -720,70 +753,74 @@ body{
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 15px;
+    padding: 12px;
     background: rgba(20, 20, 30, 0.6);
     border-radius: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 0;
 }
 
 .message {
-    margin-bottom: 15px;
-    padding: 12px;
+    margin-bottom: 12px;
+    padding: 10px;
     background: rgba(30, 30, 40, 0.8);
     border-radius: 10px;
     border-left: 3px solid var(--green);
+    flex-shrink: 0;
 }
 
 .message-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .message-user {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     font-weight: 700;
+    font-size: 0.9rem;
 }
 
 .twitter-badge {
     background: #1DA1F2;
     color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7rem;
     font-weight: 700;
 }
 
 .message-time {
     color: #888;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
 }
 
 .message-text {
     color: #ddd;
     line-height: 1.4;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 /* إدخال الشات */
 .chat-input-container {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .chat-input {
     flex: 1;
-    padding: 12px 15px;
+    padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid rgba(0, 168, 89, 0.3);
     background: rgba(20, 20, 30, 0.8);
     color: white;
     font-family: 'Cairo', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .chat-input:focus {
@@ -793,7 +830,7 @@ body{
 }
 
 .send-btn {
-    padding: 12px 25px;
+    padding: 10px 20px;
     background: linear-gradient(45deg, var(--green), #FFD700);
     color: #000;
     border: none;
@@ -803,7 +840,8 @@ body{
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.9rem;
 }
 
 .send-btn:hover {
@@ -816,19 +854,20 @@ body{
     background: #1DA1F2;
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 10px 15px;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 15px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .twitter-share:hover {
@@ -837,19 +876,94 @@ body{
     box-shadow: 0 10px 25px rgba(29, 161, 242, 0.4);
 }
 
-@media(max-width:900px){
-    body{flex-direction:column}
-    .sidebar{width:100%;height:100vh}
+/* شريط التمرير */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--green), var(--red));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #FFD700, var(--red));
+}
+
+/* تصميم متجاوب */
+@media(max-width: 1400px){
+    .sidebar{
+        width: 350px;
+        min-width: 350px;
+    }
+    .poll-chat-container {
+        width: 450px;
+        min-width: 450px;
+    }
+}
+
+@media(max-width: 1200px){
+    .stream-area {
+        flex-direction: column;
+        padding: 15px;
+    }
+    .video-container{
+        height: 300px;
+        min-height: 300px;
+    }
+    .poll-chat-container {
+        width: 100%;
+        min-width: auto;
+        flex-direction: row;
+    }
+    .poll-container, .chat-container {
+        flex: 1;
+    }
+}
+
+@media(max-width: 900px){
+    body{
+        flex-direction: column;
+        overflow: auto;
+    }
+    .sidebar{
+        width: 100%;
+        min-width: auto;
+        height: auto;
+        max-height: 50vh;
+    }
     .stream-area {
         flex-direction: column;
         padding: 10px;
     }
-    .video-container, .poll-chat-container {
-        width: 100%;
+    .video-container{
+        height: 250px;
+        min-height: 250px;
     }
     .poll-chat-container {
-        height: auto;
-        max-height: none;
+        flex-direction: column;
+        width: 100%;
+    }
+}
+
+@media(max-width: 600px){
+    .logo-text{
+        font-size: 2rem;
+    }
+    .sidebar{
+        max-height: 60vh;
+    }
+    .video-container{
+        height: 200px;
+        font-size: 1.5rem;
+    }
+    .video-container::after {
+        font-size: 1.8rem;
     }
 }
 </style>
@@ -1012,15 +1126,15 @@ body{
 <script>
 // إنشاء جسيمات متحركة
 const particlesContainer = document.getElementById('particles');
-for (let i = 0; i < 60; i++) {
+for (let i = 0; i < 40; i++) { // قلل عدد الجسيمات للأداء
     const particle = document.createElement('div');
     particle.classList.add('particle');
     
     // خصائص عشوائية
-    const size = 2 + Math.random() * 6;
+    const size = 2 + Math.random() * 5;
     const left = Math.random() * 100;
     const delay = Math.random() * 15;
-    const duration = 10 + Math.random() * 25;
+    const duration = 10 + Math.random() * 20;
     
     particle.style.width = `${size}px`;
     particle.style.height = `${size}px`;
@@ -1033,14 +1147,14 @@ for (let i = 0; i < 60; i++) {
 
 // إنشاء خطوط مضيئة
 const glowLines = document.getElementById('glowLines');
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 6; i++) { // قلل عدد الخطوط للأداء
     const line = document.createElement('div');
     line.classList.add('glow-line');
     
     const top = Math.random() * 100;
-    const width = 50 + Math.random() * 200;
+    const width = 50 + Math.random() * 150;
     const delay = Math.random() * 8;
-    const duration = 5 + Math.random() * 10;
+    const duration = 5 + Math.random() * 8;
     
     line.style.top = `${top}%`;
     line.style.width = `${width}%`;
@@ -1125,20 +1239,26 @@ const channels = [
 const list=document.getElementById("channels");
 let lastCat="";
 
-channels.forEach(ch=>{
-    if(ch.c!==lastCat){
-        const cat=document.createElement("div");
-        cat.className="cat";
-        cat.textContent=ch.c;
-        list.appendChild(cat);
-        lastCat=ch.c;
-    }
-    const btn=document.createElement("div");
-    btn.className="btn";
-    btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
-    btn.onclick=()=>window.open(ch.u,"_blank");
-    list.appendChild(btn);
-});
+// تحميل القنوات بشكل تدريجي للأداء
+function loadChannels() {
+    channels.forEach(ch=>{
+        if(ch.c!==lastCat){
+            const cat=document.createElement("div");
+            cat.className="cat";
+            cat.textContent=ch.c;
+            list.appendChild(cat);
+            lastCat=ch.c;
+        }
+        const btn=document.createElement("div");
+        btn.className="btn";
+        btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
+        btn.onclick=()=>window.open(ch.u,"_blank");
+        list.appendChild(btn);
+    });
+}
+
+// تحميل القنوات بعد تحميل الصفحة
+window.addEventListener('DOMContentLoaded', loadChannels);
 
 // كود الاستطلاع والشات
 let selectedVote = null;
@@ -1199,7 +1319,6 @@ function updatePollDisplay() {
 // تحميل رسائل الشات الأولية
 function loadInitialMessages() {
     const chatMessages = document.getElementById('chat-messages');
-    chatMessages.innerHTML = '';
     
     initialMessages.forEach(message => {
         addMessageToChat(message.user, message.twitter, message.time, message.text);
@@ -1354,6 +1473,28 @@ updateTwitterShareLink('algeria', '@neurosisnet');
 updatePollDisplay();
 loadInitialMessages();
 document.getElementById('vote-button').disabled = true;
+
+// إصلاح حجم الصفحة عند التحميل
+window.addEventListener('load', function() {
+    // ضبط ارتفاع العناصر
+    const mainContent = document.querySelector('.main-content');
+    const streamArea = document.querySelector('.stream-area');
+    
+    if (mainContent && streamArea) {
+        const windowHeight = window.innerHeight;
+        const sidebarHeight = document.querySelector('.sidebar').offsetHeight;
+        
+        // ضبط ارتفاع المحتوى الرئيسي
+        mainContent.style.height = `${windowHeight}px`;
+        streamArea.style.height = `${windowHeight - 40}px`;
+    }
+    
+    // إصلاح التمرير
+    const channelsList = document.querySelector('.list');
+    if (channelsList) {
+        channelsList.style.maxHeight = `${window.innerHeight - 300}px`;
+    }
+});
 </script>
 
 </body>
