@@ -1,1615 +1,1565 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MisterAI TV - بث مباشر كأس أفريقيا 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-:root { 
-    --bg:#050505;
-    --green:#00A859;
-    --gold:#FFD700;
-    --red:#D62828;
-    --blue:#1DA1F2;
-    --dark-blue:#0d8bd9;
-    --dark-red:#b22222;
-}
-*{box-sizing:border-box; margin:0; padding:0}
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-body{
-    margin:0;
-    font-family:'Cairo', sans-serif;
-    background:var(--bg);
-    color:#fff;
-    display:flex;
-    height:100vh;
-    overflow:hidden;
-    position: relative;
-}
-
-/* خلفية متحركة */
-.bg-animation {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.gradient-bg {
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, 
-        var(--green), 
-        #006233,
-        var(--red),
-        var(--gold),
-        #000000);
-    opacity: 0.1;
-    animation: rotateGradient 40s linear infinite;
-}
-
-@keyframes rotateGradient {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* السايدبار */
-.sidebar{
-    width: 380px;
-    min-width: 380px;
-    background: rgba(15, 15, 20, 0.95);
-    border-left: 3px solid var(--green);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 1;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 40px rgba(0, 168, 89, 0.3);
-    overflow: hidden;
-}
-
-.brand{
-    padding: 20px 15px;
-    text-align: center;
-    border-bottom: 2px solid var(--green);
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.logo-text{
-    font-size: 2.5rem;
-    font-weight: 900;
-    text-shadow: 0 0 15px var(--green),
-                 0 0 30px var(--green),
-                 0 0 45px var(--red);
-    animation: logoGlow 3s infinite alternate;
-    background: linear-gradient(to right, 
-        var(--green), 
-        var(--gold), 
-        var(--red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 15px;
-}
-
-@keyframes logoGlow {
-    0% { transform: scale(1); filter: brightness(1); }
-    100% { transform: scale(1.02); filter: brightness(1.2); }
-}
-
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: white;
-    background: linear-gradient(45deg, var(--green), var(--red));
-    padding: 12px 25px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-top: 10px;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 5px 20px rgba(0, 168, 89, 0.4);
-}
-
-.social-link:hover {
-    background: linear-gradient(45deg, var(--gold), var(--green));
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5);
-}
-
-/* قائمة القنوات */
-.list{
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    min-height: 0;
-}
-
-.cat{
-    padding: 12px 15px;
-    margin: 15px 0 10px;
-    background: rgba(25, 25, 35, 0.8);
-    color: var(--gold);
-    font-weight: 700;
-    border-right: 4px solid var(--green);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    font-size: 1.1rem;
-}
-
-.btn{
-    padding: 14px 15px;
-    margin: 8px 0;
-    background: rgba(30, 30, 45, 0.8);
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn:hover{
-    background: linear-gradient(90deg, var(--green), var(--red));
-    transform: translateX(-5px);
-    border-color: var(--gold);
-    box-shadow: 0 5px 20px rgba(0, 168, 89, 0.4);
-}
-
-.badge{
-    font-size: 0.75rem;
-    background: var(--red);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 700;
-    box-shadow: 0 2px 10px rgba(214, 40, 40, 0.3);
-}
-
-.footer-rights{
-    padding: 15px;
-    text-align: center;
-    font-size: 0.9rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.3);
-    flex-shrink: 0;
-}
-
-.footer-rights b{
-    background: linear-gradient(to right, var(--green), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 900;
-}
-
-/* المحتوى الرئيسي */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 20px;
-    background: rgba(5, 5, 10, 0.7);
-}
-
-.stream-area {
-    flex: 1;
-    display: flex;
-    gap: 20px;
-    overflow: hidden;
-    min-height: 0;
-}
-
-/* منطقة الفيديو */
-.video-container{
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 15px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 0 50px rgba(0, 168, 89, 0.2);
-    border: 2px solid rgba(0, 168, 89, 0.3);
-    min-width: 0;
-}
-
-.video-placeholder {
-    text-align: center;
-    padding: 20px;
-}
-
-.video-title {
-    font-size: 2.2rem;
-    font-weight: 900;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, var(--green), var(--gold), var(--red));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.video-subtitle {
-    color: #aaa;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-}
-
-.live-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--red);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: 700;
-    animation: pulseLive 2s infinite;
-}
-
-@keyframes pulseLive {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-/* منطقة الاستطلاع والشات */
-.poll-chat-container {
-    width: 500px;
-    min-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow: hidden;
-}
-
-/* استطلاع الرأي */
-.poll-container {
-    background: rgba(20, 20, 30, 0.95);
-    border-radius: 15px;
-    padding: 25px;
-    border: 2px solid var(--green);
-    box-shadow: 0 0 40px rgba(0, 168, 89, 0.2);
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.poll-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.poll-title {
-    font-size: 1.8rem;
-    font-weight: 900;
-    background: linear-gradient(to right, var(--green), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-}
-
-.poll-subtitle {
-    color: #aaa;
-    font-size: 1rem;
-}
-
-/* معلومات المباراة */
-.match-info {
-    background: rgba(30, 30, 45, 0.8);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 25px;
-    text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.teams {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.team {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-}
-
-.team-flag {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-}
-
-.team-name {
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: white;
-}
-
-.team:nth-child(1) .team-name {
-    color: var(--green);
-    text-shadow: 0 0 10px rgba(0, 168, 89, 0.3);
-}
-
-.team:nth-child(3) .team-name {
-    color: var(--red);
-    text-shadow: 0 0 10px rgba(214, 40, 40, 0.3);
-}
-
-.vs {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: var(--gold);
-    padding: 0 20px;
-    animation: vsGlow 2s infinite alternate;
-}
-
-@keyframes vsGlow {
-    0% { text-shadow: 0 0 10px var(--gold); }
-    100% { text-shadow: 0 0 20px var(--gold), 0 0 30px var(--gold); }
-}
-
-.match-details {
-    color: #aaa;
-    font-size: 0.95rem;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 8px 20px;
-    border-radius: 20px;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-/* خيارات الاستطلاع */
-.poll-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.poll-option {
-    background: rgba(40, 40, 60, 0.8);
-    border-radius: 12px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.poll-option:hover {
-    background: rgba(50, 50, 70, 0.9);
-    transform: translateX(-5px);
-}
-
-.poll-option.selected {
-    background: rgba(50, 50, 70, 0.9);
-    border-color: var(--green);
-    box-shadow: 0 0 20px rgba(0, 168, 89, 0.3);
-}
-
-.option-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.option-text {
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.option-percentage {
-    font-weight: 900;
-    font-size: 1.3rem;
-    color: var(--gold);
-}
-
-.vote-bar {
-    height: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 8px;
-}
-
-.vote-fill {
-    height: 100%;
-    border-radius: 5px;
-    width: 0%;
-    transition: width 1.5s ease-out;
-}
-
-.vote-fill.nigeria {
-    background: linear-gradient(90deg, var(--green), #00F5A0);
-}
-
-.vote-fill.algeria {
-    background: linear-gradient(90deg, var(--red), #FF6B8B);
-}
-
-/* إدخال حساب تويتر */
-.twitter-input-container {
-    background: rgba(30, 30, 45, 0.8);
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(29, 161, 242, 0.3);
-}
-
-.twitter-input-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    color: var(--blue);
-    font-weight: 700;
-    font-size: 1rem;
-}
-
-.twitter-input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 8px;
-    border: 1px solid rgba(29, 161, 242, 0.3);
-    background: rgba(20, 20, 30, 0.8);
-    color: white;
-    font-family: 'Cairo', sans-serif;
-    font-size: 0.95rem;
-    direction: ltr;
-    text-align: left;
-}
-
-.twitter-input:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 15px rgba(29, 161, 242, 0.3);
-}
-
-.twitter-error {
-    color: var(--red);
-    font-size: 0.85rem;
-    margin-top: 8px;
-    display: none;
-}
-
-/* زر التصويت */
-.vote-btn {
-    background: linear-gradient(45deg, var(--green), var(--gold));
-    color: #000;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.vote-btn:hover:not(:disabled) {
-    background: linear-gradient(45deg, var(--gold), var(--red));
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-}
-
-.vote-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* إحصائيات التصويت */
-.vote-stats {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    font-size: 0.9rem;
-    color: #aaa;
-}
-
-.vote-count {
-    font-weight: 700;
-    color: var(--gold);
-}
-
-/* قسم الشات */
-.chat-container {
-    background: rgba(20, 20, 30, 0.95);
-    border-radius: 15px;
-    padding: 25px;
-    border: 2px solid var(--blue);
-    box-shadow: 0 0 40px rgba(29, 161, 242, 0.2);
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-}
-
-.chat-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.chat-title {
-    font-size: 1.8rem;
-    font-weight: 900;
-    background: linear-gradient(to right, var(--blue), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-}
-
-.chat-subtitle {
-    color: #aaa;
-    font-size: 1rem;
-}
-
-/* قائمة الشات */
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    background: rgba(30, 30, 45, 0.6);
-    border-radius: 10px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 0;
-}
-
-.chat-messages:empty::before {
-    content: 'لا توجد رسائل بعد. كن أول من يعلق!';
-    display: block;
-    text-align: center;
-    color: #666;
-    padding: 40px 20px;
-    font-style: italic;
-}
-
-.message {
-    margin-bottom: 15px;
-    padding: 15px;
-    background: rgba(40, 40, 60, 0.8);
-    border-radius: 10px;
-    border-left: 4px solid var(--green);
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.message-user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-}
-
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, var(--green), var(--blue));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-}
-
-.twitter-badge {
-    background: var(--blue);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    margin-right: 8px;
-}
-
-.message-time {
-    color: #888;
-    font-size: 0.85rem;
-}
-
-.message-text {
-    color: #ddd;
-    line-height: 1.5;
-    font-size: 0.95rem;
-    margin-top: 8px;
-}
-
-/* إدخال الشات */
-.chat-input-container {
-    display: flex;
-    gap: 10px;
-}
-
-.chat-input {
-    flex: 1;
-    padding: 14px 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 168, 89, 0.3);
-    background: rgba(30, 30, 45, 0.8);
-    color: white;
-    font-family: 'Cairo', sans-serif;
-    font-size: 0.95rem;
-}
-
-.chat-input:focus {
-    outline: none;
-    border-color: var(--green);
-    box-shadow: 0 0 15px rgba(0, 168, 89, 0.3);
-}
-
-.send-btn {
-    padding: 14px 25px;
-    background: linear-gradient(45deg, var(--green), var(--blue));
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.95rem;
-}
-
-.send-btn:hover {
-    background: linear-gradient(45deg, var(--blue), var(--green));
-    transform: translateY(-2px);
-}
-
-/* زر مشاركة تويتر */
-.twitter-share {
-    background: var(--blue);
-    color: white;
-    border: none;
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-decoration: none;
-    text-align: center;
-}
-
-.twitter-share:hover {
-    background: var(--dark-blue);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(29, 161, 242, 0.4);
-}
-
-/* رسالة نجاح */
-.success-message {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(45deg, var(--green), var(--gold));
-    color: #000;
-    padding: 15px 25px;
-    border-radius: 10px;
-    font-weight: 700;
-    z-index: 10000;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    animation: fadeInOut 3s ease;
-    display: none;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-}
-
-/* شريط التمرير */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, var(--green), var(--blue));
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, var(--blue), var(--green));
-}
-
-/* تصميم متجاوب */
-@media(max-width: 1400px){
-    .sidebar{
-        width: 350px;
-        min-width: 350px;
-    }
-    .poll-chat-container {
-        width: 450px;
-        min-width: 450px;
-    }
-}
-
-@media(max-width: 1200px){
-    .stream-area {
-        flex-direction: column;
-    }
-    .video-container{
-        height: 300px;
-        min-height: 300px;
-    }
-    .poll-chat-container {
-        width: 100%;
-        min-width: auto;
-        flex-direction: row;
-    }
-    .poll-container, .chat-container {
-        flex: 1;
-    }
-}
-
-@media(max-width: 900px){
-    body{
-        flex-direction: column;
-    }
-    .sidebar{
-        width: 100%;
-        min-width: auto;
-        height: auto;
-        max-height: 50vh;
-    }
-    .stream-area {
-        flex-direction: column;
-    }
-    .video-container{
-        height: 250px;
-        min-height: 250px;
-    }
-    .poll-chat-container {
-        flex-direction: column;
-        width: 100%;
-    }
-}
-
-@media(max-width: 600px){
-    .logo-text{
-        font-size: 2rem;
-    }
-    .video-title{
-        font-size: 1.8rem;
-    }
-    .poll-title, .chat-title{
-        font-size: 1.5rem;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MisterAI TV - بث مباشر كأس أفريقيا 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --green: #00A859;
+            --gold: #FFD700;
+            --red: #D62828;
+            --blue: #1DA1F2;
+            --dark-blue: #0d8bd9;
+            --dark-red: #b22222;
+            --sidebar-width: 350px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* خلفية متحركة */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .gradient-bg {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                var(--green), 
+                #006233,
+                var(--red),
+                var(--gold),
+                #000000);
+            opacity: 0.08;
+            animation: rotateGradient 40s linear infinite;
+        }
+        
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* السايدبار */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(10, 10, 15, 0.98);
+            border-left: 3px solid var(--green);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .brand {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--green);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px var(--green),
+                        0 0 20px var(--green),
+                        0 0 30px var(--red);
+            background: linear-gradient(to right, 
+                var(--green), 
+                var(--gold), 
+                var(--red));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            animation: logoPulse 3s infinite alternate;
+        }
+        
+        @keyframes logoPulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.03); filter: brightness(1.2); }
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+            background: linear-gradient(45deg, var(--green), var(--red));
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .social-link:hover {
+            background: linear-gradient(45deg, var(--gold), var(--green));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        /* قائمة القنوات */
+        .list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .cat {
+            padding: 10px 15px;
+            margin: 12px 0 8px;
+            background: rgba(20, 20, 30, 0.9);
+            color: var(--gold);
+            font-weight: 700;
+            border-right: 3px solid var(--green);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            padding: 12px 15px;
+            margin: 6px 0;
+            background: rgba(30, 30, 45, 0.9);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(90deg, var(--green), var(--red));
+            transform: translateX(-3px);
+            border-color: var(--gold);
+            box-shadow: 0 3px 10px rgba(0, 168, 89, 0.3);
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            background: var(--red);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-weight: 700;
+        }
+        
+        .footer-rights {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+        
+        .footer-rights b {
+            background: linear-gradient(to right, var(--green), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: rgba(5, 5, 10, 0.8);
+            height: 100vh;
+        }
+        
+        .stream-area {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+            height: calc(100vh - 40px);
+        }
+        
+        /* منطقة الفيديو */
+        .video-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 168, 89, 0.2);
+            border: 2px solid rgba(0, 168, 89, 0.3);
+            min-width: 0;
+        }
+        
+        .video-placeholder {
+            text-align: center;
+            padding: 20px;
+            max-width: 80%;
+        }
+        
+        .video-title {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--green), var(--gold), var(--red));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .video-subtitle {
+            color: #aaa;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--red);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            animation: pulseLive 1.5s infinite;
+        }
+        
+        @keyframes pulseLive {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* منطقة الاستطلاع والشات */
+        .poll-chat-container {
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: hidden;
+        }
+        
+        /* استطلاع الرأي */
+        .poll-container {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid var(--green);
+            box-shadow: 0 0 30px rgba(0, 168, 89, 0.2);
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .poll-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .poll-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--green), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .poll-subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* معلومات المباراة */
+        .match-info {
+            background: rgba(25, 25, 40, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .team-flag {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+        }
+        
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: white;
+        }
+        
+        .team:nth-child(1) .team-name {
+            color: var(--green);
+        }
+        
+        .team:nth-child(3) .team-name {
+            color: var(--red);
+        }
+        
+        .vs {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--gold);
+            padding: 0 15px;
+            animation: vsGlow 2s infinite alternate;
+        }
+        
+        @keyframes vsGlow {
+            0% { text-shadow: 0 0 5px var(--gold); }
+            100% { text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold); }
+        }
+        
+        .match-details {
+            color: #aaa;
+            font-size: 0.85rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        /* خيارات الاستطلاع */
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .poll-option {
+            background: rgba(35, 35, 50, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .poll-option:hover {
+            background: rgba(45, 45, 65, 0.95);
+            transform: translateX(-3px);
+        }
+        
+        .poll-option.selected {
+            background: rgba(45, 45, 65, 0.95);
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 168, 89, 0.2);
+        }
+        
+        .option-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .option-text {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .option-percentage {
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+        
+        .vote-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .vote-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+        
+        .vote-fill.nigeria {
+            background: linear-gradient(90deg, var(--green), #00F5A0);
+        }
+        
+        .vote-fill.algeria {
+            background: linear-gradient(90deg, var(--red), #FF6B8B);
+        }
+        
+        /* إدخال حساب تويتر */
+        .twitter-input-container {
+            background: rgba(25, 25, 40, 0.9);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(29, 161, 242, 0.3);
+        }
+        
+        .twitter-input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--blue);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .twitter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(29, 161, 242, 0.3);
+            background: rgba(15, 15, 25, 0.9);
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .twitter-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 10px rgba(29, 161, 242, 0.2);
+        }
+        
+        .twitter-error {
+            color: var(--red);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* زر التصويت */
+        .vote-btn {
+            background: linear-gradient(45deg, var(--green), var(--gold));
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .vote-btn:hover:not(:disabled) {
+            background: linear-gradient(45deg, var(--gold), var(--red));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* إحصائيات التصويت */
+        .vote-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .vote-count {
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        /* قسم الشات */
+        .chat-container {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 30px rgba(29, 161, 242, 0.2);
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .chat-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--blue), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .chat-subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* قائمة الشات */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(25, 25, 40, 0.7);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 0;
+        }
+        
+        .chat-messages:empty::before {
+            content: 'لا توجد رسائل بعد. كن أول من يعلق!';
+            display: block;
+            text-align: center;
+            color: #666;
+            padding: 30px 15px;
+            font-style: italic;
+        }
+        
+        .message {
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(35, 35, 50, 0.9);
+            border-radius: 8px;
+            border-left: 3px solid var(--green);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .message-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--green), var(--blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .twitter-badge {
+            background: var(--blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .message-time {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        
+        .message-text {
+            color: #ddd;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            margin-top: 6px;
+        }
+        
+        /* إدخال الشات */
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 168, 89, 0.3);
+            background: rgba(25, 25, 40, 0.9);
+            color: white;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 10px rgba(0, 168, 89, 0.2);
+        }
+        
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(45deg, var(--green), var(--blue));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .send-btn:hover {
+            background: linear-gradient(45deg, var(--blue), var(--green));
+            transform: translateY(-2px);
+        }
+        
+        /* زر مشاركة تويتر */
+        .twitter-share {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .twitter-share:hover {
+            background: var(--dark-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(29, 161, 242, 0.3);
+        }
+        
+        /* رسالة نجاح */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, var(--green), var(--gold));
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            z-index: 10000;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            animation: fadeInOut 3s ease;
+            display: none;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
+        }
+        
+        /* شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--green), var(--blue));
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--blue), var(--green));
+        }
+        
+        /* تصميم متجاوب */
+        @media (max-width: 1400px) {
+            .poll-chat-container {
+                width: 450px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .stream-area {
+                flex-direction: column;
+            }
+            
+            .video-container {
+                height: 300px;
+                min-height: 300px;
+            }
+            
+            .poll-chat-container {
+                width: 100%;
+                flex-direction: row;
+            }
+            
+            .poll-container,
+            .chat-container {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+            }
+            
+            .stream-area {
+                padding: 10px;
+            }
+            
+            .video-container {
+                height: 200px;
+                min-height: 200px;
+            }
+            
+            .poll-chat-container {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .video-title {
+                font-size: 1.5rem;
+            }
+            
+            .poll-title,
+            .chat-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<!-- خلفية متحركة -->
-<div class="bg-animation">
-    <div class="gradient-bg"></div>
-</div>
-
-<!-- رسالة النجاح -->
-<div class="success-message" id="success-message"></div>
-
-<!-- السايدبار -->
-<div class="sidebar">
-    <div class="brand">
-        <div class="logo-text">MISTERAI TV</div>
-        <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
-            <i class="fab fa-twitter"></i>
-            تابعنا على X: @neurosisnet
-        </a>
+    <!-- خلفية متحركة -->
+    <div class="bg-animation">
+        <div class="gradient-bg"></div>
     </div>
 
-    <div class="list" id="channels">
-        <!-- سيتم تحميل القنوات هنا -->
-    </div>
+    <!-- رسالة النجاح -->
+    <div class="success-message" id="success-message"></div>
 
-    <div class="footer-rights">
-        <div><b>كأس أفريقيا 2026</b> - البث المباشر</div>
-        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">
-            MisterAI TV GLOBAL © 2026
+    <!-- السايدبار -->
+    <div class="sidebar">
+        <div class="brand">
+            <div class="logo-text">MISTERAI TV</div>
+            <a href="https://x.com/neurosisnet" target="_blank" class="social-link">
+                <i class="fab fa-twitter"></i>
+                تابعنا على X: @neurosisnet
+            </a>
         </div>
-    </div>
-</div>
 
-<!-- المحتوى الرئيسي -->
-<div class="main-content">
-    <div class="stream-area">
-        <!-- منطقة البث المباشر -->
-        <div class="video-container">
-            <div class="video-placeholder">
-                <div class="video-title">كأس أفريقيا 2026</div>
-                <div class="video-subtitle">البث المباشر - دور ربع النهائي</div>
-                <div class="live-indicator">
-                    <i class="fas fa-circle"></i>
-                    بث مباشر
-                </div>
+        <div class="list" id="channels">
+            <!-- سيتم تحميل القنوات هنا -->
+        </div>
+
+        <div class="footer-rights">
+            <div><b>كأس أفريقيا 2026</b> - البث المباشر</div>
+            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 3px;">
+                MisterAI TV GLOBAL © 2026
             </div>
         </div>
-        
-        <!-- منطقة الاستطلاع والشات -->
-        <div class="poll-chat-container">
-            <!-- استطلاع الرأي -->
-            <div class="poll-container">
-                <div class="poll-header">
-                    <div class="poll-title">استطلاع رأي ربع النهائي</div>
-                    <div class="poll-subtitle">من سيفوز ويتأهل لنصف النهائي؟</div>
-                </div>
-                
-                <div class="match-info">
-                    <div class="teams">
-                        <div class="team">
-                            <div class="team-flag">🇳🇬</div>
-                            <div class="team-name">نيجيريا</div>
-                        </div>
-                        
-                        <div class="vs">VS</div>
-                        
-                        <div class="team">
-                            <div class="team-flag">🇩🇿</div>
-                            <div class="team-name">الجزائر</div>
-                        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <div class="stream-area">
+            <!-- منطقة البث المباشر -->
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div class="video-title">كأس أفريقيا 2026</div>
+                    <div class="video-subtitle">البث المباشر - دور ربع النهائي</div>
+                    <div class="live-indicator">
+                        <i class="fas fa-circle"></i>
+                        بث مباشر
                     </div>
-                    
-                    <div class="match-details">
-                        دور ربع النهائي - كأس أفريقيا 2026 - الساعة: 17:00
-                    </div>
-                </div>
-                
-                <div class="poll-options">
-                    <div class="poll-option" data-vote="nigeria">
-                        <div class="option-content">
-                            <div class="option-text">
-                                <i class="fas fa-trophy" style="color: var(--green);"></i>
-                                فوز نيجيريا
-                            </div>
-                            <div class="option-percentage" id="nigeria-percent">0%</div>
-                        </div>
-                        <div class="vote-bar">
-                            <div class="vote-fill nigeria" id="nigeria-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="poll-option" data-vote="algeria">
-                        <div class="option-content">
-                            <div class="option-text">
-                                <i class="fas fa-trophy" style="color: var(--red);"></i>
-                                فوز الجزائر
-                            </div>
-                            <div class="option-percentage" id="algeria-percent">0%</div>
-                        </div>
-                        <div class="vote-bar">
-                            <div class="vote-fill algeria" id="algeria-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- إدخال حساب تويتر -->
-                <div class="twitter-input-container">
-                    <div class="twitter-input-label">
-                        <i class="fab fa-twitter" style="color: var(--blue);"></i>
-                        أدخل حسابك على تويتر للمشاركة:
-                    </div>
-                    <input type="text" class="twitter-input" id="twitter-handle" 
-                           placeholder="@neurosisnet" value="@neurosisnet">
-                    <div class="twitter-error" id="twitter-error"></div>
-                </div>
-                
-                <button class="vote-btn" id="vote-button">
-                    <i class="fas fa-vote-yea"></i>
-                    صوّت الآن وشارك على تويتر
-                </button>
-                
-                <div class="vote-stats">
-                    <span>إجمالي الأصوات: <span class="vote-count" id="total-votes">0</span></span>
-                    <span>آخر تحديث: <span id="last-update">--</span></span>
                 </div>
             </div>
-            
-            <!-- قسم الشات -->
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div class="chat-title">شات كأس أفريقيا</div>
-                    <div class="chat-subtitle">ناقش المباراة مع المشجعين العرب</div>
-                </div>
-                
-                <div class="chat-messages" id="chat-messages">
-                    <!-- الرسائل ستضاف هنا من قبل المستخدمين الحقيقيين -->
-                </div>
-                
-                <div class="chat-input-container">
-                    <input type="text" class="chat-input" id="chat-input" 
-                           placeholder="اكتب تعليقك عن المباراة..." maxlength="200">
-                    <button class="send-btn" id="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                        إرسال
+
+            <!-- منطقة الاستطلاع والشات -->
+            <div class="poll-chat-container">
+                <!-- استطلاع الرأي -->
+                <div class="poll-container">
+                    <div class="poll-header">
+                        <div class="poll-title">استطلاع رأي ربع النهائي</div>
+                        <div class="poll-subtitle">من سيفوز ويتأهل لنصف النهائي؟</div>
+                    </div>
+
+                    <div class="match-info">
+                        <div class="teams">
+                            <div class="team">
+                                <div class="team-flag">🇳🇬</div>
+                                <div class="team-name">نيجيريا</div>
+                            </div>
+
+                            <div class="vs">VS</div>
+
+                            <div class="team">
+                                <div class="team-flag">🇩🇿</div>
+                                <div class="team-name">الجزائر</div>
+                            </div>
+                        </div>
+
+                        <div class="match-details">
+                            دور ربع النهائي - كأس أفريقيا 2026 - الساعة: 17:00
+                        </div>
+                    </div>
+
+                    <div class="poll-options">
+                        <div class="poll-option" data-vote="nigeria">
+                            <div class="option-content">
+                                <div class="option-text">
+                                    <i class="fas fa-trophy" style="color: var(--green);"></i>
+                                    فوز نيجيريا
+                                </div>
+                                <div class="option-percentage" id="nigeria-percent">0%</div>
+                            </div>
+                            <div class="vote-bar">
+                                <div class="vote-fill nigeria" id="nigeria-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="poll-option" data-vote="algeria">
+                            <div class="option-content">
+                                <div class="option-text">
+                                    <i class="fas fa-trophy" style="color: var(--red);"></i>
+                                    فوز الجزائر
+                                </div>
+                                <div class="option-percentage" id="algeria-percent">0%</div>
+                            </div>
+                            <div class="vote-bar">
+                                <div class="vote-fill algeria" id="algeria-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- إدخال حساب تويتر -->
+                    <div class="twitter-input-container">
+                        <div class="twitter-input-label">
+                            <i class="fab fa-twitter" style="color: var(--blue);"></i>
+                            أدخل حسابك على تويتر للمشاركة:
+                        </div>
+                        <input type="text" class="twitter-input" id="twitter-handle" 
+                               placeholder="@neurosisnet" value="@neurosisnet">
+                        <div class="twitter-error" id="twitter-error"></div>
+                    </div>
+
+                    <button class="vote-btn" id="vote-button">
+                        <i class="fas fa-vote-yea"></i>
+                        صوّت الآن وشارك على تويتر
                     </button>
+
+                    <div class="vote-stats">
+                        <span>إجمالي الأصوات: <span class="vote-count" id="total-votes">0</span></span>
+                        <span>آخر تحديث: <span id="last-update">--</span></span>
+                    </div>
                 </div>
-                
-                <!-- زر مشاركة تويتر -->
-                <a href="#" class="twitter-share" id="twitter-share-btn" target="_blank">
-                    <i class="fab fa-twitter"></i>
-                    غرّد برأيك على تويتر
-                </a>
+
+                <!-- قسم الشات -->
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-title">شات كأس أفريقيا</div>
+                        <div class="chat-subtitle">ناقش المباراة مع المشجعين العرب</div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- الرسائل ستضاف هنا من قبل المستخدمين الحقيقيين -->
+                    </div>
+
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" 
+                               placeholder="اكتب تعليقك عن المباراة..." maxlength="200">
+                        <button class="send-btn" id="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            إرسال
+                        </button>
+                    </div>
+
+                    <!-- زر مشاركة تويتر -->
+                    <a href="#" class="twitter-share" id="twitter-share-btn" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                        غرّد برأيك على تويتر
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-// ============ نظام التخزين المحسن ============
-class StorageSystem {
-    constructor() {
-        this.POLL_KEY = 'afcon_poll_real_data';
-        this.CHAT_KEY = 'afcon_chat_real_messages';
-        this.USER_VOTES_KEY = 'afcon_user_real_votes';
-        this.USER_ID_KEY = 'afcon_real_user_id';
-    }
-
-    // توليد معرف فريد للمستخدم
-    generateUserId() {
-        return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    }
-
-    getUserId() {
-        let userId = localStorage.getItem(this.USER_ID_KEY);
-        if (!userId) {
-            userId = this.generateUserId();
-            localStorage.setItem(this.USER_ID_KEY, userId);
-        }
-        return userId;
-    }
-
-    // بيانات الاستطلاع
-    getPollData() {
-        const defaultData = {
-            nigeria: { votes: 0 },
-            algeria: { votes: 0 },
-            total: 0,
-            lastUpdated: Date.now()
-        };
-        
-        try {
-            const data = JSON.parse(localStorage.getItem(this.POLL_KEY));
-            return data || defaultData;
-        } catch (e) {
-            console.error('خطأ في تحميل بيانات الاستطلاع:', e);
-            return defaultData;
-        }
-    }
-
-    savePollData(data) {
-        try {
-            data.lastUpdated = Date.now();
-            localStorage.setItem(this.POLL_KEY, JSON.stringify(data));
-            return true;
-        } catch (e) {
-            console.error('خطأ في حفظ بيانات الاستطلاع:', e);
-            return false;
-        }
-    }
-
-    // تحقق من تصويت المستخدم
-    hasUserVoted(userId) {
-        try {
-            const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
-            return !!votes[userId];
-        } catch (e) {
-            console.error('خطأ في التحقق من تصويت المستخدم:', e);
-            return false;
-        }
-    }
-
-    saveUserVote(userId, vote) {
-        try {
-            const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
-            votes[userId] = {
-                vote: vote,
-                timestamp: Date.now(),
-                ip: 'local'
-            };
-            localStorage.setItem(this.USER_VOTES_KEY, JSON.stringify(votes));
-            return true;
-        } catch (e) {
-            console.error('خطأ في حفظ تصويت المستخدم:', e);
-            return false;
-        }
-    }
-
-    // رسائل الشات
-    getChatMessages() {
-        try {
-            const messages = JSON.parse(localStorage.getItem(this.CHAT_KEY)) || [];
-            return messages.slice(-100); // إرجاع آخر 100 رسالة فقط
-        } catch (e) {
-            console.error('خطأ في تحميل رسائل الشات:', e);
-            return [];
-        }
-    }
-
-    saveChatMessage(message) {
-        try {
-            const messages = this.getChatMessages();
-            messages.push(message);
-            // حفظ آخر 100 رسالة فقط
-            if (messages.length > 100) {
-                messages.splice(0, messages.length - 100);
+    <script>
+        // ============ نظام التخزين المحسن ============
+        class StorageSystem {
+            constructor() {
+                this.POLL_KEY = 'afcon_poll_real_data';
+                this.CHAT_KEY = 'afcon_chat_real_messages';
+                this.USER_VOTES_KEY = 'afcon_user_real_votes';
+                this.USER_ID_KEY = 'afcon_real_user_id';
             }
-            localStorage.setItem(this.CHAT_KEY, JSON.stringify(messages));
-            return true;
-        } catch (e) {
-            console.error('خطأ في حفظ رسالة الشات:', e);
-            return false;
-        }
-    }
 
-    // إحصائيات النظام
-    getStats() {
-        const pollData = this.getPollData();
-        const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
-        const messages = this.getChatMessages();
-        
-        return {
-            totalVotes: pollData.total,
-            totalVoters: Object.keys(votes).length,
-            totalMessages: messages.length,
-            nigeriaVotes: pollData.nigeria.votes,
-            algeriaVotes: pollData.algeria.votes,
-            lastUpdated: pollData.lastUpdated
-        };
-    }
-}
-
-// ============ مدير التطبيق ============
-class AppManager {
-    constructor() {
-        this.storage = new StorageSystem();
-        this.userId = this.storage.getUserId();
-        this.pollData = this.storage.getPollData();
-        this.selectedVote = null;
-        this.isInitialized = false;
-        
-        this.initialize();
-    }
-
-    initialize() {
-        if (this.isInitialized) return;
-        
-        this.loadChannels();
-        this.updatePollDisplay();
-        this.loadChatMessages();
-        this.setupEventListeners();
-        this.updateTwitterShareLink();
-        
-        this.isInitialized = true;
-        console.log('التطبيق جاهز للاستخدام');
-    }
-
-    loadChannels() {
-        const channels = [
-            // beIN MAX Channels
-            {c:"beIN SPORTS MAX",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
-            
-            {c:"beIN SPORTS MAX",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
-            
-            {c:"beIN SPORTS MAX",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8"},
-            {c:"beIN SPORTS MAX",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8"},
-            
-            // القنوات الوطنية
-            {c:"القنوات الوطنية",n:"البرنامج الوطني الجزائري",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
-            
-            // القنوات الفرنسية
-            {c:"القنوات الفرنسية",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
-            {c:"القنوات الفرنسية",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
-            {c:"القنوات الفرنسية",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
-            
-            // beIN PREMIUM
-            {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
-            {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
-            {c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
-            {c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
-            {c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"}
-        ];
-
-        const list = document.getElementById("channels");
-        list.innerHTML = '';
-        
-        let lastCategory = "";
-        
-        channels.forEach(channel => {
-            if (channel.c !== lastCategory) {
-                const category = document.createElement("div");
-                category.className = "cat";
-                category.textContent = channel.c;
-                list.appendChild(category);
-                lastCategory = channel.c;
+            // توليد معرف فريد للمستخدم
+            generateUserId() {
+                return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             }
-            
-            const button = document.createElement("div");
-            button.className = "btn";
-            button.innerHTML = `
-                <span>${channel.n}</span>
-                <span class="badge">LIVE</span>
-            `;
-            button.onclick = () => {
-                if (channel.u && channel.u.trim()) {
-                    window.open(channel.u.trim(), "_blank");
-                } else {
-                    this.showError("رابط البث غير متوفر حالياً", "general");
+
+            getUserId() {
+                let userId = localStorage.getItem(this.USER_ID_KEY);
+                if (!userId) {
+                    userId = this.generateUserId();
+                    localStorage.setItem(this.USER_ID_KEY, userId);
                 }
-            };
-            list.appendChild(button);
-        });
-    }
+                return userId;
+            }
 
-    updatePollDisplay() {
-        const total = this.pollData.total;
-        const nigeriaVotes = this.pollData.nigeria.votes;
-        const algeriaVotes = this.pollData.algeria.votes;
-        
-        // حساب النسب المئوية
-        const nigeriaPercent = total > 0 ? Math.round((nigeriaVotes / total) * 100) : 0;
-        const algeriaPercent = total > 0 ? Math.round((algeriaVotes / total) * 100) : 0;
-        
-        // تحديث النسب المئوية
-        document.getElementById('nigeria-percent').textContent = nigeriaPercent + '%';
-        document.getElementById('algeria-percent').textContent = algeriaPercent + '%';
-        
-        // تحديث أشرطة التقدم
-        document.getElementById('nigeria-bar').style.width = nigeriaPercent + '%';
-        document.getElementById('algeria-bar').style.width = algeriaPercent + '%';
-        
-        // تحديث إجمالي الأصوات
-        document.getElementById('total-votes').textContent = total.toLocaleString();
-        
-        // تحديث وقت التحديث
-        const now = new Date();
-        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        document.getElementById('last-update').textContent = timeString;
-        
-        // تحديث حالة زر التصويت
-        this.updateVoteButtonState();
-    }
+            // بيانات الاستطلاع
+            getPollData() {
+                const defaultData = {
+                    nigeria: { votes: 0 },
+                    algeria: { votes: 0 },
+                    total: 0,
+                    lastUpdated: Date.now()
+                };
+                
+                try {
+                    const data = JSON.parse(localStorage.getItem(this.POLL_KEY));
+                    return data || defaultData;
+                } catch (e) {
+                    console.error('خطأ في تحميل بيانات الاستطلاع:', e);
+                    return defaultData;
+                }
+            }
 
-    updateVoteButtonState() {
-        const voteButton = document.getElementById('vote-button');
-        const hasVoted = this.storage.hasUserVoted(this.userId);
-        
-        if (hasVoted) {
-            voteButton.innerHTML = '<i class="fas fa-check"></i> لقد صوّتت بالفعل';
-            voteButton.disabled = true;
-        } else if (this.selectedVote) {
-            voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> صوّت الآن';
-            voteButton.disabled = false;
-        } else {
-            voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> اختر فريقاً أولاً';
-            voteButton.disabled = true;
+            savePollData(data) {
+                try {
+                    data.lastUpdated = Date.now();
+                    localStorage.setItem(this.POLL_KEY, JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    console.error('خطأ في حفظ بيانات الاستطلاع:', e);
+                    return false;
+                }
+            }
+
+            // تحقق من تصويت المستخدم
+            hasUserVoted(userId) {
+                try {
+                    const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
+                    return !!votes[userId];
+                } catch (e) {
+                    console.error('خطأ في التحقق من تصويت المستخدم:', e);
+                    return false;
+                }
+            }
+
+            saveUserVote(userId, vote) {
+                try {
+                    const votes = JSON.parse(localStorage.getItem(this.USER_VOTES_KEY)) || {};
+                    votes[userId] = {
+                        vote: vote,
+                        timestamp: Date.now(),
+                        ip: 'local'
+                    };
+                    localStorage.setItem(this.USER_VOTES_KEY, JSON.stringify(votes));
+                    return true;
+                } catch (e) {
+                    console.error('خطأ في حفظ تصويت المستخدم:', e);
+                    return false;
+                }
+            }
+
+            // رسائل الشات
+            getChatMessages() {
+                try {
+                    const messages = JSON.parse(localStorage.getItem(this.CHAT_KEY)) || [];
+                    return messages.slice(-100); // إرجاع آخر 100 رسالة فقط
+                } catch (e) {
+                    console.error('خطأ في تحميل رسائل الشات:', e);
+                    return [];
+                }
+            }
+
+            saveChatMessage(message) {
+                try {
+                    const messages = this.getChatMessages();
+                    messages.push(message);
+                    // حفظ آخر 100 رسالة فقط
+                    if (messages.length > 100) {
+                        messages.splice(0, messages.length - 100);
+                    }
+                    localStorage.setItem(this.CHAT_KEY, JSON.stringify(messages));
+                    return true;
+                } catch (e) {
+                    console.error('خطأ في حفظ رسالة الشات:', e);
+                    return false;
+                }
+            }
         }
-    }
 
-    loadChatMessages() {
-        const messages = this.storage.getChatMessages();
-        const chatMessages = document.getElementById('chat-messages');
-        chatMessages.innerHTML = '';
-        
-        if (messages.length === 0) {
-            return;
-        }
-        
-        messages.forEach(msg => {
-            this.addMessageToDOM(msg.user, msg.twitter, msg.time, msg.text, false);
-        });
-        
-        // التمرير لآخر رسالة
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+        // ============ مدير التطبيق ============
+        class AppManager {
+            constructor() {
+                this.storage = new StorageSystem();
+                this.userId = this.storage.getUserId();
+                this.pollData = this.storage.getPollData();
+                this.selectedVote = null;
+                this.isInitialized = false;
+                
+                this.initialize();
+            }
 
-    addMessageToDOM(user, twitter, time, text, shouldSave = true) {
-        const chatMessages = document.getElementById('chat-messages');
-        
-        // إذا كانت الرسالة الأولى، أزل رسالة "لا توجد رسائل"
-        if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
-            chatMessages.innerHTML = '';
-        }
-        
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message';
-        messageElement.innerHTML = `
-            <div class="message-header">
-                <div class="message-user">
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    ${user}
-                    <span class="twitter-badge">${twitter}</span>
-                </div>
-                <div class="message-time">${time}</div>
-            </div>
-            <div class="message-text">${text}</div>
-        `;
-        
-        chatMessages.appendChild(messageElement);
-        
-        // التمرير لآخر رسالة
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        // حفظ الرسالة إذا كان مطلوباً
-        if (shouldSave) {
-            this.storage.saveChatMessage({
-                user: user,
-                twitter: twitter,
-                time: time,
-                text: text,
-                timestamp: Date.now()
-            });
-        }
-    }
+            initialize() {
+                if (this.isInitialized) return;
+                
+                this.loadChannels();
+                this.updatePollDisplay();
+                this.loadChatMessages();
+                this.setupEventListeners();
+                this.updateTwitterShareLink();
+                
+                this.isInitialized = true;
+            }
 
-    setupEventListeners() {
-        // اختيار خيار التصويت
-        document.querySelectorAll('.poll-option').forEach(option => {
-            option.addEventListener('click', (e) => {
-                if (this.storage.hasUserVoted(this.userId)) {
-                    this.showError('لقد قمت بالتصويت مسبقاً!', 'general');
+            loadChannels() {
+                const channels = [
+                    // beIN MAX Channels
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},
+                    
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},
+                    {c:"beIN SPORTS MAX",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},
+                    
+                    // القنوات الوطنية
+                    {c:"القنوات الوطنية",n:"البرنامج الوطني الجزائري",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},
+                    
+                    // القنوات الفرنسية
+                    {c:"القنوات الفرنسية",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},
+                    {c:"القنوات الفرنسية",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},
+                    {c:"القنوات الفرنسية",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},
+                    
+                    // beIN PREMIUM
+                    {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},
+                    {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},
+                    {c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},
+                    {c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},
+                    {c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"}
+                ];
+
+                const list = document.getElementById("channels");
+                list.innerHTML = '';
+                
+                let lastCategory = "";
+                
+                channels.forEach(channel => {
+                    if (channel.c !== lastCategory) {
+                        const category = document.createElement("div");
+                        category.className = "cat";
+                        category.textContent = channel.c;
+                        list.appendChild(category);
+                        lastCategory = channel.c;
+                    }
+                    
+                    const button = document.createElement("div");
+                    button.className = "btn";
+                    button.innerHTML = `
+                        <span>${channel.n}</span>
+                        <span class="badge">LIVE</span>
+                    `;
+                    button.onclick = () => {
+                        if (channel.u && channel.u.trim()) {
+                            window.open(channel.u.trim(), "_blank");
+                        } else {
+                            this.showError("رابط البث غير متوفر حالياً");
+                        }
+                    };
+                    list.appendChild(button);
+                });
+            }
+
+            updatePollDisplay() {
+                const total = this.pollData.total;
+                const nigeriaVotes = this.pollData.nigeria.votes;
+                const algeriaVotes = this.pollData.algeria.votes;
+                
+                // حساب النسب المئوية
+                const nigeriaPercent = total > 0 ? Math.round((nigeriaVotes / total) * 100) : 0;
+                const algeriaPercent = total > 0 ? Math.round((algeriaVotes / total) * 100) : 0;
+                
+                // تحديث النسب المئوية
+                document.getElementById('nigeria-percent').textContent = nigeriaPercent + '%';
+                document.getElementById('algeria-percent').textContent = algeriaPercent + '%';
+                
+                // تحديث أشرطة التقدم
+                document.getElementById('nigeria-bar').style.width = nigeriaPercent + '%';
+                document.getElementById('algeria-bar').style.width = algeriaPercent + '%';
+                
+                // تحديث إجمالي الأصوات
+                document.getElementById('total-votes').textContent = total.toLocaleString();
+                
+                // تحديث وقت التحديث
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                document.getElementById('last-update').textContent = timeString;
+                
+                // تحديث حالة زر التصويت
+                this.updateVoteButtonState();
+            }
+
+            updateVoteButtonState() {
+                const voteButton = document.getElementById('vote-button');
+                const hasVoted = this.storage.hasUserVoted(this.userId);
+                
+                if (hasVoted) {
+                    voteButton.innerHTML = '<i class="fas fa-check"></i> لقد صوّتت بالفعل';
+                    voteButton.disabled = true;
+                } else if (this.selectedVote) {
+                    voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> صوّت الآن';
+                    voteButton.disabled = false;
+                } else {
+                    voteButton.innerHTML = '<i class="fas fa-vote-yea"></i> اختر فريقاً أولاً';
+                    voteButton.disabled = true;
+                }
+            }
+
+            loadChatMessages() {
+                const messages = this.storage.getChatMessages();
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML = '';
+                
+                if (messages.length === 0) {
                     return;
                 }
                 
-                // إزالة التحديد من جميع الخيارات
-                document.querySelectorAll('.poll-option').forEach(opt => {
-                    opt.classList.remove('selected');
+                messages.forEach(msg => {
+                    this.addMessageToDOM(msg.user, msg.twitter, msg.time, msg.text, false);
                 });
                 
-                // تحديد الخيار المختار
-                e.currentTarget.classList.add('selected');
-                this.selectedVote = e.currentTarget.getAttribute('data-vote');
-                
-                // تحديث زر التصويت
-                this.updateVoteButtonState();
-            });
-        });
-
-        // زر التصويت
-        document.getElementById('vote-button').addEventListener('click', () => this.submitVote());
-
-        // إرسال رسالة في الشات
-        document.getElementById('send-btn').addEventListener('click', () => this.sendChatMessage());
-        
-        // إرسال رسالة عند الضغط على Enter
-        document.getElementById('chat-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.sendChatMessage();
+                // التمرير لآخر رسالة
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
             }
-        });
 
-        // تحديث رابط تويتر عند تغيير الحساب
-        document.getElementById('twitter-handle').addEventListener('input', () => {
-            this.updateTwitterShareLink();
-            this.hideError('twitter');
-        });
-    }
+            addMessageToDOM(user, twitter, time, text, shouldSave = true) {
+                const chatMessages = document.getElementById('chat-messages');
+                
+                // إذا كانت الرسالة الأولى، أزل رسالة "لا توجد رسائل"
+                if (chatMessages.innerHTML.includes('لا توجد رسائل')) {
+                    chatMessages.innerHTML = '';
+                }
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                messageElement.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-user">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            ${user}
+                            <span class="twitter-badge">${twitter}</span>
+                        </div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                    <div class="message-text">${text}</div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+                
+                // التمرير لآخر رسالة
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+                
+                // حفظ الرسالة إذا كان مطلوباً
+                if (shouldSave) {
+                    this.storage.saveChatMessage({
+                        user: user,
+                        twitter: twitter,
+                        time: time,
+                        text: text,
+                        timestamp: Date.now()
+                    });
+                }
+            }
 
-    validateTwitterHandle(handle) {
-        if (!handle || handle.trim() === '') {
-            return { valid: false, error: 'يرجى إدخال حساب تويتر' };
-        }
-        
-        const trimmedHandle = handle.trim();
-        
-        if (!trimmedHandle.startsWith('@')) {
-            return { valid: false, error: 'يجب أن يبدأ حساب تويتر بـ @' };
-        }
-        
-        if (trimmedHandle.length < 2) {
-            return { valid: false, error: 'حساب تويتر قصير جداً' };
-        }
-        
-        if (trimmedHandle.length > 20) {
-            return { valid: false, error: 'حساب تويتر طويل جداً' };
-        }
-        
-        // تحقق من الأحرف المسموحة
-        const validPattern = /^@[a-zA-Z0-9_]+$/;
-        if (!validPattern.test(trimmedHandle)) {
-            return { valid: false, error: 'يحتوي حساب تويتر على أحرف غير مسموحة' };
-        }
-        
-        return { valid: true, handle: trimmedHandle };
-    }
+            setupEventListeners() {
+                // اختيار خيار التصويت
+                document.querySelectorAll('.poll-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        if (this.storage.hasUserVoted(this.userId)) {
+                            this.showError('لقد قمت بالتصويت مسبقاً!');
+                            return;
+                        }
+                        
+                        // إزالة التحديد من جميع الخيارات
+                        document.querySelectorAll('.poll-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        // تحديد الخيار المختار
+                        e.currentTarget.classList.add('selected');
+                        this.selectedVote = e.currentTarget.getAttribute('data-vote');
+                        
+                        // تحديث زر التصويت
+                        this.updateVoteButtonState();
+                    });
+                });
 
-    submitVote() {
-        // تحقق إذا كان المستخدم قد صوّت مسبقاً
-        if (this.storage.hasUserVoted(this.userId)) {
-            this.showError('لقد قمت بالتصويت مسبقاً!', 'general');
-            return;
-        }
-        
-        // تحقق من اختيار خيار
-        if (!this.selectedVote) {
-            this.showError('يرجى اختيار فريق للتصويت', 'general');
-            return;
-        }
-        
-        // تحقق من حساب تويتر
-        const twitterHandle = document.getElementById('twitter-handle').value;
-        const validation = this.validateTwitterHandle(twitterHandle);
-        
-        if (!validation.valid) {
-            this.showError(validation.error, 'twitter');
-            return;
-        }
-        
-        // تحديث بيانات الاستطلاع
-        this.pollData[this.selectedVote].votes += 1;
-        this.pollData.total += 1;
-        
-        // حفظ البيانات
-        const pollSaved = this.storage.savePollData(this.pollData);
-        const voteSaved = this.storage.saveUserVote(this.userId, this.selectedVote);
-        
-        if (!pollSaved || !voteSaved) {
-            this.showError('حدث خطأ في حفظ التصويت', 'general');
-            return;
-        }
-        
-        // تحديث العرض
-        this.updatePollDisplay();
-        
-        // إضافة رسالة للشات
-        const voteText = this.selectedVote === 'nigeria' ? 
-            'صوت لصالح نيجيريا ⚽🇳🇬' : 
-            'صوت لصالح الجزائر ⚽🇩🇿';
-        
-        const now = new Date();
-        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        
-        this.addMessageToDOM('مشجع جديد', validation.handle, timeString, 
-            `${voteText} في استطلاع رأي كأس أفريقيا!`);
-        
-        // تحديث رابط تويتر
-        this.updateTwitterShareLink();
-        
-        // إظهار رسالة نجاح
-        this.showSuccess(`شكراً لتصويتك ${validation.handle}! صوتك تم تسجيله بنجاح.`);
-        
-        // إخفاء الأخطاء
-        this.hideError('twitter');
-        this.hideError('general');
-    }
+                // زر التصويت
+                document.getElementById('vote-button').addEventListener('click', () => this.submitVote());
 
-    sendChatMessage() {
-        const chatInput = document.getElementById('chat-input');
-        const messageText = chatInput.value.trim();
-        
-        // تحقق من الرسالة
-        if (!messageText) {
-            this.showError('يرجى كتابة رسالة قبل الإرسال', 'chat');
-            return;
-        }
-        
-        if (messageText.length < 2) {
-            this.showError('الرسالة قصيرة جداً', 'chat');
-            return;
-        }
-        
-        if (messageText.length > 200) {
-            this.showError('الرسالة طويلة جداً (الحد الأقصى 200 حرف)', 'chat');
-            return;
-        }
-        
-        // تحقق من حساب تويتر
-        const twitterHandle = document.getElementById('twitter-handle').value;
-        const validation = this.validateTwitterHandle(twitterHandle);
-        
-        if (!validation.valid) {
-            this.showError(validation.error, 'twitter');
-            return;
-        }
-        
-        // إضافة الرسالة
-        const now = new Date();
-        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-        
-        this.addMessageToDOM('مشجع', validation.handle, timeString, messageText);
-        
-        // مسح حقل الإدخال
-        chatInput.value = '';
-        
-        // إخفاء الأخطاء
-        this.hideError('chat');
-        this.hideError('twitter');
-        
-        // إظهار رسالة نجاح
-        this.showSuccess('تم إرسال رسالتك بنجاح!');
-    }
+                // إرسال رسالة في الشات
+                document.getElementById('send-btn').addEventListener('click', () => this.sendChatMessage());
+                
+                // إرسال رسالة عند الضغط على Enter
+                document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendChatMessage();
+                    }
+                });
 
-    updateTwitterShareLink() {
-        const twitterHandle = document.getElementById('twitter-handle').value.trim() || '@neurosisnet';
-        const validation = this.validateTwitterHandle(twitterHandle);
-        const handle = validation.valid ? validation.handle : '@neurosisnet';
-        
-        const voteText = this.selectedVote === 'nigeria' ? 
-            'صوت لصالح نيجيريا' : 
-            (this.selectedVote === 'algeria' ? 'صوت لصالح الجزائر' : 'شارك في الاستطلاع');
-        
-        const hashtags = 'كأس_أفريقيا, AFCON2026, MisterAITV';
-        const url = window.location.href.split('#')[0];
-        
-        const tweetText = `${voteText} في مباراة نيجيريا ضد الجزائر - دور ربع النهائي لكأس أفريقيا 2026! ${handle} `;
-        const twitterShareBtn = document.getElementById('twitter-share-btn');
-        
-        twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=${hashtags}&url=${encodeURIComponent(url)}`;
-    }
+                // تحديث رابط تويتر عند تغيير الحساب
+                document.getElementById('twitter-handle').addEventListener('input', () => {
+                    this.updateTwitterShareLink();
+                    this.hideError();
+                });
+            }
 
-    showError(message, type = 'general') {
-        // إخفاء جميع رسائل الخطأ أولاً
-        this.hideAllErrors();
-        
-        if (type === 'twitter') {
-            const errorElement = document.getElementById('twitter-error');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            errorElement.style.color = 'var(--red)';
-        } else if (type === 'chat') {
-            // لرسائل الشات، استخدم alert بسيط
-            alert('خطأ: ' + message);
-        } else {
-            // للرسائل العامة، استخدم alert
-            alert('خطأ: ' + message);
-        }
-    }
+            validateTwitterHandle(handle) {
+                if (!handle || handle.trim() === '') {
+                    return { valid: false, error: 'يرجى إدخال حساب تويتر' };
+                }
+                
+                const trimmedHandle = handle.trim();
+                
+                if (!trimmedHandle.startsWith('@')) {
+                    return { valid: false, error: 'يجب أن يبدأ حساب تويتر بـ @' };
+                }
+                
+                if (trimmedHandle.length < 2) {
+                    return { valid: false, error: 'حساب تويتر قصير جداً' };
+                }
+                
+                if (trimmedHandle.length > 20) {
+                    return { valid: false, error: 'حساب تويتر طويل جداً' };
+                }
+                
+                return { valid: true, handle: trimmedHandle };
+            }
 
-    hideError(type = 'general') {
-        if (type === 'twitter') {
-            const errorElement = document.getElementById('twitter-error');
-            errorElement.style.display = 'none';
-            errorElement.textContent = '';
-        }
-    }
-
-    hideAllErrors() {
-        this.hideError('twitter');
-    }
-
-    showSuccess(message) {
-        const successElement = document.getElementById('success-message');
-        successElement.textContent = message;
-        successElement.style.display = 'block';
-        
-        // إخفاء الرسالة بعد 3 ثوان
-        setTimeout(() => {
-            successElement.style.display = 'none';
-        }, 3000);
-    }
-
-    // دالة للحصول على إحصائيات النظام
-    getSystemStats() {
-        return this.storage.getStats();
-    }
-}
-
-// ============ تهيئة التطبيق ============
-document.addEventListener('DOMContentLoaded', () => {
-    // التحقق من دعم localStorage
-    if (!window.localStorage) {
-        alert('عذراً، متصفحك لا يدعم التخزين المحلي. بعض الميزات قد لا تعمل بشكل صحيح.');
-        return;
-    }
-    
-    try {
-        // بدء التطبيق
-        window.appManager = new AppManager();
-        
-        // تحديث رابط تويتر عند التحميل
-        window.appManager.updateTwitterShareLink();
-        
-        // إضافة بعض رسائل الترحيب التلقائية إذا كان الشات فارغاً
-        setTimeout(() => {
-            const chatMessages = document.getElementById('chat-messages');
-            if (chatMessages && chatMessages.innerHTML.includes('لا توجد رسائل')) {
+            submitVote() {
+                // تحقق إذا كان المستخدم قد صوّت مسبقاً
+                if (this.storage.hasUserVoted(this.userId)) {
+                    this.showError('لقد قمت بالتصويت مسبقاً!');
+                    return;
+                }
+                
+                // تحقق من اختيار خيار
+                if (!this.selectedVote) {
+                    this.showError('يرجى اختيار فريق للتصويت');
+                    return;
+                }
+                
+                // تحقق من حساب تويتر
+                const twitterHandle = document.getElementById('twitter-handle').value;
+                const validation = this.validateTwitterHandle(twitterHandle);
+                
+                if (!validation.valid) {
+                    this.showError(validation.error);
+                    return;
+                }
+                
+                // تحديث بيانات الاستطلاع
+                this.pollData[this.selectedVote].votes += 1;
+                this.pollData.total += 1;
+                
+                // حفظ البيانات
+                const pollSaved = this.storage.savePollData(this.pollData);
+                const voteSaved = this.storage.saveUserVote(this.userId, this.selectedVote);
+                
+                if (!pollSaved || !voteSaved) {
+                    this.showError('حدث خطأ في حفظ التصويت');
+                    return;
+                }
+                
+                // تحديث العرض
+                this.updatePollDisplay();
+                
+                // إضافة رسالة للشات
+                const voteText = this.selectedVote === 'nigeria' ? 
+                    'صوت لصالح نيجيريا ⚽🇳🇬' : 
+                    'صوت لصالح الجزائر ⚽🇩🇿';
+                
                 const now = new Date();
                 const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
                 
-                // رسالة ترحيب واحدة فقط
-                window.appManager.addMessageToDOM(
-                    'نظام MisterAI TV',
-                    '@neurosisnet',
-                    timeString,
-                    'مرحباً بكم في شات كأس أفريقيا! شاركوا آرائكم وتوقعاتكم للمباراة.',
-                    true
-                );
+                this.addMessageToDOM('مشجع جديد', validation.handle, timeString, 
+                    `${voteText} في استطلاع رأي كأس أفريقيا!`);
+                
+                // تحديث رابط تويتر
+                this.updateTwitterShareLink();
+                
+                // إظهار رسالة نجاح
+                this.showSuccess(`شكراً لتصويتك ${validation.handle}! صوتك تم تسجيله بنجاح.`);
+                
+                // إخفاء الأخطاء
+                this.hideError();
             }
-        }, 1000);
-        
-        console.log('MisterAI TV - نظام الاستطلاع والشات جاهز للعمل');
-        
-    } catch (error) {
-        console.error('خطأ في تهيئة التطبيق:', error);
-        alert('حدث خطأ في تحميل التطبيق. يرجى تحديث الصفحة.');
-    }
-});
 
-// ============ دالات مساعدة إضافية ============
-// تحديث الوقت كل دقيقة
-setInterval(() => {
-    if (window.appManager) {
-        window.appManager.updatePollDisplay();
-    }
-}, 60000);
+            sendChatMessage() {
+                const chatInput = document.getElementById('chat-input');
+                const messageText = chatInput.value.trim();
+                
+                // تحقق من الرسالة
+                if (!messageText) {
+                    this.showError('يرجى كتابة رسالة قبل الإرسال');
+                    return;
+                }
+                
+                if (messageText.length < 2) {
+                    this.showError('الرسالة قصيرة جداً');
+                    return;
+                }
+                
+                if (messageText.length > 200) {
+                    this.showError('الرسالة طويلة جداً (الحد الأقصى 200 حرف)');
+                    return;
+                }
+                
+                // تحقق من حساب تويتر
+                const twitterHandle = document.getElementById('twitter-handle').value;
+                const validation = this.validateTwitterHandle(twitterHandle);
+                
+                if (!validation.valid) {
+                    this.showError(validation.error);
+                    return;
+                }
+                
+                // إضافة الرسالة
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                this.addMessageToDOM('مشجع', validation.handle, timeString, messageText);
+                
+                // مسح حقل الإدخال
+                chatInput.value = '';
+                
+                // إخفاء الأخطاء
+                this.hideError();
+                
+                // إظهار رسالة نجاح
+                this.showSuccess('تم إرسال رسالتك بنجاح!');
+            }
 
-// إصلاح المشاكل الشائعة
-window.addEventListener('error', function(e) {
-    console.error('حدث خطأ:', e.error);
-});
+            updateTwitterShareLink() {
+                const twitterHandle = document.getElementById('twitter-handle').value.trim() || '@neurosisnet';
+                const validation = this.validateTwitterHandle(twitterHandle);
+                const handle = validation.valid ? validation.handle : '@neurosisnet';
+                
+                const voteText = this.selectedVote === 'nigeria' ? 
+                    'صوت لصالح نيجيريا' : 
+                    (this.selectedVote === 'algeria' ? 'صوت لصالح الجزائر' : 'شارك في الاستطلاع');
+                
+                const hashtags = 'كأس_أفريقيا,AFCON2026,MisterAITV';
+                const url = window.location.href.split('#')[0];
+                
+                const tweetText = `${voteText} في مباراة نيجيريا ضد الجزائر - دور ربع النهائي لكأس أفريقيا 2026! ${handle} `;
+                const twitterShareBtn = document.getElementById('twitter-share-btn');
+                
+                twitterShareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=${hashtags}&url=${encodeURIComponent(url)}`;
+            }
 
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('وعد مرفوض غير معالج:', e.reason);
-});
-</script>
+            showError(message) {
+                const errorElement = document.getElementById('twitter-error');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                errorElement.style.color = 'var(--red)';
+                
+                // إخفاء الخطأ بعد 5 ثواني
+                setTimeout(() => {
+                    this.hideError();
+                }, 5000);
+            }
+
+            hideError() {
+                const errorElement = document.getElementById('twitter-error');
+                errorElement.style.display = 'none';
+                errorElement.textContent = '';
+            }
+
+            showSuccess(message) {
+                const successElement = document.getElementById('success-message');
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                
+                // إخفاء الرسالة بعد 3 ثوان
+                setTimeout(() => {
+                    successElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // ============ تهيئة التطبيق ============
+        document.addEventListener('DOMContentLoaded', () => {
+            // التحقق من دعم localStorage
+            if (!window.localStorage) {
+                alert('عذراً، متصفحك لا يدعم التخزين المحلي. بعض الميزات قد لا تعمل بشكل صحيح.');
+                return;
+            }
+            
+            try {
+                // بدء التطبيق
+                window.appManager = new AppManager();
+                
+                // تحديث رابط تويتر عند التحميل
+                window.appManager.updateTwitterShareLink();
+                
+                // إضافة رسالة ترحيب تلقائية إذا كان الشات فارغاً
+                setTimeout(() => {
+                    const chatMessages = document.getElementById('chat-messages');
+                    if (chatMessages && chatMessages.innerHTML.includes('لا توجد رسائل')) {
+                        const now = new Date();
+                        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                        
+                        window.appManager.addMessageToDOM(
+                            'نظام MisterAI TV',
+                            '@neurosisnet',
+                            timeString,
+                            'مرحباً بكم في شات كأس أفريقيا! شاركوا آرائكم وتوقعاتكم للمباراة.',
+                            true
+                        );
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                console.error('خطأ في تهيئة التطبيق:', error);
+                alert('حدث خطأ في تحميل التطبيق. يرجى تحديث الصفحة.');
+            }
+        });
+
+        // تحديث الوقت كل دقيقة
+        setInterval(() => {
+            if (window.appManager) {
+                window.appManager.updatePollDisplay();
+            }
+        }, 60000);
+    </script>
 </body>
 </html>
