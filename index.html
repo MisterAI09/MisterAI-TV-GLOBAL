@@ -32,8 +32,6 @@ body{
 
 /* الخلفية والجسيمات */
 .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
-.gradient-bg { position: absolute; width: 200%; height: 200%; background: linear-gradient(45deg, var(--color1), var(--color2), var(--color3), var(--color4), var(--color5)); opacity: 0.15; animation: rotateGradient 30s linear infinite; }
-@keyframes rotateGradient { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 .particle { position: absolute; border-radius: 50%; background: var(--color3); animation: float 15s infinite linear; box-shadow: 0 0 20px currentColor; }
 @keyframes float { 0% { transform: translateY(100vh) scale(0.5); opacity: 0; } 10%, 90% { opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
 
@@ -48,29 +46,11 @@ body{
     backdrop-filter: blur(10px);
 }
 
-/* --- قسم التصويت الجديد --- */
-.poll-section {
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.poll-title { color: var(--color5); text-align: center; font-size: 0.9rem; margin-bottom: 10px; }
-.vs-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background: #111;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid var(--color4);
-}
-.team-vote { text-align: center; cursor: pointer; flex: 1; }
-.team-vote span { display: block; font-size: 1.4rem; font-weight: 900; }
-.vs-circle { background: #d35400; padding: 4px 8px; border-radius: 50%; font-size: 0.7rem; }
+/* --- تم حذف قسم التصويت من هنا --- */
 
-/* --- قسم الشات الجديد --- */
+/* قسم الشات */
 .chat-section {
-    height: 250px;
+    height: 300px; /* زدنا الطول قليلاً بعد حذف التصويت */
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -117,21 +97,12 @@ body{
         <div style="font-size:1.8rem; font-weight:900; color:var(--color3);">MISTERAI TV</div>
     </div>
 
-    <div class="poll-section">
-        <div class="poll-title">من سيفوز ويتأهل لنصف النهائي؟ 🏆</div>
-        <div class="vs-container">
-            <div class="team-vote" onclick="vote('DZ')"><span>DZ</span><small>تصويت 🗳️</small></div>
-            <div class="vs-circle">VS</div>
-            <div class="team-vote" onclick="vote('NG')"><span>NG</span><small>تصويت 🗳️</small></div>
-        </div>
-    </div>
-
     <div class="chat-section">
         <div style="font-size:0.9rem; margin-bottom:5px; color:var(--color4);"><i class="fas fa-comments"></i> شات المونديال</div>
         <div class="chat-box" id="chatBox">
             <div class="chat-msg">
                 <span class="chat-user">@MisterAI:</span>
-                <span>أهلاً بكم في البث المباشر! استمتعوا بالمباراة ⚽🔥</span>
+                <span>مرحباً بك يا مصطفى! القنوات جاهزة والبث شغال ⚽🔥</span>
             </div>
         </div>
         <div class="chat-input-container">
@@ -159,7 +130,6 @@ body{
 </div>
 
 <script>
-// --- كود الجسيمات (لا يتغير) ---
 const particlesContainer = document.getElementById('particles');
 for (let i = 0; i < 40; i++) {
     const p = document.createElement('div');
@@ -171,7 +141,7 @@ for (let i = 0; i < 40; i++) {
     particlesContainer.appendChild(p);
 }
 
-// --- بيانات القنوات (كما هي تماماً) ---
+// رجعتلك كل القنوات والروابط الأصلية يا مصطفى
 const channels = [
     {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
     {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
@@ -201,14 +171,9 @@ const channels = [
     {c:"beIN PREMIUM",n:"beIN SPORT 6",u:"http://135.125.109.73:9000/beinsport6_.m3u8 "},
     {c:"beIN PREMIUM",n:"beIN SPORT 7",u:"http://135.125.109.73:9000/beinsport7_.m3u8 "},
     {c:"beIN PREMIUM",n:"beIN SPORT 8",u:"http://135.125.109.73:9000/beinsport8_.m3u8 "},
-    {c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8 "},
-    {c:"RAKUTEN TV UK",n:"Rakuten TV Top Movies UK (1080p)",u:"https://0145451975a64b35866170fd2e8fa486.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-5987/master.m3u8"},
-    {c:"RAKUTEN TV UK",n:"Rakuten TV Action Movies UK (1080p)",u:"https://54045f0c40fd442c8b06df076aaf1e85.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6065/master.m3u8"},
-    {c:"RAKUTEN TV UK",n:"Rakuten TV Comedy Movies UK (1080p)",u:"https://9be783d652cd4b099cf63e1dc134c4a3.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6181/master.m3u8"},
-    {c:"RAKUTEN TV UK",n:"Rakuten TV Drama Movies UK (1080p)",u:"https://fee09fd665814f51b939b6d106cf5f66.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6093/master.m3u8"}
+    {c:"beIN PREMIUM",n:"beIN SPORT 9",u:"http://135.125.109.73:9000/beinsport9_.m3u8 "}
 ];
 
-// توليد القنوات في القائمة
 const list = document.getElementById("channels");
 let lastCat = "";
 channels.forEach(ch => {
@@ -226,7 +191,6 @@ channels.forEach(ch => {
     list.appendChild(btn);
 });
 
-// --- وظائف الشات والتصويت ---
 function sendMsg() {
     const inp = document.getElementById('chatInput');
     if(inp.value.trim()){
@@ -235,10 +199,6 @@ function sendMsg() {
         inp.value = "";
         box.scrollTop = box.scrollHeight;
     }
-}
-
-function vote(team) {
-    alert("شكراً لتصويتك لـ " + team + "! تم تسجيل صوتك ✅");
 }
 </script>
 </body>
