@@ -46,23 +46,6 @@ body{
     backdrop-filter: blur(10px);
 }
 
-/* --- تم حذف قسم التصويت من هنا --- */
-
-/* قسم الشات */
-.chat-section {
-    height: 300px; /* زدنا الطول قليلاً بعد حذف التصويت */
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.chat-box { flex: 1; overflow-y: auto; margin-bottom: 10px; font-size: 0.85rem; }
-.chat-msg { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; margin-bottom: 5px; border-right: 3px solid var(--color3); }
-.chat-user { color: var(--color4); font-weight: bold; font-size: 0.75rem; }
-.chat-input-container { display: flex; gap: 5px; }
-.chat-input-container input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 5px; font-family: 'Cairo'; }
-.send-btn { background: var(--color4); border: none; padding: 0 12px; border-radius: 5px; cursor: pointer; }
-
 /* زر تويتر */
 .twitter-btn {
     background: var(--twitter);
@@ -97,20 +80,6 @@ body{
         <div style="font-size:1.8rem; font-weight:900; color:var(--color3);">MISTERAI TV</div>
     </div>
 
-    <div class="chat-section">
-        <div style="font-size:0.9rem; margin-bottom:5px; color:var(--color4);"><i class="fas fa-comments"></i> شات المونديال</div>
-        <div class="chat-box" id="chatBox">
-            <div class="chat-msg">
-                <span class="chat-user">@MisterAI:</span>
-                <span>مرحباً بك يا مصطفى! القنوات جاهزة والبث شغال ⚽🔥</span>
-            </div>
-        </div>
-        <div class="chat-input-container">
-            <input type="text" id="chatInput" placeholder="اكتب تعليقك...">
-            <button class="send-btn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-
     <a href="https://twitter.com/intent/tweet?text=أنا أشاهد كأس أفريقيا الآن عبر MisterAI TV! 🏁⚽" target="_blank" class="twitter-btn">
         <i class="fab fa-twitter"></i> غرد برأيك على تويتر
     </a>
@@ -141,7 +110,6 @@ for (let i = 0; i < 40; i++) {
     particlesContainer.appendChild(p);
 }
 
-// رجعتلك كل القنوات والروابط الأصلية يا مصطفى
 const channels = [
     {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 4K",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432904.m3u8 "},
     {c:"beIN SPORTS MAX (CAN)",n:"beIN MAX 1 FHD",u:"http://fr.ottv.pro/live/4476647188407159/4476647188407159/432903.m3u8 "},
@@ -190,16 +158,6 @@ channels.forEach(ch => {
     btn.onclick = () => window.open(ch.u, "_blank");
     list.appendChild(btn);
 });
-
-function sendMsg() {
-    const inp = document.getElementById('chatInput');
-    if(inp.value.trim()){
-        const box = document.getElementById('chatBox');
-        box.innerHTML += `<div class="chat-msg"><span class="chat-user">@You:</span> <span>${inp.value}</span></div>`;
-        inp.value = "";
-        box.scrollTop = box.scrollHeight;
-    }
-}
 </script>
 </body>
 </html>
